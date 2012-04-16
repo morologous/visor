@@ -1,10 +1,10 @@
 package net.yankus.visor
 
-class BeanToQueryComposer {
+class BeanInspector {
 	
 	static def optOutTypes = [java.lang.Class]
 
-	static def compose = { queryBean -> 
+	static def inspect = { queryBean -> 
 		def queryMap = [:]
 
 		def getters = queryBean.class.methods.findAll{ it.name =~ /^get[A-Z]/ }

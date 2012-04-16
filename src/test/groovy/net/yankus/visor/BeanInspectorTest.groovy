@@ -9,7 +9,7 @@ class BeanToQueryComposerTest  {
 	public void testCompose() {
 		def testBean = new TestBean([t1:'foo', t2:'bar', t3:'baz'])
 
-		def result = BeanToQueryComposer.compose(testBean)
+		def result = BeanInspector.inspect(testBean)
 		println(result)
 		assertNotNull (result['t1'])
 		assertNotNull (result['t2'])
