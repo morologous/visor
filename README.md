@@ -1,3 +1,4 @@
+```
                           .     t#,               
              t           ;W    ;##W.   j.         
              Ej         f#E   :#L:WE   EW,        
@@ -11,7 +12,8 @@
   ED.        E#t ,WK,           G#t    E#t  ;#W:  
   t          E#t EG.             t     DWi   ,KK: 
              ,;. ,                                
+```
                         
 Visor is a library used to bridge the gap between groovy/Java domain objects and the ElasticSearch search server.
 
-Travis-ci build status: [![Build Status](https://secure.travis-ci.org/morologous/visor.png)](http://travis-ci.org/morologous/visor)]
+Travis-ci build status: [![Build Status](https://secure.travis-ci.org/morologous/visor.png)](http://travis-ci.org/morologous/visor)
