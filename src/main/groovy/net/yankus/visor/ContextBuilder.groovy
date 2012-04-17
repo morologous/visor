@@ -1,7 +1,7 @@
 package net.yankus.visor
 
 class ContextBuilder {
-	
+
 	public static def build = {
 		def buildFromAnnotation = {  
 			def typeAnnotation = it.class.getAnnotation(QueryBean)
