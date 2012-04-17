@@ -6,14 +6,17 @@ class Engine {
     
     def client
 
-    def query = { queryParam ->
+    def doQuery = { queryParam ->
         def context = ContextBuilder.build(queryParam)
-        def query = BeanInspector.inspect(queryParam)
+        println (context)
+        def queryMap = BeanInspector.inspect(queryParam)
+        println (queryMap)
         def search = client.search {
-            indicies context.index
+            indices context['index']
+            types "testData"
             source {
                 query {
-                    term(query)
+                   term(queryMap)
                 }
             }
         }
