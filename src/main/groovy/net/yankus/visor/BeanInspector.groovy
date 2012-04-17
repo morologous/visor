@@ -2,8 +2,6 @@ package net.yankus.visor
 
 class BeanInspector {
 	
-	static def optOutTypes = [java.lang.Class]
-
 	static def inspect = { queryBean -> 
 		def queryMap = [:]
 
