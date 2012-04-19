@@ -1,6 +1,8 @@
 package net.yankus.visor
 
 import org.junit.Test
+import org.junit.Before
+import org.junit.After
 import org.junit.BeforeClass
 import org.junit.AfterClass
 import static org.junit.Assert.*
@@ -78,7 +80,7 @@ class EngineTest {
          confirmResults.response.hits.each { SearchHit hit ->
             assertEquals "2", hit.id
         }
-
+       
     }
 
     @AfterClass
@@ -115,7 +117,11 @@ class EngineTest {
         }
     }
 
-    @QueryBean(index = "test", settings = { node { local = true } }, filters = { }, returnType = TestBean.class)
+    @QueryBean(index = "test", settings = { 
+        node { 
+            local = true 
+        } 
+    }, filters = { }, returnType = TestBean.class)
     @ToString
     public class TestBean {
         @QueryParam
