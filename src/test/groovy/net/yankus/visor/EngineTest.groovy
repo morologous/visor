@@ -80,19 +80,16 @@ class EngineTest {
     }
 
     @Test
-    public void testInject() {
-        def engine = new Engine(client:node.client)
-        assertNotNull(engine.client)
-    }
-
-    @Test
     public void testQuery() {
-        def engine = new Engine(client:node.client)
-        assertNotNull(engine.client)
-        engine.doQuery(new TestBean(value:'foo'))
+        def engine = new Engine()
+        def response = engine.doQuery(new TestBean(value:'foo'))
+        response.hits.each { SearchHit hit ->
+            assertEquals "1", hit.id
+        }
+
     }
 
-    @QueryBean(index = "test", settings = { }, filters = { }, returnType = TestBean.class)
+    @QueryBean(index = "test", settings = { node { local = true } }, filters = { }, returnType = TestBean.class)
     public class TestBean {
         @QueryParam
         def value
