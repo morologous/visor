@@ -1,6 +1,7 @@
 package net.yankus.visor
 
 import org.elasticsearch.search.SearchHit
+import groovy.util.Expando
 
 class Engine {
 
@@ -28,8 +29,12 @@ class Engine {
             }
 
             
-            return search.response          
+            def results = new Expando()
 
+            results.response = search.response
+            results.list = new SearchResultInflator(context:context).inflateAll(search.response.hits)
+
+            results
         }
     }
 

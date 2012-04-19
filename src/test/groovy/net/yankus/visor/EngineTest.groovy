@@ -8,6 +8,7 @@ import org.elasticsearch.groovy.node.GNode
 import org.elasticsearch.groovy.node.GNodeBuilder
 import static org.elasticsearch.groovy.node.GNodeBuilder.*
 import org.elasticsearch.search.SearchHit
+import groovy.transform.ToString
 
 class EngineTest {
     
@@ -33,6 +34,7 @@ class EngineTest {
             id "1"
             source {
                 value = "foo"
+
             }
         }
         println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
@@ -82,14 +84,18 @@ class EngineTest {
     @Test
     public void testQuery() {
         def engine = new Engine()
-        def response = engine.doQuery(new TestBean(value:'foo'))
-        response.hits.each { SearchHit hit ->
+        def results = engine.doQuery(new TestBean(value:'foo'))
+        results.response.hits.each { SearchHit hit ->
             assertEquals "1", hit.id
+        }
+        results.list.each {
+           assertEquals 'foo', it.value
         }
 
     }
 
     @QueryBean(index = "test", settings = { node { local = true } }, filters = { }, returnType = TestBean.class)
+    @ToString
     public class TestBean {
         @QueryParam
         def value
