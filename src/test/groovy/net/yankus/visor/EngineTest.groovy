@@ -1,8 +1,8 @@
 package net.yankus.visor
 
 import org.junit.Test
-import org.junit.Before
-import org.junit.After
+import org.junit.BeforeClass
+import org.junit.AfterClass
 import static org.junit.Assert.*
 import org.elasticsearch.groovy.node.GNode
 import org.elasticsearch.groovy.node.GNodeBuilder
@@ -12,11 +12,11 @@ import groovy.transform.ToString
 
 class EngineTest {
     
-    GNode node 
-    GNodeBuilder nodeBuilder
+    static GNode node 
+    static GNodeBuilder nodeBuilder
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() throws Exception {
         nodeBuilder = nodeBuilder();
         nodeBuilder.settings {
             node {
@@ -34,7 +34,7 @@ class EngineTest {
             id "1"
             source {
                 value = "foo"
-
+                num = 1
             }
         }
         println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
@@ -45,9 +45,12 @@ class EngineTest {
             id "2"
             source {
                 value = "bar"
+                num = 2
             }
         }
+
         println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
+
 
         indexR = client.index {
             index "test"
@@ -55,9 +58,12 @@ class EngineTest {
             id "3"
             source {
                 value = "baz"
+                num = 2
             }
         }
+
         println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
+
 
         def confirmResults = client.search {
             indices "test"
@@ -70,14 +76,13 @@ class EngineTest {
         }
 
          confirmResults.response.hits.each { SearchHit hit ->
-            println ("Got hit $hit.id from $hit.index/$hit.type")
             assertEquals "2", hit.id
         }
 
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterClass
+    public static void tearDown() throws Exception {
         node.stop().close()
     }
 
@@ -85,13 +90,29 @@ class EngineTest {
     public void testQuery() {
         def engine = new Engine()
         def results = engine.doQuery(new TestBean(value:'foo'))
+        results.list.each { println "result $it" }
         results.response.hits.each { SearchHit hit ->
             assertEquals "1", hit.id
         }
         results.list.each {
            assertEquals 'foo', it.value
+           assertEquals 1, it.num
         }
 
+    }
+
+    @Test
+    public void testMultiFieldQuery() {
+        def engine = new Engine()
+        def results = engine.doQuery(new TestBean(value:'bar', num:2))
+        results.list.each { println "result $it" }
+        results.response.hits.each { SearchHit hit ->
+            assertEquals "2", hit.id
+        }
+        results.list.each {
+           assertEquals 'bar', it.value
+           assertEquals 2, it.num
+        }
     }
 
     @QueryBean(index = "test", settings = { node { local = true } }, filters = { }, returnType = TestBean.class)
@@ -99,5 +120,8 @@ class EngineTest {
     public class TestBean {
         @QueryParam
         def value
+
+        @QueryParam
+        def num
     }
 }
