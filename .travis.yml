@@ -1,1 +1,3 @@
 language: groovy
+
+test_script: check --info
