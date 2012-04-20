@@ -1,4 +1,4 @@
 language: groovy
 
-install: gradle build
-script: gradle test --info
+#install: gradle build
+#script: gradle test --info
