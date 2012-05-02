@@ -18,20 +18,29 @@ class Engine {
         def context = ContextBuilder.build(queryParam)
         def queryMap = BeanInspector.inspect(queryParam)
         doInElasticSearch(context) { client ->
-            def search = client.search {
+            def search = client.search (({
                 indices context['index']
                 types "testData"
                 source {
                     query {
-                       term(queryMap)
+                        filtered {
+                            query {
+                                def reqs = []
+                                queryMap.entrySet().each { entry ->
+                                    reqs << field((entry.key): entry.value)
+                                }      
+                                must: reqs                          
+                            }
+                            filter = context.filters.newInstance(null, null).rehydrate(delegate, owner, thisObject)
+                        }
                     }
-                }
-            }
+                }  
+            }))
 
-            
             def results = new Expando()
 
             results.response = search.response
+            results.count = search.response.hits().totalHits()
             results.list = new SearchResultInflator(context:context).inflateAll(search.response.hits)
 
             results

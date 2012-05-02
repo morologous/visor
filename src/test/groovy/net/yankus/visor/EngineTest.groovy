@@ -37,6 +37,7 @@ class EngineTest {
             source {
                 value = "foo"
                 num = 1
+                security = 'none'
             }
         }
         println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
@@ -48,6 +49,7 @@ class EngineTest {
             source {
                 value = "bar"
                 num = 2
+                security = 'low'
             }
         }
 
@@ -61,10 +63,27 @@ class EngineTest {
             source {
                 value = "baz"
                 num = 2
+                security = 'medium'
             }
         }
 
         println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
+
+
+
+        indexR = client.index {
+            index "test"
+            type "testData"
+            id "4"
+            source {
+                value = "gazonk"
+                num = 9
+                security = 'low'
+            }
+        }
+
+        println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
+
 
 
         def confirmResults = client.search {
@@ -92,6 +111,7 @@ class EngineTest {
     public void testQuery() {
         def engine = new Engine()
         def results = engine.doQuery(new TestBean(value:'foo'))
+        assertEquals 1, results.count
         results.list.each { println "result $it" }
         results.response.hits.each { SearchHit hit ->
             assertEquals "1", hit.id
@@ -108,6 +128,7 @@ class EngineTest {
         def engine = new Engine()
         def results = engine.doQuery(new TestBean(value:'bar', num:2))
         results.list.each { println "result $it" }
+        assertEquals 1, results.count
         results.response.hits.each { SearchHit hit ->
             assertEquals "2", hit.id
         }
@@ -117,11 +138,27 @@ class EngineTest {
         }
     }
 
-    @QueryBean(index = "test", settings = { 
-        node { 
-            local = true 
-        } 
-    }, filters = { }, returnType = TestBean.class)
+    @Test
+    public void testFilters() {
+        def engine = new Engine()
+        def results = engine.doQuery(new TestBean(value:'b*'))
+        assertEquals 1, results.count 
+        results.list.each { println "result $it" }
+        results.response.hits.each { SearchHit hit ->
+            assertEquals "2", hit.id
+        }
+        results.list.each {
+           assertEquals 'bar', it.value
+           assertEquals 2, it.num
+        }
+    }
+
+    @QueryBean(index = "test", 
+                settings = { node { local = true } }, 
+                filters = { 
+                    terms(security:['low', 'none'])
+                },
+                returnType = TestBean.class)
     @ToString
     public class TestBean {
         @QueryParam
@@ -129,5 +166,8 @@ class EngineTest {
 
         @QueryParam
         def num
+
+        @QueryParam
+        def security
     }
 }
