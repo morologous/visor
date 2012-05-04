@@ -15,7 +15,7 @@ class Engine {
     }
 
     def doQuery = { queryParam ->
-        def context = ContextBuilder.build(queryParam)
+        def context = ContextBuilder.INSTANCE.build(queryParam)
         def queryMap = BeanInspector.inspect(queryParam)
         doInElasticSearch(context) { client ->
             def search = client.search (({
@@ -45,6 +45,11 @@ class Engine {
 
             results
         }
+    }
+
+    def doIndex = { target -> 
+        
+
     }
 
 }

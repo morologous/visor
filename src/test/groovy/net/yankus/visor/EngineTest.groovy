@@ -153,12 +153,8 @@ class EngineTest {
         }
     }
 
-    @QueryBean(index = "test", 
-                settings = { node { local = true } }, 
-                filters = { 
-                    terms(security:['low', 'none'])
-                },
-                returnType = TestBean.class)
+    @QueryBean(filters = { terms(security:['low', 'none']) }, returnType = TestBean.class)
+    @IndexSettings(index = "test", settings = { node { local = true } } )
     @ToString
     public class TestBean {
         @QueryParam

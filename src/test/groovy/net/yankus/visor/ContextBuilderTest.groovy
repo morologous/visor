@@ -14,7 +14,7 @@ class ContextBuilderTest {
 
 	@Test
 	public void testBuildContextFromAnnotation() {
-		def result = ContextBuilder.build(new AnnotationTestBean())
+		def result = ContextBuilder.INSTANCE.build(new AnnotationTestBean())
 		assertNotNull result
 		assertNotNull result['settings'] 
 		assertNotNull result['returnType']
@@ -31,7 +31,8 @@ class ContextBuilderTest {
 	}
 */
 
-	@QueryBean(settings={foo='bar'}, filters={it=='foo'}, index='foo', returnType=ContextBuilderTest.class)
+	@QueryBean(filters={it=='foo'}, returnType=ContextBuilderTest.class)
+	@IndexSettings(settings={foo='bar'}, index='foo')
 	public class AnnotationTestBean {
 
 	}

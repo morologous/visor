@@ -1,30 +1,39 @@
 package net.yankus.visor
 
-class ContextBuilder {
+final class ContextBuilder {
 
-	public static def build = {
-		def buildFromAnnotation = {  
-			def typeAnnotation = it.class.getAnnotation(QueryBean)
-			def context = null
-			if (typeAnnotation) {
-				context = [:]
-				context << ['settings':typeAnnotation.settings()]
-				context << ['index':typeAnnotation.index()]
-				context << ['filters':typeAnnotation.filters()]
-				context << ['returnType':typeAnnotation.returnType()]				
-			}
+	private static final ContextBuilder INSTANCE = new ContextBuilder()
 
-			context
-		} 
-		def buildFromClosure = { 
-			it.class.getField('visor')
-		}
+	private ContextBuilder() { }
+
+	public def build = {
 		def context = buildFromAnnotation(it)
-		/*buildFromClosure(it) 
-		if (!context) 
-			context = 
-		*/
+
 		context
+	}
+
+	private def buildFromAnnotation = { 
+		def context = [:]
+
+		context << pullAnnotationConfig(findAnnotation(it, QueryBean), ['filters', 'returnType'])
+		context << pullAnnotationConfig(findAnnotation(it, IndexSettings), ['index', 'settings']) 
+		
+		context
+	} 
+
+	private def findAnnotation = { targetObj, annotationClass -> 
+		def annotation = targetObj.class.getAnnotation(annotationClass)
+		
+		annotation
+	}
+
+	private def pullAnnotationConfig = { annotationInstance, fields -> 
+		def data = [:]
+		fields.each {
+			data << [(it):annotationInstance?.class.getMethod(it)?.invoke(annotationInstance)]
+		}
+
+		data
 	}
 
 
