@@ -31,8 +31,7 @@ class ContextBuilderTest {
 	}
 */
 
-	@QueryBean(filters={it=='foo'}, returnType=ContextBuilderTest.class)
-	@IndexSettings(settings={foo='bar'}, index='foo')
+	@Visor(filters={it=='foo'}, returnType=ContextBuilderTest.class, settings={foo='bar'}, index='foo')
 	public class AnnotationTestBean {
 
 	}

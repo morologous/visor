@@ -6,8 +6,6 @@ import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface IndexSettings { 
-    public Class settings();
-    public String index();
+@Target(ElementType.FIELD)
+public @interface Id { 
 }

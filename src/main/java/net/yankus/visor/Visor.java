@@ -7,7 +7,10 @@ import java.lang.annotation.ElementType;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface QueryBean { 
-	public Class filters();
-	public Class returnType();
+public @interface Visor { 
+    public Class filters();
+    public Class returnType();
+    public Class settings();
+    public String index();
+
 }

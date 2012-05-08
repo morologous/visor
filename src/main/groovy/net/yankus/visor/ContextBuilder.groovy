@@ -15,8 +15,7 @@ final class ContextBuilder {
 	private def buildFromAnnotation = { 
 		def context = [:]
 
-		context << pullAnnotationConfig(findAnnotation(it, QueryBean), ['filters', 'returnType'])
-		context << pullAnnotationConfig(findAnnotation(it, IndexSettings), ['index', 'settings']) 
+		context << pullAnnotationConfig(findAnnotation(it, Visor), ['filters', 'returnType', 'index', 'settings'])
 		
 		context
 	} 

@@ -2,6 +2,7 @@ package net.yankus.visor
 
 import org.elasticsearch.search.SearchHit
 import groovy.util.Expando
+import org.elasticsearch.action.index.IndexResponse
 
 class Engine {
 
@@ -20,7 +21,7 @@ class Engine {
         doInElasticSearch(context) { client ->
             def search = client.search (({
                 indices context['index']
-                types "testData"
+                types queryParam.class.simpleName
                 source {
                     query {
                         filtered {
@@ -48,7 +49,32 @@ class Engine {
     }
 
     def doIndex = { target -> 
-        
+        def context = ContextBuilder.INSTANCE.build(target)
+
+        doInElasticSearch(context) { client -> 
+            def indexValues = [:]
+
+            target.properties.each {
+                if (!['id'].contains(it.key)) {
+                    indexValues << it
+                }
+            }
+            def result = client.index {
+                index context.index
+                type target.class.simpleName
+                id "$target.id"
+                source indexValues
+            }
+            /*
+           result.success = {IndexResponse response ->
+                println "Indexed $response.id into $response.index/$response.type"
+            }
+            result.failure = {Throwable t ->
+                println "Failed to index: $t.message"
+            }
+            */
+            result
+        }
 
     }
 

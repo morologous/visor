@@ -10,6 +10,11 @@ class SearchResultInflator {
     def inflate = { SearchHit hit -> 
         def result = context.returnType.newInstance()
         hit.source.entrySet().each {
+            println it
+            if (result.class.declaredFields.name.contains(it.key) && !['metaClass', 'class'].contains(it.key)) {
+                result[it.key] = it.value
+            }
+/**
             def key = it.key
             def value = it.value
             def setterName = 'set' + key[0].toUpperCase() + key[1..-1]
@@ -17,7 +22,7 @@ class SearchResultInflator {
             if (setter && value) {
                 setter.invoke(result, value)
             }
-
+**/
         }
         result
     }
@@ -30,7 +35,5 @@ class SearchResultInflator {
 
         inflated
     }
-
-
 
 }

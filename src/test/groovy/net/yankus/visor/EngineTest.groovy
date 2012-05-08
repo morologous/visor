@@ -32,7 +32,7 @@ class EngineTest {
 
         def indexR = client.index {
             index "test"
-            type "testData"
+            type TestBean.class.simpleName
             id "1"
             source {
                 value = "foo"
@@ -44,7 +44,7 @@ class EngineTest {
 
         indexR = client.index {
             index "test"
-            type "testData"
+            type TestBean.class.simpleName
             id "2"
             source {
                 value = "bar"
@@ -58,7 +58,7 @@ class EngineTest {
 
         indexR = client.index {
             index "test"
-            type "testData"
+            type TestBean.class.simpleName
             id "3"
             source {
                 value = "baz"
@@ -69,11 +69,9 @@ class EngineTest {
 
         println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
 
-
-
         indexR = client.index {
             index "test"
-            type "testData"
+            type TestBean.class.simpleName
             id "4"
             source {
                 value = "gazonk"
@@ -88,7 +86,7 @@ class EngineTest {
 
         def confirmResults = client.search {
             indices "test"
-            types "testData"
+            types TestBean.class.simpleName
             source {
                 query {
                     term(value:'bar')
@@ -104,6 +102,24 @@ class EngineTest {
 
     @AfterClass
     public static void tearDown() throws Exception {
+        def toDelete = node.client.search {
+            indices "test"
+            types TestBean.class.simpleName
+            source {
+                query {
+                    match_all { }
+                }
+            }
+        }
+
+        toDelete.response.hits.each {
+            def toDeleteId = it.id
+            node.client.delete { 
+                index 'test'
+                type TestBean.class.simpleName
+                id toDeleteId
+            }
+        }
         node.stop().close()
     }
 
@@ -153,10 +169,35 @@ class EngineTest {
         }
     }
 
-    @QueryBean(filters = { terms(security:['low', 'none']) }, returnType = TestBean.class)
-    @IndexSettings(index = "test", settings = { node { local = true } } )
+    @Test
+    public void testIndex() {
+        def engine = new Engine()
+        def data = new TestBean(id:99, value:'flurgle', num:9, security:'none')
+
+        def indexResult = engine.doIndex(data)
+        def response  = indexResult.response '5s'
+        println "Indexed $response.index/$response.type/$response.id"
+
+        def results = engine.doQuery(new TestBean(value:"flurgle"))
+        assertEquals 1, results.count 
+        results.list.each { println "result $it" }
+        results.response.hits.each { SearchHit hit ->
+            assertEquals "99", hit.id
+        }
+        results.list.each {
+           assertEquals 'flurgle', it.value
+           assertEquals 9, it.num
+        }
+
+    }
+
+    @Visor(filters = { terms(security:['low', 'none']) }, returnType = TestBean.class, index = "test", settings = { node { local = true } } )
     @ToString
     public class TestBean {
+        @QueryParam
+        @Id
+        def id
+
         @QueryParam
         def value
 
