@@ -8,6 +8,10 @@ import static org.elasticsearch.groovy.node.GNodeBuilder.*
 class ElasticSearchClientFactory {
     
     static def create = { context -> 
+        // short circuit
+        if (ElasticSearchClientHolder.INSTANCE.get().clients[context.returnType]) {
+                return ElasticSearchClientHolder.INSTANCE.get().clients[context.returnType]
+        }
 
         def datasource = new Expando()
         datasource.nodeBuilder = nodeBuilder()
@@ -19,7 +23,9 @@ class ElasticSearchClientFactory {
         datasource.node = datasource.nodeBuilder.node()
         datasource.client = datasource.node.client
 
-        datasource.close = { datasource.node.close() }
+        datasource.close = { datasource.node.stop().close() }
+
+        ElasticSearchClientHolder.INSTANCE.get().clients[context.returnType] = datasource
 
         datasource
     }

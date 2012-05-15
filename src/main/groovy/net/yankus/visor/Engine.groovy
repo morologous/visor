@@ -8,11 +8,7 @@ class Engine {
 
     def doInElasticSearch = { context, operation ->
         def datasource = ElasticSearchClientFactory.create context
-        try {
-                return operation.call(datasource.client)
-            } finally {
-                datasource.close()        
-            }
+        return operation.call(datasource.client)
     }
 
     def doQuery = { queryParam ->

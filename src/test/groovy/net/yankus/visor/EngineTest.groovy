@@ -14,23 +14,16 @@ import groovy.transform.ToString
 
 class EngineTest {
     
-    static GNode node 
-    static GNodeBuilder nodeBuilder
+    static def datasource
 
     @BeforeClass
     public static void setUp() throws Exception {
-        nodeBuilder = nodeBuilder();
-        nodeBuilder.settings {
-            node {
-                local = true
-            }
-        }
 
-        node = nodeBuilder.node()
+        def dummyBean = new TestBean()
+        
+        datasource = ElasticSearchClientFactory.create(ContextBuilder.INSTANCE.build(dummyBean))
 
-        def client = node.client
-
-        def indexR = client.index {
+        def indexR = datasource.client.index {
             index "test"
             type TestBean.class.simpleName
             id "1"
@@ -42,7 +35,7 @@ class EngineTest {
         }
         println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
 
-        indexR = client.index {
+        indexR = datasource.client.index {
             index "test"
             type TestBean.class.simpleName
             id "2"
@@ -56,7 +49,7 @@ class EngineTest {
         println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
 
 
-        indexR = client.index {
+        indexR = datasource.client.index {
             index "test"
             type TestBean.class.simpleName
             id "3"
@@ -69,7 +62,7 @@ class EngineTest {
 
         println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
 
-        indexR = client.index {
+        indexR = datasource.client.index {
             index "test"
             type TestBean.class.simpleName
             id "4"
@@ -84,25 +77,25 @@ class EngineTest {
 
 
 
-        def confirmResults = client.search {
+        def confirmResults = datasource.client.search {
             indices "test"
             types TestBean.class.simpleName
             source {
                 query {
-                    term(value:'bar')
+                    term(value:'gazonk')
                 }
             }
         }
 
          confirmResults.response.hits.each { SearchHit hit ->
-            assertEquals "2", hit.id
+            assertEquals "4", hit.id
         }
        
     }
 
     @AfterClass
     public static void tearDown() throws Exception {
-        def toDelete = node.client.search {
+        def toDelete = datasource.client.search {
             indices "test"
             types TestBean.class.simpleName
             source {
@@ -114,13 +107,13 @@ class EngineTest {
 
         toDelete.response.hits.each {
             def toDeleteId = it.id
-            node.client.delete { 
+            datasource.client.delete { 
                 index 'test'
                 type TestBean.class.simpleName
                 id toDeleteId
             }
         }
-        node.stop().close()
+        datasource.close()
     }
 
     @Test
@@ -191,20 +184,5 @@ class EngineTest {
 
     }
 
-    @Visor(filters = { terms(security:['low', 'none']) }, returnType = TestBean.class, index = "test", settings = { node { local = true } } )
-    @ToString
-    public class TestBean {
-        @QueryParam
-        @Id
-        def id
-
-        @QueryParam
-        def value
-
-        @QueryParam
-        def num
-
-        @QueryParam
-        def security
-    }
+    
 }
