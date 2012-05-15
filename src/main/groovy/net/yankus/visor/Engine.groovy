@@ -3,7 +3,9 @@ package net.yankus.visor
 import org.elasticsearch.search.SearchHit
 import groovy.util.Expando
 import org.elasticsearch.action.index.IndexResponse
+import groovy.util.logging.Log4j 
 
+@Log4j
 class Engine {
 
     def doInElasticSearch = { context, operation ->
@@ -14,10 +16,12 @@ class Engine {
     def doQuery = { queryParam ->
         def context = ContextBuilder.INSTANCE.build(queryParam)
         def queryMap = BeanInspector.inspect(queryParam)
+        def type = queryParam.class.simpleName
         doInElasticSearch(context) { client ->
+            log.debug("Searching for $context.index/$type/$queryMap")
             def search = client.search (({
-                indices context['index']
-                types queryParam.class.simpleName
+                indices context.index
+                types type
                 source {
                     query {
                         filtered {
@@ -35,8 +39,8 @@ class Engine {
             }))
 
             def results = new Expando()
-
-            results.response = search.response
+            log.debug search.response
+            results.response = search.response '5s'
             results.count = search.response.hits().totalHits()
             results.list = new SearchResultInflator(context:context).inflateAll(search.response.hits)
 

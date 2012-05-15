@@ -10,7 +10,6 @@ import groovy.transform.ToString
         } )
 @ToString
 public class TestBean {
-    @QueryParam
     @Id
     def id
 

@@ -14,106 +14,40 @@ import groovy.transform.ToString
 
 class EngineTest {
     
-    static def datasource
+//    static def datasource
 
+    static def testBeans = []
     @BeforeClass
     public static void setUp() throws Exception {
-
-        def dummyBean = new TestBean()
         
-        datasource = ElasticSearchClientFactory.create(ContextBuilder.INSTANCE.build(dummyBean))
+        def foo = new TestBean(id:'1', num:1, value:'foo', security:'none')
+        def bar = new TestBean(id:'2', num:2, value:'bar', security:'low')
+        def baz = new TestBean(id:'3', num:2, value:'baz', security:'medium')
+        def gazonk = new TestBean(id:'4', num:9, value:'gazonk', security:'low')
 
-        def indexR = datasource.client.index {
-            index "test"
-            type TestBean.class.simpleName
-            id "1"
-            source {
-                value = "foo"
-                num = 1
-                security = 'none'
-            }
-        }
-        println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
+        SearchEngineTestHelper.index foo
+        testBeans << foo
+        SearchEngineTestHelper.index bar
+        testBeans << bar
+        SearchEngineTestHelper.index baz
+        testBeans << baz
+        SearchEngineTestHelper.index gazonk
+        testBeans << gazonk
 
-        indexR = datasource.client.index {
-            index "test"
-            type TestBean.class.simpleName
-            id "2"
-            source {
-                value = "bar"
-                num = 2
-                security = 'low'
-            }
-        }
+        SearchEngineTestHelper.get foo
+        SearchEngineTestHelper.get bar
+        SearchEngineTestHelper.get baz
+        SearchEngineTestHelper.get gazonk
 
-        println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
-
-
-        indexR = datasource.client.index {
-            index "test"
-            type TestBean.class.simpleName
-            id "3"
-            source {
-                value = "baz"
-                num = 2
-                security = 'medium'
-            }
-        }
-
-        println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
-
-        indexR = datasource.client.index {
-            index "test"
-            type TestBean.class.simpleName
-            id "4"
-            source {
-                value = "gazonk"
-                num = 9
-                security = 'low'
-            }
-        }
-
-        println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
-
-
-
-        def confirmResults = datasource.client.search {
-            indices "test"
-            types TestBean.class.simpleName
-            source {
-                query {
-                    term(value:'gazonk')
-                }
-            }
-        }
-
-         confirmResults.response.hits.each { SearchHit hit ->
-            assertEquals "4", hit.id
-        }
-       
+        //println "Indexed $indexR.response.index/$indexR.response.type/$indexR.response.id"
+        SearchEngineTestHelper.showAll TestBean.class
     }
 
     @AfterClass
     public static void tearDown() throws Exception {
-        def toDelete = datasource.client.search {
-            indices "test"
-            types TestBean.class.simpleName
-            source {
-                query {
-                    match_all { }
-                }
-            }
+        testBeans.each {
+            SearchEngineTestHelper.delete it
         }
-
-        toDelete.response.hits.each {
-            def toDeleteId = it.id
-            datasource.client.delete { 
-                index 'test'
-                type TestBean.class.simpleName
-                id toDeleteId
-            }
-        }
-        datasource.close()
     }
 
     @Test
@@ -170,7 +104,7 @@ class EngineTest {
         def indexResult = engine.doIndex(data)
         def response  = indexResult.response '5s'
         println "Indexed $response.index/$response.type/$response.id"
-
+        SearchEngineTestHelper.snooze()
         def results = engine.doQuery(new TestBean(value:"flurgle"))
         assertEquals 1, results.count 
         results.list.each { println "result $it" }
