@@ -16,9 +16,9 @@ class BeanToQueryComposerTest  {
 	}
 
 	public class TestBean {
-		@QueryParam
+		@Field
 		def t1
-		@QueryParam
+		@Field
 		def t2
 		def t3
 	}

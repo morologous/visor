@@ -65,14 +65,7 @@ class Engine {
                 id "$target.id"
                 source indexValues
             }
-            /*
-           result.success = {IndexResponse response ->
-                println "Indexed $response.id into $response.index/$response.type"
-            }
-            result.failure = {Throwable t ->
-                println "Failed to index: $t.message"
-            }
-            */
+            
             result
         }
 

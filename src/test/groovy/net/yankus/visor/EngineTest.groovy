@@ -55,7 +55,7 @@ class EngineTest {
         def engine = new Engine()
         def results = engine.doQuery(new TestBean(value:'foo'))
         assertEquals 1, results.count
-        results.list.each { println "result $it" }
+        // results.list.each { println "result $it" }
         results.response.hits.each { SearchHit hit ->
             assertEquals "1", hit.id
         }
@@ -70,7 +70,7 @@ class EngineTest {
     public void testMultiFieldQuery() {
         def engine = new Engine()
         def results = engine.doQuery(new TestBean(value:'bar', num:2))
-        results.list.each { println "result $it" }
+        //results.list.each { println "result $it" }
         assertEquals 1, results.count
         results.response.hits.each { SearchHit hit ->
             assertEquals "2", hit.id
@@ -86,7 +86,7 @@ class EngineTest {
         def engine = new Engine()
         def results = engine.doQuery(new TestBean(value:'b*'))
         assertEquals 1, results.count 
-        results.list.each { println "result $it" }
+        //results.list.each { println "result $it" }
         results.response.hits.each { SearchHit hit ->
             assertEquals "2", hit.id
         }
@@ -103,11 +103,11 @@ class EngineTest {
 
         def indexResult = engine.doIndex(data)
         def response  = indexResult.response '5s'
-        println "Indexed $response.index/$response.type/$response.id"
+        //println "Indexed $response.index/$response.type/$response.id"
         SearchEngineTestHelper.snooze()
         def results = engine.doQuery(new TestBean(value:"flurgle"))
         assertEquals 1, results.count 
-        results.list.each { println "result $it" }
+        //results.list.each { println "result $it" }
         results.response.hits.each { SearchHit hit ->
             assertEquals "99", hit.id
         }

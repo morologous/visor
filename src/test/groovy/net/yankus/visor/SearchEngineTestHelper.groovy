@@ -27,7 +27,7 @@ class SearchEngineTestHelper {
         response
     }
 
-    static def snooze(time=2000) {
+    static def snooze(time=1000) {
         try {
             Thread.sleep(time)
         } catch (InterruptedException ie) {
@@ -87,18 +87,8 @@ class SearchEngineTestHelper {
             types bean.class.simpleName
             source {
                 query {
-                    //props.each {
-                    //    field ((it.key):it.value)
-                    //}
                     ids(values:[bean.id])
                 }
-                /*
-                def fields = []
-                props.each {
-                    fields << field((it.key):it.value)
-                }
-                must: fields
-                */
             }
         } 
 

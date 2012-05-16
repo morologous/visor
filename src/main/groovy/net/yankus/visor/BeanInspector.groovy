@@ -1,24 +1,31 @@
 package net.yankus.visor
 
+import groovy.util.logging.Log4j 
+
+@Log4j
 class BeanInspector {
 	
-	static def inspect = { queryBean -> 
-		def queryMap = [:]
+	private static def getProperties = { bean ->
+		def props = bean.getProperties()
 
-		def getters = queryBean.class.methods.findAll{ it.name =~ /^get[A-Z]/ }
-		getters.each { method ->
-			def fieldName = method.name[3].toLowerCase() + method.name[4..-1]
-			def field = queryBean.class.declaredFields.find { it.name == fieldName }
-			if (field) {
-				if (field.declaredAnnotations.find {it instanceof QueryParam}) {
-					def value = method.invoke(queryBean)
-					if (value) {
-						queryMap << [(fieldName):value]
-					}
-				}				
-			}				
+		props.remove 'metaClass'
+		props.remove 'class'
+
+		props
+	}
+
+	static def inspect = { bean -> 
+		def props = BeanInspector.getProperties bean
+		props.clone().keySet().each {
+			def field = bean.class.getDeclaredField it
+			def annotation = field.getAnnotation Field
+			if (!annotation || !props[it]) {
+				props.remove it
+			} 
 		}
-		queryMap
+		log.debug props
+		props
+
 	}
 
 }

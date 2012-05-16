@@ -13,12 +13,12 @@ public class TestBean {
     @Id
     def id
 
-    @QueryParam
+    @Field
     def value
 
-    @QueryParam
+    @Field
     def num
 
-    @QueryParam
+    @Field
     def security
 }
