@@ -20,7 +20,7 @@ final class ElasticSearchClientHolder {
         strategy.get()
     }
 
-    def set(ElasticSearchClientContext context) {
-        strategy.set(context)
+    def set(ElasticSearchClientRegistry registry) {
+        strategy.set(registry)
     }
 }

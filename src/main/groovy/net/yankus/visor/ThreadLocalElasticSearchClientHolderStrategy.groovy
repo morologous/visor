@@ -2,7 +2,7 @@ package net.yankus.visor
 
 class ThreadLocalElasticSearchClientHolderStrategy {
     
-    ThreadLocal<ElasticSearchClientContext> context = new ThreadLocal<ElasticSearchClientContext>()
+    ThreadLocal<ElasticSearchClientRegistry> context = new ThreadLocal<ElasticSearchClientRegistry>()
 
     def clear() {
         context.set(null)
@@ -10,7 +10,7 @@ class ThreadLocalElasticSearchClientHolderStrategy {
 
     def get() {
         if (!context.get()) {
-            context.set(new ElasticSearchClientContext())
+            context.set(new ElasticSearchClientRegistry())
         }
         context.get()
     }

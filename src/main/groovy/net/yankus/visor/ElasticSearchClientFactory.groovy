@@ -4,6 +4,7 @@ import groovy.util.Expando
 import org.elasticsearch.groovy.node.GNode
 import org.elasticsearch.groovy.node.GNodeBuilder
 import static org.elasticsearch.groovy.node.GNodeBuilder.*
+import org.elasticsearch.client.transport.TransportClient
 
 class ElasticSearchClientFactory {
     
@@ -14,16 +15,21 @@ class ElasticSearchClientFactory {
         }
 
         def datasource = new Expando()
-        datasource.nodeBuilder = nodeBuilder()
 
-        def settingsClosure = context.settings.newInstance(datasource.nodeBuilder.getSettings(), datasource.nodeBuilder.getSettings())
+        //if (context.remote) {
+        //        new TransportClient()
+        //} else {
+                datasource.nodeBuilder = nodeBuilder()
 
-        datasource.nodeBuilder.settings(settingsClosure) 
-        
-        datasource.node = datasource.nodeBuilder.node()
-        datasource.client = datasource.node.client
+                def settingsClosure = context.settings.newInstance(datasource.nodeBuilder.getSettings(), datasource.nodeBuilder.getSettings())
 
-        datasource.close = { datasource.node.stop().close() }
+                datasource.nodeBuilder.settings(settingsClosure) 
+                
+                datasource.node = datasource.nodeBuilder.node()
+                datasource.client = datasource.node.client
+
+                datasource.close = { datasource.node.stop().close() }                        
+        //}
 
         ElasticSearchClientHolder.INSTANCE.get().clients[context.returnType] = datasource
 

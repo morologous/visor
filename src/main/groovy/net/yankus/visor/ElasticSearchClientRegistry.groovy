@@ -1,6 +1,6 @@
 package net.yankus.visor
 
-class ElasticSearchClientContext {
+class ElasticSearchClientRegistry {
     
     def clients = [:]
 

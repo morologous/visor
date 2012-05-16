@@ -14,8 +14,8 @@ class Engine {
     }
 
     def doQuery = { queryParam ->
-        def context = ContextBuilder.INSTANCE.build(queryParam)
-        def queryMap = BeanInspector.inspect(queryParam)
+        def context = ContextBuilder.INSTANCE.build queryParam
+        def queryMap = BeanInspector.inspect queryParam
         def type = queryParam.class.simpleName
         doInElasticSearch(context) { client ->
             log.debug("Searching for $context.index/$type/$queryMap")

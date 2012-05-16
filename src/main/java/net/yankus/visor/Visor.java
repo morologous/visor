@@ -12,5 +12,6 @@ public @interface Visor {
     public Class returnType();
     public Class settings();
     public String index();
+    public boolean remote();
 
 }
