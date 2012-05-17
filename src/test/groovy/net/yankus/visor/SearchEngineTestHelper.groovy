@@ -7,15 +7,15 @@ import groovy.util.logging.Log4j
 class SearchEngineTestHelper {
     
     static def index = { bean ->
-        def context = ContextBuilder.INSTANCE.build(bean)
+        def context = ContextBuilder.build(bean)
         def datasource = ElasticSearchClientFactory.create(context) 
 
         // TODO: detect ID property
         def indexR = datasource.client.index {
             index context.index
-            type bean.class.simpleName
+            type context.returnType.simpleName
             id bean.id
-            source BeanInspector.inspect(bean)
+            source context.parameters
         }
 
         def response = indexR.response '5s'
@@ -36,13 +36,13 @@ class SearchEngineTestHelper {
     }
 
     static def get = { bean -> 
-        def context = ContextBuilder.INSTANCE.build(bean)
+        def context = ContextBuilder.build(bean)
         def datasource = ElasticSearchClientFactory.create(context)
 
         // TODO: detect ID property
         def getR = datasource.client.get {
             index context.index
-            type bean.class.simpleName
+            type context.returnType.simpleName
             id bean.id
         }
 
@@ -54,13 +54,13 @@ class SearchEngineTestHelper {
     }
 
     static def delete = { bean -> 
-        def context = ContextBuilder.INSTANCE.build(bean)
+        def context = ContextBuilder.build(bean)
         def datasource = ElasticSearchClientFactory.create(context)
 
         // TODO detect id
         def deleteR = datasource.client.delete {
             index context.index
-            type bean.class.simpleName
+            type context.returnType.simpleName
             id bean.id
         }
 
@@ -72,19 +72,12 @@ class SearchEngineTestHelper {
     }
 
     static def search = { bean -> 
-        def context = ContextBuilder.INSTANCE.build(bean)
+        def context = ContextBuilder.build(bean)
         def datasource = ElasticSearchClientFactory.create(context)
-        def props = bean.properties
-
-        props.remove('id')
-        props.remove('metaClass')
-        props.remove('class')
-
-        //log.debug props
 
         def searchR = datasource.client.search {
             indices context.index
-            types bean.class.simpleName
+            types context.returnType.simpleName
             source {
                 query {
                     ids(values:[bean.id])
@@ -98,12 +91,12 @@ class SearchEngineTestHelper {
 
     static def showAll = { beanType ->
         def bean = beanType.newInstance()
-        def context = ContextBuilder.INSTANCE.build bean
+        def context = ContextBuilder.build bean
         def datasource = ElasticSearchClientFactory.create context
 
         def searchR = datasource.client.search {
             indices context.index
-            types beanType.simpleName
+            types context.returnType.simpleName
             source {
                 query {
                     match_all { }

@@ -1,39 +1,31 @@
 package net.yankus.visor
 
+import groovy.util.Expando
+
 final class ContextBuilder {
 
-	private static final ContextBuilder INSTANCE = new ContextBuilder()
+	public static def build = { bean ->
+		def context = new Expando()
 
-	private ContextBuilder() { }
+		def annotation = ContextBuilder.findAnnotation(bean, Visor)
+		if (!annotation) {
+			throw new IllegalArgumentException('Bean does not have required Visor annotation.')
+		}
+		context.filters = annotation.filters()
+		context.index = annotation.index()
+		context.settings = annotation.settings()
+		context.remote = annotation.remote()
 
-	public def build = {
-		def context = buildFromAnnotation(it)
+		context.returnType = bean.class
+		context.parameters = BeanInspector.inspect(bean)
 
 		context
 	}
 
-	private def buildFromAnnotation = { 
-		def context = [:]
-
-		context << pullAnnotationConfig(findAnnotation(it, Visor), ['filters', 'returnType', 'index', 'settings'])
-		
-		context
-	} 
-
-	private def findAnnotation = { targetObj, annotationClass -> 
+	private static def findAnnotation = { targetObj, annotationClass -> 
 		def annotation = targetObj.class.getAnnotation(annotationClass)
 		
 		annotation
 	}
-
-	private def pullAnnotationConfig = { annotationInstance, fields -> 
-		def data = [:]
-		fields.each {
-			data << [(it):annotationInstance?.class.getMethod(it)?.invoke(annotationInstance)]
-		}
-
-		data
-	}
-
 
 }

@@ -14,20 +14,17 @@ class Engine {
     }
 
     def doQuery = { queryParam ->
-        def context = ContextBuilder.INSTANCE.build queryParam
-        def queryMap = BeanInspector.inspect queryParam
-        def type = queryParam.class.simpleName
+        def context = ContextBuilder.build queryParam
         doInElasticSearch(context) { client ->
-            log.debug("Searching for $context.index/$type/$queryMap")
             def search = client.search (({
                 indices context.index
-                types type
+                types context.returnType.simpleName
                 source {
                     query {
                         filtered {
                             query {
                                 def reqs = []
-                                queryMap.entrySet().each { entry ->
+                                context.parameters.entrySet().each { entry ->
                                     reqs << field((entry.key): entry.value)
                                 }      
                                 must: reqs                          
@@ -49,21 +46,23 @@ class Engine {
     }
 
     def doIndex = { target -> 
-        def context = ContextBuilder.INSTANCE.build(target)
+        def context = ContextBuilder.build(target)
 
         doInElasticSearch(context) { client -> 
-            def indexValues = [:]
+
+/*            def indexValues = [:]
 
             target.properties.each {
                 if (!['id'].contains(it.key)) {
                     indexValues << it
                 }
             }
+*/
             def result = client.index {
                 index context.index
-                type target.class.simpleName
+                type context.returnType.simpleName
                 id "$target.id"
-                source indexValues
+                source context.parameters
             }
             
             result

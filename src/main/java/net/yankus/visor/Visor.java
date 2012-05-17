@@ -9,9 +9,8 @@ import java.lang.annotation.ElementType;
 @Target(ElementType.TYPE)
 public @interface Visor { 
     public Class filters();
-    public Class returnType();
     public Class settings();
     public String index();
-    public boolean remote();
+    public boolean remote() default false;
 
 }
