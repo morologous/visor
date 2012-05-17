@@ -14,7 +14,7 @@ class ContextBuilderTest {
 
 	@Test
 	public void testBuildContextFromAnnotation() {
-		def result = ContextBuilder.build(new AnnotationTestBean())
+		def result = ContextBuilder.build(new AnnotationTestBean(test:'foo'))
 		assertNotNull result
 		assertNotNull result.settings 
 		assertNotNull result.returnType
@@ -29,6 +29,10 @@ class ContextBuilderTest {
 		assertEquals 'bar', harness.foo
 
 		assertEquals 'foo', result.index
+
+		assertNotNull result.parameters
+		assertTrue result.parameters.containsKey('test')
+		assertEquals 'foo', result.parameters['test']
 	}
 
 /*
@@ -42,7 +46,8 @@ class ContextBuilderTest {
 
 	@Visor(filters={it=='foo'}, settings={it.foo='bar'}, index='foo')
 	public class AnnotationTestBean {
-
+		@Field
+		def test
 	}
 }
 
