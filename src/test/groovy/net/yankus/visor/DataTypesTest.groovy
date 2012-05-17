@@ -51,7 +51,8 @@ class DataTypesTest {
     @EqualsAndHashCode
     static class DataTypesTestBean {
         def id
-        @Field(unmarshall = { FieldUtils.unmarshallDate(it) } )
+        @Field(marshall = { FieldUtils.marshallDate(it) },
+            unmarshall = { FieldUtils.unmarshallDate(it) } )
         Date dt
         @Field
         String str

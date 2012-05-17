@@ -6,13 +6,17 @@ import groovy.util.logging.Log4j
 @Log4j
 class FieldUtils {
     
-    public static def unmarshallDate = { // prop, target, value ->
-        def dateTime = ISODateTimeFormat.dateTimeParser().parseDateTime(it.fieldValue)
-        log.debug("Parsed $it.value to DateTime $dateTime")
-        it.targetBean[it.fieldName] = dateTime?.toDate()
+    public static def marshallDate = {
+        it.targetBean[it.fieldName].time
+    }
+
+    public static def unmarshallDate = {
+        //def dateTime = ISODateTimeFormat.dateTimeParser().parseDateTime(it.fieldValue)
+        //it.targetBean[it.fieldName] = dateTime?.toDate()
+        it.targetBean[it.fieldName] = new Date(it.fieldValue)
     } 
 
-    public static def marshallCollection = { // prop, target -> 
+    public static def marshallCollection = { 
         def coll = []
         it.targetBean[it.fieldName].each {
             coll << Marshaller.marshall(it)            

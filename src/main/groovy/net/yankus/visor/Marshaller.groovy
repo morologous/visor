@@ -36,15 +36,13 @@ class Marshaller {
                 props[it] = annotation.marshall().newInstance(null, null).call(marshallContext)
             }
         }
-        log.debug props
-
+        
         props
     }
 
     static def unmarshall = { data, type -> 
         def targetBean = type.newInstance()
         data.entrySet().each {
-            log.debug(it)
             def field = Marshaller.getField(targetBean, it.key)
             if (field) {
                 def annotation = field.getAnnotation Field
