@@ -8,7 +8,7 @@ import org.elasticsearch.search.SearchHit
 import groovy.mock.interceptor.MockFor
 import groovy.util.Expando
 
-class SearchResultInflatorTest {
+class ElasticSearchUnmarshallerTest {
 	
 	def source = [foo:'foo', bar:'bar', gazonk:'gazonk']
 	def mock
@@ -31,7 +31,7 @@ class SearchResultInflatorTest {
 
 	@Test
 	public void testInflate() { 
-		def result = SearchResultInflator.inflate(searchHit, context)
+		def result = ElasticSearchMarshaller.unmarshall(searchHit, context)
 
 		assertNotNull(result)
 		assertTrue(result instanceof TestBean)

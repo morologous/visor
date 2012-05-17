@@ -35,15 +35,6 @@ class ContextBuilderTest {
 		assertEquals 'foo', result.parameters['test']
 	}
 
-/*
-	@Test
-	public void testBuildContextFromStatic() {
-		def result = ContextBuilder.build(new StaticTestBean())
-		assertNotNull result
-		assertEquals expected, result
-	}
-*/
-
 	@Visor(filters={it=='foo'}, settings={it.foo='bar'}, index='foo')
 	public class AnnotationTestBean {
 		@Field

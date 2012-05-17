@@ -39,7 +39,7 @@ class Engine {
             log.debug search.response
             results.response = search.response '5s'
             results.count = search.response.hits().totalHits()
-            results.list = SearchResultInflator.inflateAll(search.response.hits, context)
+            results.list = ElasticSearchMarshaller.unmarshallAll(search.response.hits, context)
 
             results
         }

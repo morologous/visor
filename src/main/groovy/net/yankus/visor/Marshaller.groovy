@@ -1,15 +1,18 @@
 package net.yankus.visor
 
-import org.elasticsearch.search.SearchHit
-import org.elasticsearch.search.SearchHits
-import org.joda.time.format.ISODateTimeFormat
 import groovy.util.logging.Log4j 
-import groovy.util.Expando
 
 @Log4j
-class SearchResultInflator {
+class Marshaller {
     
-    def context
+    private static def getProperties = { bean ->
+        def props = bean.getProperties()
+
+        props.remove 'metaClass'
+        props.remove 'class'
+
+        props
+    }
 
     private static def getField = { targetBean, fieldName -> 
         def field
@@ -21,10 +24,28 @@ class SearchResultInflator {
         field
     }
 
-    static def inflateMap = { map, targetBean -> 
-        map.entrySet().each {
+    static def marshall = { bean -> 
+        def props = [:]
+        Marshaller.getProperties(bean).keySet().each {
+            def field = bean.class.getDeclaredField it
+            def annotation = field.getAnnotation Field
+            if (annotation && bean[it]) {
+                def marshallContext = new Expando()
+                marshallContext.fieldName = it
+                marshallContext.targetBean = bean
+                props[it] = annotation.marshall().newInstance(null, null).call(marshallContext)
+            }
+        }
+        log.debug props
+
+        props
+    }
+
+    static def unmarshall = { data, type -> 
+        def targetBean = type.newInstance()
+        data.entrySet().each {
             log.debug(it)
-            def field = SearchResultInflator.getField(targetBean, it.key)
+            def field = Marshaller.getField(targetBean, it.key)
             if (field) {
                 def annotation = field.getAnnotation Field
                 if (annotation) {
@@ -38,23 +59,8 @@ class SearchResultInflator {
                 }
             }
         }
-    }
-
-    static def inflate = { SearchHit hit, context -> 
-        def targetBean = context.returnType.newInstance()
-        
-        SearchResultInflator.inflateMap(hit.source, targetBean)
 
         targetBean
-    }
-
-    static def inflateAll = { SearchHits hits, context -> 
-        def inflated = []
-        hits.each { hit ->
-            inflated << SearchResultInflator.inflate(hit, context)
-        }
-
-        inflated
     }
 
 }

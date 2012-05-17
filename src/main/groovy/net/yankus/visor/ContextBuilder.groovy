@@ -17,7 +17,7 @@ final class ContextBuilder {
 		context.remote = annotation.remote()
 
 		context.returnType = bean.class
-		context.parameters = BeanInspector.inspect(bean)
+		context.parameters = Marshaller.marshall(bean)
 
 		context
 	}

@@ -15,7 +15,7 @@ class FieldUtils {
     public static def marshallCollection = { // prop, target -> 
         def coll = []
         it.targetBean[it.fieldName].each {
-            coll << BeanInspector.inspect(it)            
+            coll << Marshaller.marshall(it)            
         }
         coll
     } 
@@ -23,9 +23,7 @@ class FieldUtils {
     public static def unmarshallCollection = { context ->
         def coll = []
         context.fieldValue.each {
-            def bean = context.annotation.type().newInstance()
-            SearchResultInflator.inflateMap(it, bean)
-            coll << bean
+            coll << Marshaller.unmarshall(it,  context.annotation.type())
         }
         context.targetBean[context.fieldName] = coll
     }
