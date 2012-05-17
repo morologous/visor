@@ -1,3 +1,7 @@
 build
 .gradle
 data
+
+visor.sublime-project
+
+visor.sublime-workspace

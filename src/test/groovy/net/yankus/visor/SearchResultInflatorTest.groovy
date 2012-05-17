@@ -31,7 +31,7 @@ class SearchResultInflatorTest {
 
 	@Test
 	public void testInflate() { 
-		def result = new SearchResultInflator(context:context).inflate(searchHit)
+		def result = SearchResultInflator.inflate(searchHit, context)
 
 		assertNotNull(result)
 		assertTrue(result instanceof TestBean)
@@ -42,8 +42,11 @@ class SearchResultInflatorTest {
 	}
 
 	public class TestBean {
+		@Field
 		def foo
+		@Field
 		def bar
+		@Field
 		def baz
 	}
 }

@@ -54,21 +54,23 @@ class SearchEngineTestHelper {
     }
 
     static def delete = { bean -> 
-        def context = ContextBuilder.build(bean)
-        def datasource = ElasticSearchClientFactory.create(context)
+        if (bean) {            
+            def context = ContextBuilder.build(bean)
+            def datasource = ElasticSearchClientFactory.create(context)
 
-        // TODO detect id
-        def deleteR = datasource.client.delete {
-            index context.index
-            type context.returnType.simpleName
-            id bean.id
+            // TODO detect id
+            def deleteR = datasource.client.delete {
+                index context.index
+                type context.returnType.simpleName
+                id bean.id
+            }
+
+            def response = deleteR.response '5s'
+            assertEquals bean.id, response.id
+
+
+            response
         }
-
-        def response = deleteR.response '5s'
-        assertEquals bean.id, response.id
-
-
-        response
     }
 
     static def search = { bean -> 

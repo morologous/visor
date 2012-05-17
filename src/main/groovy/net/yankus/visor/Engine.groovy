@@ -39,7 +39,7 @@ class Engine {
             log.debug search.response
             results.response = search.response '5s'
             results.count = search.response.hits().totalHits()
-            results.list = new SearchResultInflator(context:context).inflateAll(search.response.hits)
+            results.list = SearchResultInflator.inflateAll(search.response.hits, context)
 
             results
         }
@@ -47,17 +47,8 @@ class Engine {
 
     def doIndex = { target -> 
         def context = ContextBuilder.build(target)
-
+        log.debug "Indexing $context.parameters as id $target.id of type $context.returnType.simpleName into $context.index"
         doInElasticSearch(context) { client -> 
-
-/*            def indexValues = [:]
-
-            target.properties.each {
-                if (!['id'].contains(it.key)) {
-                    indexValues << it
-                }
-            }
-*/
             def result = client.index {
                 index context.index
                 type context.returnType.simpleName

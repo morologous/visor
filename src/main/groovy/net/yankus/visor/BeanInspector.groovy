@@ -1,7 +1,7 @@
 package net.yankus.visor
 
 import groovy.util.logging.Log4j 
-
+import groovy.util.Expando
 @Log4j
 class BeanInspector {
 	
@@ -15,13 +15,16 @@ class BeanInspector {
 	}
 
 	static def inspect = { bean -> 
-		def props = BeanInspector.getProperties bean
-		props.clone().keySet().each {
+		def props = [:]
+		BeanInspector.getProperties(bean).keySet().each {
 			def field = bean.class.getDeclaredField it
 			def annotation = field.getAnnotation Field
-			if (!annotation || !props[it]) {
-				props.remove it
-			} 
+			if (annotation && bean[it]) {
+				def marshallContext = new Expando()
+				marshallContext.fieldName = it
+				marshallContext.targetBean = bean
+				props[it] = annotation.marshall().newInstance(null, null).call(marshallContext)
+			}
 		}
 		log.debug props
 		props

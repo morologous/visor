@@ -2,35 +2,56 @@ package net.yankus.visor
 
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHits
+import org.joda.time.format.ISODateTimeFormat
+import groovy.util.logging.Log4j 
+import groovy.util.Expando
 
+@Log4j
 class SearchResultInflator {
     
     def context
 
-    def inflate = { SearchHit hit -> 
-        def result = context.returnType.newInstance()
-        hit.source.entrySet().each {
-            println it
-            if (result.class.declaredFields.name.contains(it.key) && !['metaClass', 'class'].contains(it.key)) {
-                result[it.key] = it.value
+    private static def getField = { targetBean, fieldName -> 
+        def field
+        try {
+            field = targetBean.class.getDeclaredField fieldName
+            } catch (NoSuchFieldException nsfe) {
+                log.warn ("Target bean $targetBean does not have field $fieldName")
             }
-/**
-            def key = it.key
-            def value = it.value
-            def setterName = 'set' + key[0].toUpperCase() + key[1..-1]
-            def setter = context.returnType.methods.find { it.name == setterName }
-            if (setter && value) {
-                setter.invoke(result, value)
-            }
-**/
-        }
-        result
+        field
     }
 
-    def inflateAll = { SearchHits hits -> 
+    static def inflateMap = { map, targetBean -> 
+        map.entrySet().each {
+            log.debug(it)
+            def field = SearchResultInflator.getField(targetBean, it.key)
+            if (field) {
+                def annotation = field.getAnnotation Field
+                if (annotation) {
+                    def unmarshallContext = new Expando()
+                    unmarshallContext.fieldName = field.name
+                    unmarshallContext.targetBean = targetBean
+                    unmarshallContext.fieldValue = it.value
+                    unmarshallContext.field = field
+                    unmarshallContext.annotation = annotation
+                    annotation.unmarshall().newInstance(null, null).call(unmarshallContext)
+                }
+            }
+        }
+    }
+
+    static def inflate = { SearchHit hit, context -> 
+        def targetBean = context.returnType.newInstance()
+        
+        SearchResultInflator.inflateMap(hit.source, targetBean)
+
+        targetBean
+    }
+
+    static def inflateAll = { SearchHits hits, context -> 
         def inflated = []
         hits.each { hit ->
-            inflated << inflate(hit)
+            inflated << SearchResultInflator.inflate(hit, context)
         }
 
         inflated
