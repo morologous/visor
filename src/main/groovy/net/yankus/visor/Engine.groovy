@@ -16,7 +16,6 @@ class Engine {
     def doQuery = { queryParam ->
         def context = ContextBuilder.build queryParam
         def flattenedParams = ElasticSearchMarshaller.marshallSearchParameters(context.parameters)
-        log.debug flattenedParams
         doInElasticSearch(context) { client ->
             def search = client.search (({
                 indices context.index
