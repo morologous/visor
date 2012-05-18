@@ -14,7 +14,7 @@ final class ContextBuilder {
 		context.filters = annotation.filters()
 		context.index = annotation.index()
 		context.settings = annotation.settings()
-		context.remote = annotation.remote()
+		context.remoteAddresses = annotation.remoteAddresses()
 
 		context.returnType = bean.class
 		context.parameters = Marshaller.marshall(bean)

@@ -41,7 +41,7 @@ class EngineIndexTest {
         assertEquals flurgle, result.list[0]
     }
 
-    @Visor(index='test')
+    @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
     @EqualsAndHashCode
     static class EngineIndexTestBean {

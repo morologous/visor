@@ -9,8 +9,11 @@ import java.lang.annotation.ElementType;
 @Target(ElementType.TYPE)
 public @interface Visor { 
     public Class filters() default { match_all { } };
-    public Class settings() default { node { local = true } };
+    public Class settings() default { 
+        node { local = true } 
+        http { enabled = false }
+    };
     public String index();
-    public boolean remote() default false;
+    public String[] remoteAddresses() default [];
 
 }

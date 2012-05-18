@@ -4,10 +4,8 @@ import groovy.transform.ToString
 import groovy.transform.EqualsAndHashCode
 
 @Visor(filters = { terms(security:['low', 'none']) }, 
-       index = "test", 
-       settings = { 
-        node { local = true} 
-        } )
+       index = "test",
+       settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
 @ToString
 @EqualsAndHashCode
 public class TestBean {

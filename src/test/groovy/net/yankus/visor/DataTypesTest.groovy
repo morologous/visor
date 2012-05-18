@@ -46,7 +46,7 @@ class DataTypesTest {
         assertEquals alpha.subs, retrievedAlpha.subs
     }
 
-    @Visor ( index = 'test' )
+    @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
     @EqualsAndHashCode
     static class DataTypesTestBean {

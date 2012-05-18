@@ -6,6 +6,12 @@ import groovy.util.logging.Log4j
 @Log4j
 class SearchEngineTestHelper {
     
+    static def testESSettings = { 
+        node { local = true } 
+        http { enabled = false }
+        path { data = './build/data' }
+    }
+
     static def index = { bean ->
         def context = ContextBuilder.build(bean)
         def datasource = ElasticSearchClientFactory.create(context) 
