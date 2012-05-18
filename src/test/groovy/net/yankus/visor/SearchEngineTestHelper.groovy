@@ -10,11 +10,10 @@ class SearchEngineTestHelper {
         def context = ContextBuilder.build(bean)
         def datasource = ElasticSearchClientFactory.create(context) 
 
-        // TODO: detect ID property
         def indexR = datasource.client.index {
             index context.index
             type context.returnType.simpleName
-            id bean.id
+            id SearchEngineTestHelper.getId(bean)
             source context.parameters
         }
 
@@ -39,11 +38,10 @@ class SearchEngineTestHelper {
         def context = ContextBuilder.build(bean)
         def datasource = ElasticSearchClientFactory.create(context)
 
-        // TODO: detect ID property
         def getR = datasource.client.get {
             index context.index
             type context.returnType.simpleName
-            id bean.id
+            id SearchEngineTestHelper.getId(bean)
         }
 
         def response = getR.response '5s'
@@ -62,7 +60,7 @@ class SearchEngineTestHelper {
             def deleteR = datasource.client.delete {
                 index context.index
                 type context.returnType.simpleName
-                id bean.id
+                id SearchEngineTestHelper.getId(bean)
             }
 
             def response = deleteR.response '5s'
@@ -71,6 +69,24 @@ class SearchEngineTestHelper {
 
             response
         }
+    }
+
+    private static def getId = { bean -> 
+        def id = '' + bean.hashCode()
+        def idField
+        // intentionally naive about the possibility of multiple Id field annotation, for test purposes.
+        bean.class.declaredFields.each {
+            if (!idField && it.getAnnotation(Id)) {
+                idField = it
+            }
+        }
+        if (idField) {
+            id = '' + bean[idField.name]
+        } else if (bean.class.declaredFields.name.contains('id')) {
+            id = '' + bean.id
+        } 
+
+        id
     }
 
     static def search = { bean -> 
