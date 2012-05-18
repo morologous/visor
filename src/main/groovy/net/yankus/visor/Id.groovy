@@ -1,4 +1,4 @@
-package net.yankus.visor;
+package net.yankus.visor
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
