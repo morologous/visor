@@ -49,7 +49,7 @@ class EngineSearchTest {
     @Test
     public void testQuery() {
         def engine = new Engine()
-        def results = engine.doQuery(new TestBean(value:'foo'))
+        def results = engine.search(new TestBean(value:'foo'))
         assertEquals 1, results.count
         // results.list.each { println "result $it" }
         results.response.hits.each { SearchHit hit ->
@@ -65,7 +65,7 @@ class EngineSearchTest {
     @Test
     public void testMultiFieldQuery() {
         def engine = new Engine()
-        def results = engine.doQuery(new TestBean(value:'bar', num:2))
+        def results = engine.search(new TestBean(value:'bar', num:2))
         //results.list.each { println "result $it" }
         assertEquals 1, results.count
         results.response.hits.each { SearchHit hit ->
@@ -80,7 +80,7 @@ class EngineSearchTest {
     @Test
     public void testFilters() {
         def engine = new Engine()
-        def results = engine.doQuery(new TestBean(value:'b*'))
+        def results = engine.search(new TestBean(value:'b*'))
         assertEquals 1, results.count 
         //results.list.each { println "result $it" }
         results.response.hits.each { SearchHit hit ->

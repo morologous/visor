@@ -31,12 +31,12 @@ class EngineIndexTest {
     @Test
     void testIndex() {
         def engine = new Engine()
-        def indexR = engine.doIndex flurgle
+        def indexR = engine.index flurgle
 
         indexR.response '5s'
         SearchEngineTestHelper.snooze()
-        
-        def result = engine.doQuery new EngineIndexTestBean(num:200)
+
+        def result = engine.search new EngineIndexTestBean(num:200)
         assertEquals 1, result.count
         assertEquals flurgle, result.list[0]
     }

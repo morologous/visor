@@ -13,7 +13,7 @@ class Engine {
         return operation.call(datasource.client)
     }
 
-    def doQuery = { queryParam ->
+    def search = { queryParam ->
         def context = ContextBuilder.build queryParam
         def flattenedParams = ElasticSearchMarshaller.marshallSearchParameters(context.parameters)
         doInElasticSearch(context) { client ->
@@ -46,7 +46,7 @@ class Engine {
         }
     }
 
-    def doIndex = { target -> 
+    def index = { target -> 
         def context = ContextBuilder.build(target)
         log.debug "Indexing $context.parameters as id $target.id of type $context.returnType.simpleName into $context.index"
         doInElasticSearch(context) { client -> 
