@@ -19,3 +19,9 @@ dependencies {
 task listJars << {
     configurations.compile.each { File file -> println file.name }
 }
+
+test {
+    if (testall == 'false') {
+        exclude '**/*Integration*'
+    }
+}
