@@ -18,7 +18,7 @@ class DataTypesTest {
             id:'alpha',
             dt:new Date().parse("M/d/yyyy", '01/01/2010'), 
             str:'alpha', 
-            d:10.25, 
+            d:10.25d, 
             subs: [new DataTypeTestBeanSub(name:'foo', num:1), 
                    new DataTypeTestBeanSub(name:'bar', num:2)])
 
@@ -53,11 +53,11 @@ class DataTypesTest {
         def id
         @Field(marshall = { FieldUtils.marshallDate(it) },
             unmarshall = { FieldUtils.unmarshallDate(it) } )
-        Date dt
+        def dt
         @Field
-        String str
+        def str
         @Field
-        double d
+        def d
         @Field(type = DataTypeTestBeanSub,
                marshall = { FieldUtils.marshallCollection(it) },
                unmarshall = { FieldUtils.unmarshallCollection(it) })
