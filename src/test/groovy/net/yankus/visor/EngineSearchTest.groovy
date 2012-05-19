@@ -48,7 +48,7 @@ class EngineSearchTest {
 
     @Test
     public void testQuery() {
-        def results = Engine.search(new TestBean(value:'foo'))
+        def results = new TestBean(value:'foo').search()
         assertEquals 1, results.count
         // results.list.each { println "result $it" }
         results.response.hits.each { SearchHit hit ->
@@ -78,7 +78,7 @@ class EngineSearchTest {
 
     @Test
     public void testFilters() {
-        def results = Engine.search(new TestBean(value:'b*'))
+        def results = new TestBean(value:'b*').search()
         assertEquals 1, results.count 
         //results.list.each { println "result $it" }
         results.response.hits.each { SearchHit hit ->

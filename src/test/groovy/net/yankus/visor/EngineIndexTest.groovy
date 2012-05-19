@@ -30,12 +30,12 @@ class EngineIndexTest {
 
     @Test
     void testIndex() {
-        def indexR = Engine.index flurgle
+        def indexR = flurgle.index()
 
         indexR.response '5s'
         SearchEngineTestHelper.snooze()
 
-        def result = Engine.search new EngineIndexTestBean(num:200)
+        def result = new EngineIndexTestBean(num:200).search()
         assertEquals 1, result.count
         assertEquals flurgle, result.list[0]
     }

@@ -27,16 +27,13 @@ class DataTypesTest {
 
     @AfterClass
     static void tearDown () {
-        if (alpha) {
-
-        }
         SearchEngineTestHelper.delete(alpha)
     }
 
     @Test
     void testRetrieveTypes() {
         def engine = new Engine()
-        def results = engine.search(new DataTypesTestBean(str:'alpha'))
+        def results = new DataTypesTestBean(str:'alpha').search()
         assertEquals 1, results.count
         def retrievedAlpha = results.list[0]
         assertNotNull(retrievedAlpha)

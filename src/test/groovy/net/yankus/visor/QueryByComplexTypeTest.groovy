@@ -30,7 +30,7 @@ class QueryByComplexTypeTest {
     @Test
     public void testChildQuery() {
 
-        def results = Engine.search(new ComplexTypeParent(children:[new ComplexTypeChild(num:2)]))
+        def results = new ComplexTypeParent(children:[new ComplexTypeChild(num:2)]).search()
         assertEquals 1, results.count
 
         assertEquals foo, results.list[0]

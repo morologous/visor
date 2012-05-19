@@ -34,7 +34,7 @@ class RemoteClientTestIntegration {
 
     @Test
     void testRemoteIndex() {
-        def indexR = Engine.index beta
+        def indexR = beta.index()
 
         indexR.response '5s'
         SearchEngineTestHelper.snooze()
