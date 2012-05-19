@@ -29,7 +29,7 @@ class ElasticSearchMarshaller {
         map
     }
 
-    private static def findIdField = { bean -> 
+    static def findIdField = { bean -> 
         def idField
         bean.class.declaredFields.each {
             def annotation = it.getAnnotation Id 

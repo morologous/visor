@@ -24,7 +24,7 @@ class VisorASTTransformation extends AbstractASTTransformation {
 
     public void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
         init(nodes, sourceUnit)
-        
+
         AnnotatedNode parent = (AnnotatedNode) nodes[1]
         AnnotationNode annotation = (AnnotationNode) nodes[0]
 
@@ -35,8 +35,10 @@ class VisorASTTransformation extends AbstractASTTransformation {
             ClassNode classNode = (ClassNode) parent
             checkNotInterface(classNode, VISOR_NODE_NAME)
 
+            // TODO: preconfirm that the methods don't already exist, for sanity (i.e., what about if they're already gormified.)
             classNode.addMethod(makeSearchMethod())
             classNode.addMethod(makeIndexMethod())
+            classNode.addMethod(makeDeleteMethod())
         }
     }
 
@@ -69,6 +71,27 @@ class VisorASTTransformation extends AbstractASTTransformation {
                 block {
                     returnStatement {
                         staticMethodCall(net.yankus.visor.Engine, 'index') {
+                            argumentList {
+                                variable 'this'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        MethodNode method = ast[0]
+
+        method
+    }
+
+    private def makeDeleteMethod() {
+        def ast = new AstBuilder().buildFromSpec {
+            method('delete', ACC_PUBLIC, Object) {
+                parameters { }
+                exceptions { }
+                block {
+                    returnStatement {
+                        staticMethodCall(net.yankus.visor.Engine, 'delete') {
                             argumentList {
                                 variable 'this'
                             }
