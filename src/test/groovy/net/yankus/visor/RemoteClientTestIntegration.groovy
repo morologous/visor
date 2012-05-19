@@ -27,21 +27,19 @@ class RemoteClientTestIntegration {
 
     @Test
     void testRemoteSearch() {
-        def engine = new Engine()
-        def results = engine.search new RemoteClientTestBean(num:1000)
+        def results = Engine.search new RemoteClientTestBean(num:1000)
         assertEquals 1, results.count
         assertEquals alpha, results.list[0]
     }
 
     @Test
     void testRemoteIndex() {
-        def engine = new Engine()
-        def indexR = engine.index beta
+        def indexR = Engine.index beta
 
         indexR.response '5s'
         SearchEngineTestHelper.snooze()
 
-        def results = engine.search new RemoteClientTestBean(num:2000)
+        def results = Engine.search new RemoteClientTestBean(num:2000)
         assertEquals 1, results.count
         assertEquals beta, results.list[0]
     }

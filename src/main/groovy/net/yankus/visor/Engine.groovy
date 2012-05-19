@@ -8,15 +8,15 @@ import groovy.util.logging.Log4j
 @Log4j
 class Engine {
 
-    def doInElasticSearch = { context, operation ->
+    static def doInElasticSearch = { context, operation ->
         def datasource = ElasticSearchClientFactory.create context
         return operation.call(datasource.client)
     }
 
-    def search = { queryParam ->
+    static def search = { queryParam ->
         def context = ContextBuilder.build queryParam
         def flattenedParams = ElasticSearchMarshaller.marshallSearchParameters(context.parameters)
-        doInElasticSearch(context) { client ->
+        Engine.doInElasticSearch(context) { client ->
             def search = client.search (({
                 indices context.index
                 types context.returnType.simpleName
@@ -46,10 +46,10 @@ class Engine {
         }
     }
 
-    def index = { target -> 
+    static def index = { target -> 
         def context = ContextBuilder.build(target)
         log.debug "Indexing $context.parameters as id $target.id of type $context.returnType.simpleName into $context.index"
-        doInElasticSearch(context) { client -> 
+        Engine.doInElasticSearch(context) { client -> 
             def result = client.index {
                 index context.index
                 type context.returnType.simpleName

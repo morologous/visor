@@ -34,20 +34,19 @@ class IdAnnotationTest {
 
     @Test
     void testSearchEach() {
-        def engine = new Engine()
-        def results = engine.search(new SingleIdAnnotationTestBean(name:'aaa'))
+        def results = Engine.search(new SingleIdAnnotationTestBean(name:'aaa'))
 
         assertEquals 1, results.count
         assertEquals foo, results.list[0]
 
         try {
-            results = engine.search(new MultipleIdAnnotationTestBean(name:'bbb'))
+            results = Engine.search(new MultipleIdAnnotationTestBean(name:'bbb'))
             assertFalse true
         } catch (IllegalStateException ise) {
                 // expected
         }
 
-        results = engine.search(new NoIdAnnotationTestBean(name:'ccc'))
+        results = Engine.search(new NoIdAnnotationTestBean(name:'ccc'))
         assertEquals 1, results.count
         assertEquals new NoIdAnnotationTestBean(name:'ccc'), results.list[0]
     }
