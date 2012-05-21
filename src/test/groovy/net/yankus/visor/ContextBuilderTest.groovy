@@ -30,9 +30,6 @@ class ContextBuilderTest {
 
 		assertEquals 'foo', result.index
 
-		assertNotNull result.parameters
-		assertTrue result.parameters.containsKey('test')
-		assertEquals 'foo', result.parameters['test']
 	}
 
 	@Visor(filters={it=='foo'}, settings={it.foo='bar'}, index='foo')

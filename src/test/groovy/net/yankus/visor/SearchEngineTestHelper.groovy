@@ -16,11 +16,13 @@ class SearchEngineTestHelper {
         def context = ContextBuilder.build(bean)
         def datasource = ElasticSearchClientFactory.create(context) 
 
+        def indexParams = Marshaller.marshall(bean, 'INDEX')
+        log.debug "indexParams: $indexParams"
         def indexR = datasource.client.index {
             index context.index
             type context.returnType.simpleName
             id SearchEngineTestHelper.getId(bean)
-            source context.parameters
+            source indexParams
         }
 
         def response = indexR.response '5s'

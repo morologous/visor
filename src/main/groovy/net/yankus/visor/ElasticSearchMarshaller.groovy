@@ -2,7 +2,9 @@ package net.yankus.visor
 
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.SearchHit
+import groovy.util.logging.Log4j 
 
+@Log4j
 class ElasticSearchMarshaller {
     
     private static def flattenParameter = {key, value ->
@@ -15,6 +17,8 @@ class ElasticSearchMarshaller {
             value.entrySet().each {
                 map << ElasticSearchMarshaller.flattenParameter(key+'.'+it.key, it.value)
             }
+        } else if (value instanceof Expando) {
+            map << ElasticSearchMarshaller.flattenParameter(key, value.value)
         } else {
             map << [(key):value]
         }

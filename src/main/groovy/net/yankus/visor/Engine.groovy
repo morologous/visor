@@ -15,7 +15,8 @@ class Engine {
 
     static def search = { queryParam ->
         def context = ContextBuilder.build queryParam
-        def flattenedParams = ElasticSearchMarshaller.marshallSearchParameters(context.parameters)
+        def flattenedParams = ElasticSearchMarshaller.marshallSearchParameters(Marshaller.marshall(queryParam))
+        //log.debug "flattenedParams: $flattenedParams"
         Engine.doInElasticSearch(context) { client ->
             def search = client.search (({
                 indices context.index
@@ -48,14 +49,16 @@ class Engine {
 
     static def index = { target -> 
         def context = ContextBuilder.build(target)
-        log.debug "Indexing $context.parameters as id $target.id of type $context.returnType.simpleName into $context.index"
-        // TODO: detect id
+
+        def indexParams = Marshaller.marshall(target, 'INDEX')
+        log.debug "Indexing $context.parameters as id $target.id of type $context.returnType.simpleName into $context.index with parameters $indexParams"
+
         Engine.doInElasticSearch(context) { client -> 
             def result = client.index {
                 index context.index
                 type context.returnType.simpleName
                 id "$target.id"
-                source context.parameters
+                source indexParams
             }
             
             result

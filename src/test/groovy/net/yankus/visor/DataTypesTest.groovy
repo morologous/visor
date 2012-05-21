@@ -23,6 +23,7 @@ class DataTypesTest {
                    new DataTypeTestBeanSub(name:'bar', num:2)])
 
         SearchEngineTestHelper.index(alpha)
+        SearchEngineTestHelper.showAll(DataTypesTestBean)
     }
 
     @AfterClass

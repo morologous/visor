@@ -24,17 +24,44 @@ class Marshaller {
         field
     }
 
-    static def marshall = { bean -> 
-        def props = [:]
+    static def foreachProperty = { bean, callback ->
         Marshaller.getProperties(bean).keySet().each {
             def field = bean.class.getDeclaredField it
             def annotation = field.getAnnotation Field
             if (annotation && bean[it]) {
-                def marshallContext = new Expando()
-                marshallContext.fieldName = it
-                marshallContext.targetBean = bean
-                props[it] = annotation.marshall().newInstance(null, null).call(marshallContext)
+                callback(field, annotation)
             }
+        }
+    }
+
+    static def marshall = { bean, mode='QUERY' -> 
+        def props = [:]
+        
+        Marshaller.foreachProperty(bean) { field, annotation ->
+            def marshallContext = new Expando()
+            marshallContext.fieldName = field.name
+            marshallContext.targetBean = bean
+            marshallContext.mode = mode
+
+            //log.debug "marshallContext $marshallContext"
+
+            def value = annotation.marshall().newInstance(null, null).call(marshallContext)
+            def prop
+            // this is sorta kludgey.  We need to add extra info for QUERY operations
+            // but keep the datamodel simple for complex datatypes.  This could probably
+            // be done better with a closure at index time extracting only the value
+            // but for today, my brain hurts too much to write that.
+            if (mode == 'INDEX') {
+                //log.debug 'Marshalling for INDEX operation'
+                prop = value
+            } else {
+                //log.debug "Marshalling for $mode operation"
+                prop = new Expando()
+                prop.annotation = annotation
+                prop.field = field
+                prop.value = value                                 
+            }
+            props[field.name] = prop
         }
         
         props

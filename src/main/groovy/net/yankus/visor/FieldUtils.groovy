@@ -16,10 +16,10 @@ class FieldUtils {
         it.targetBean[it.fieldName] = new Date(it.fieldValue)
     } 
 
-    public static def marshallCollection = { 
+    public static def marshallCollection = { ctx ->
         def coll = []
-        it.targetBean[it.fieldName].each {
-            coll << Marshaller.marshall(it)            
+        ctx.targetBean[ctx.fieldName].each {
+            coll << Marshaller.marshall(it, ctx.mode)            
         }
         coll
     } 

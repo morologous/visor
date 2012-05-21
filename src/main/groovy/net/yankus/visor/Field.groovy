@@ -10,5 +10,7 @@ import java.lang.annotation.ElementType
 public @interface Field { 
     Class marshall() default { it.targetBean[it.fieldName] }
     Class unmarshall() default { it.targetBean[it.fieldName] = it.fieldValue }
+    Class applyToQuery() default { key, value -> field ((key):value)}
+    String queryPhase() default 'BODY'
     Class type() default java.lang.String 
 }

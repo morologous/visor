@@ -18,6 +18,8 @@ class QueryByComplexTypeTest {
             children:[new ComplexTypeChild(name:'child', num:2)])
 
         SearchEngineTestHelper.index(foo)
+
+        SearchEngineTestHelper.showAll (ComplexTypeParent)
     }
 
     @AfterClass

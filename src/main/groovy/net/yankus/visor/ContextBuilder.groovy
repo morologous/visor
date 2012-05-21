@@ -17,7 +17,6 @@ final class ContextBuilder {
 		context.remoteAddresses = annotation.remoteAddresses()
 
 		context.returnType = bean.class
-		context.parameters = Marshaller.marshall(bean)
 
 		context
 	}
