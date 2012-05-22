@@ -13,7 +13,6 @@ class DataTypesTest {
 
     @BeforeClass
     static void setUp() {
-        println FieldUtils.unmarshallDate
         alpha = new DataTypesTestBean(
             id:'alpha',
             dt:new Date().parse("M/d/yyyy", '01/01/2010'), 
@@ -48,9 +47,9 @@ class DataTypesTest {
     void testDateRange() {
        def fromDt = new Date().parse("M/d/yyyy", '12/01/2009')
        def toDt = new Date().parse("M/d/yyyy", "01/31/2010")
-       def dtParam = new Expando()
-       dtParam.fromDt = fromDt
-       dtParam.toDt = toDt
+       def dtParam = new DateRange(from:fromDt, to:toDt)
+       //dtParam.fromDt = fromDt
+       //dtParam.toDt = toDt
 
        def results = new DataTypesTestBean(dt:dtParam).search()
         assertEquals 1, results.count
@@ -78,9 +77,9 @@ class DataTypesTest {
     void testBefore() {
         //def fromDt = new Date().parse("M/d/yyyy", '12/01/2009')
         def toDt = new Date().parse("M/d/yyyy", "01/31/2010")
-        def dtParam = new Expando()
+        def dtParam = new DateRange(to:toDt)
         //dtParam.fromDt = fromDt
-        dtParam.toDt = toDt
+        //dtParam.toDt = toDt
 
         def results = new DataTypesTestBean(dt:dtParam).search()
         assertEquals 1, results.count
@@ -96,8 +95,8 @@ class DataTypesTest {
     void testAfter() {
         def fromDt = new Date().parse("M/d/yyyy", '12/01/2009')
         //def toDt = new Date().parse("M/d/yyyy", "01/31/2010")
-        def dtParam = new Expando()
-        dtParam.fromDt = fromDt
+        def dtParam = new DateRange(from:fromDt)
+        //dtParam.fromDt = fromDt
         //dtParam.toDt = toDt
 
         def results = new DataTypesTestBean(dt:dtParam).search()
@@ -115,17 +114,13 @@ class DataTypesTest {
     @EqualsAndHashCode
     static class DataTypesTestBean {
         def id
-        @Field(marshall = { FieldUtils.marshallDate(it) },
-            unmarshall = { FieldUtils.unmarshallDate(it) },
-            applyToQuery = { key, value -> FieldUtils.applyToQueryDate.rehydrate(delegate, owner, thisObject).call(key, value) })
+        @Field(type=Date)
         def dt
         @Field
         def str
         @Field
         def d
-        @Field(type = DataTypeTestBeanSub,
-               marshall = { FieldUtils.marshallCollection(it) },
-               unmarshall = { FieldUtils.unmarshallCollection(it) })
+        @Field(type=DataTypeTestBeanSub)
         def subs = []
     }
 

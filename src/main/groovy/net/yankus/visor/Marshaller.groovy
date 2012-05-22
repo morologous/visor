@@ -42,10 +42,12 @@ class Marshaller {
             marshallContext.fieldName = field.name
             marshallContext.targetBean = bean
             marshallContext.mode = mode
+            marshallContext.annotation = annotation
 
             //log.debug "marshallContext $marshallContext"
 
             def value = annotation.marshall().newInstance(null, null).call(marshallContext)
+            
             def prop
             // this is sorta kludgey.  We need to add extra info for QUERY operations
             // but keep the datamodel simple for complex datatypes.  This could probably
