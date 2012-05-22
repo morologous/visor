@@ -22,15 +22,9 @@ class MultiSelectTest {
     @BeforeClass
     public static void setUp() {
         a = new MultiSelectTestBean(id:'a', name:'a', type:'alphanumeric')
-        b = new MultiSelectTestBean(id:'b', name:'b', type:'alphanumeric')
-        c = new MultiSelectTestBean(id:'c', name:'c', type:'alphanumeric')
         alpha = new MultiSelectTestBean(id:'alpha', name:'alpha', type:'greek')
-        beta = new MultiSelectTestBean(id:'beta', name:'beta', type:'greek')
-        gamma = new MultiSelectTestBean(id:'gamma', name:'gamma', type:'greek')
         i = new MultiSelectTestBean(id:'i', name:'i', type:'roman')
-        ii = new MultiSelectTestBean(id:'ii', name:'ii', type:'roman')
-        iii = new MultiSelectTestBean(id:'iii', name:'iii', type:'roman')
-
+    
 
         SearchEngineTestHelper.index a
         SearchEngineTestHelper.index alpha

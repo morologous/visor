@@ -48,9 +48,7 @@ class QueryByComplexTypeTest {
         def id
         @Field
         def name
-        @Field(type=ComplexTypeChild,
-               marshall={FieldUtils.marshallCollection(it)},
-               unmarshall={FieldUtils.unmarshallCollection(it)})
+        @Field(type=ComplexTypeChild)
         def children
     }
 
