@@ -1,20 +1,7 @@
-```
-                              .       t#,               
-               t             ;W      ;##W.     j.         
-               Ej           f#E     :#L:WE     EW,        
-  t      .DD.  E#,        .E#f     .KG  ,#D    E##j       
-  EK:   ,WK.   E#t       iWW;      EE    ;#f   E###D.     
-  E#t  i#D     E#t      L##Lffi   f#.     t#i  E#jG#W;    
-  E#t j#f      E#t     tLLG##L    :#G     GK   E#t t##f   
-  E#tL#i       E#t       ,W#i      ;#L   LW.   E#t  :K#E: 
-  E#WW,        E#t      j#E.        t#f f#:    E#KDDDD###i
-  E#K:         E#t    .D#j           f#D#;     E#f,t#Wi,,,
-  ED.          E#t   ,WK,             G#t      E#t  ;#W:  
-  t            E#t   EG.               t       DWi   ,KK: 
-               ,;.   ,                                
-```
+[![Visor](https://github.com/morologous/visor/raw/master/site/visor.png) Visor    
+
 [![Build Status](https://secure.travis-ci.org/morologous/visor.png)](http://travis-ci.org/morologous/visor)
-                        
+               
 ### Visor
 Visor is a bridge API to help Groovy applications store and search information in ElasticSearch.  The intent of this API is to be as low-impact as possible for the user while still providing a high level of available customization.
 
