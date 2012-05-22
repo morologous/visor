@@ -74,6 +74,42 @@ class DataTypesTest {
         assertEquals alpha.subs, retrievedAlpha.subs
     }
 
+    @Test
+    void testBefore() {
+        //def fromDt = new Date().parse("M/d/yyyy", '12/01/2009')
+        def toDt = new Date().parse("M/d/yyyy", "01/31/2010")
+        def dtParam = new Expando()
+        //dtParam.fromDt = fromDt
+        dtParam.toDt = toDt
+
+        def results = new DataTypesTestBean(dt:dtParam).search()
+        assertEquals 1, results.count
+        def retrievedAlpha = results.list[0]
+        assertNotNull(retrievedAlpha)
+        assertEquals alpha.dt, retrievedAlpha.dt
+        assertEquals alpha.d, retrievedAlpha.d, 0.000009
+        assertEquals alpha.str, retrievedAlpha.str
+        assertEquals alpha.subs, retrievedAlpha.subs
+    }
+
+    @Test
+    void testAfter() {
+        def fromDt = new Date().parse("M/d/yyyy", '12/01/2009')
+        //def toDt = new Date().parse("M/d/yyyy", "01/31/2010")
+        def dtParam = new Expando()
+        dtParam.fromDt = fromDt
+        //dtParam.toDt = toDt
+
+        def results = new DataTypesTestBean(dt:dtParam).search()
+        assertEquals 1, results.count
+        def retrievedAlpha = results.list[0]
+        assertNotNull(retrievedAlpha)
+        assertEquals alpha.dt, retrievedAlpha.dt
+        assertEquals alpha.d, retrievedAlpha.d, 0.000009
+        assertEquals alpha.str, retrievedAlpha.str
+        assertEquals alpha.subs, retrievedAlpha.subs
+    }
+
     @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
     @EqualsAndHashCode
@@ -81,8 +117,7 @@ class DataTypesTest {
         def id
         @Field(marshall = { FieldUtils.marshallDate(it) },
             unmarshall = { FieldUtils.unmarshallDate(it) },
-            applyToQuery = { key, value -> FieldUtils.applyToQueryDate.rehydrate(delegate, owner, thisObject).call(key, value) },
-            queryPhase = 'TOPLEVEL')
+            applyToQuery = { key, value -> FieldUtils.applyToQueryDate.rehydrate(delegate, owner, thisObject).call(key, value) })
         def dt
         @Field
         def str

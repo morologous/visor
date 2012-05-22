@@ -34,7 +34,7 @@ class SearchEngineTestHelper {
         response
     }
 
-    static def snooze(time=1000) {
+    static def snooze(time=2000) {
         try {
             Thread.sleep(time)
         } catch (InterruptedException ie) {
