@@ -10,7 +10,14 @@ import java.lang.annotation.ElementType
 public @interface Field { 
     Class marshall() default { it.targetBean[it.fieldName] }
     Class unmarshall() default { it.targetBean[it.fieldName] = it.fieldValue }
-    Class applyToQuery() default { key, value -> must: field ((key):value)}
+    Class applyToQuery() default { key, value ->
+        if (value instanceof MultiSelect) {
+            //log.debug "Setting multiselect: $value.values"
+            must: terms((key): value.values)
+        } else {
+            must: field ((key):value)
+        }
+    }
     String queryPhase() default 'QUERY'
     Class type() default java.lang.String 
 }
