@@ -57,13 +57,22 @@ class Engine {
         def context = ContextBuilder.build(target)
 
         def indexParams = Marshaller.marshall(target, 'INDEX')
-        log.debug "Indexing $context.parameters as id $target.id of type $context.returnType.simpleName into $context.index with parameters $indexParams"
 
+        def targetIdField = ElasticSearchMarshaller.findIdField(target)
+        if (!targetIdField) {
+            throw new IllegalArgumentException('Bean must have Id-annotated field to be stored in search index')
+        }
+        def targetId = target[targetIdField.name]
+        if (!targetId) {
+            throw new IllegalArgumentException('Bean must have populated Id-annotated field to be stored in search index.')
+        }
+
+        log.debug "Indexing $context.parameters as id $targetId of type $context.returnType.simpleName into $context.index with parameters $indexParams"
         Engine.doInElasticSearch(context) { client -> 
             def result = client.index {
                 index context.index
                 type context.returnType.simpleName
-                id "$target.id"
+                id "$targetId"
                 source indexParams
             }
             
