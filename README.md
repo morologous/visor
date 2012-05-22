@@ -67,7 +67,7 @@ def book = new Book(isbn:'0-684-84328-5',
 book.index()
 
 // search for other books by the same author
-def results = new Book(author:'*D. Bagg')
+def results = new Book(author:'*D. Bagg').search()
 
 // print the results
 println "$results.count books by Cornelius D. Bagg:"
@@ -84,7 +84,9 @@ Visor can search for beans that match a parameter in a list (like a SQL IN claus
 
 ```groovy
 // search for books in the fashion or fitness category
-def results = new Book(categories: new MultiSelect(values:['fashion', 'fitness'])).search()
+def results = new Book(
+    categories: new MultiSelect(values:['fashion', 'fitness'])
+).search()
 
 // print the results
 println "$results.count books returned from search:"
@@ -97,8 +99,10 @@ Visor can perform Date Range searches as well.  When performing a date range sea
 
 ```groovy
 // search for books published in 2010.
-def results = 
-    new Book(publishDate: new DateRange(from: parseDate('2010-01-01'), to: parseDate('2010-12-31')).search()
+def results = new Book(
+    publishDate: new DateRange(from: parseDate('2010-01-01'), 
+                               to:   parseDate('2010-12-31')
+).search()
 
 // print the results
 println "$results.count books returned from search:"
