@@ -1,5 +1,5 @@
 <div style="margin-left:auto;margin-right:auto;width:100%">
-![Visor](https://github.com/morologous/visor/raw/master/site/visor.png)
+<img src="https://github.com/morologous/visor/raw/master/site/visor.png"/>
 </div>
 
 [![Build Status](https://secure.travis-ci.org/morologous/visor.png)](http://travis-ci.org/morologous/visor)
