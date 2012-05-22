@@ -1,5 +1,4 @@
-
-[![center][Visor](https://github.com/morologous/visor/raw/master/site/visor.png)](http://morologous.github.com/visor)    
+![center](https://github.com/morologous/visor/raw/master/site/visor.png)
 
 [![Build Status](https://secure.travis-ci.org/morologous/visor.png)](http://travis-ci.org/morologous/visor)
                
