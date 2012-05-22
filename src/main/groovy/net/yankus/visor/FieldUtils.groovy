@@ -7,7 +7,15 @@ import groovy.util.logging.Log4j
 class FieldUtils {
     
     public static def marshallDate = {
-        it.targetBean[it.fieldName].time
+        if (it.targetBean[it.fieldName] instanceof Date) {
+            it.targetBean[it.fieldName].time
+        } else {
+            def rangeQ = it.targetBean[it.fieldName]
+            rangeQ.fromDt = rangeQ.fromDt?.time
+            rangeQ.toDt = rangeQ.toDt?.time
+            log.debug rangeQ
+            rangeQ
+        }
     }
 
     public static def unmarshallDate = {
@@ -15,6 +23,20 @@ class FieldUtils {
         //it.targetBean[it.fieldName] = dateTime?.toDate()
         it.targetBean[it.fieldName] = new Date(it.fieldValue)
     } 
+
+    public static def applyToQueryDate = { key, value ->
+        log.debug "$key : $value"
+        if (value instanceof Expando) {
+            range {
+                "$key" {
+                    from: value.fromDt
+                    to: value.toDt                            
+                }
+            }  
+        } else {
+            field ((key):value)
+        }
+    }
 
     public static def marshallCollection = { ctx ->
         def coll = []

@@ -44,13 +44,45 @@ class DataTypesTest {
         assertEquals alpha.subs, retrievedAlpha.subs
     }
 
+    @Test
+    void testDateRange() {
+       def fromDt = new Date().parse("M/d/yyyy", '12/01/2009')
+       def toDt = new Date().parse("M/d/yyyy", "01/31/2010")
+       def dtParam = new Expando()
+       dtParam.fromDt = fromDt
+       dtParam.toDt = toDt
+
+       def results = new DataTypesTestBean(dt:dtParam).search()
+        assertEquals 1, results.count
+        def retrievedAlpha = results.list[0]
+        assertNotNull(retrievedAlpha)
+        assertEquals alpha.dt, retrievedAlpha.dt
+        assertEquals alpha.d, retrievedAlpha.d, 0.000009
+        assertEquals alpha.str, retrievedAlpha.str
+        assertEquals alpha.subs, retrievedAlpha.subs
+    }
+
+    @Test
+    void testByExactDate() {
+        def results = new DataTypesTestBean(dt:alpha.dt).search()
+        assertEquals 1, results.count
+        def retrievedAlpha = results.list[0]
+        assertNotNull(retrievedAlpha)
+        assertEquals alpha.dt, retrievedAlpha.dt
+        assertEquals alpha.d, retrievedAlpha.d, 0.000009
+        assertEquals alpha.str, retrievedAlpha.str
+        assertEquals alpha.subs, retrievedAlpha.subs
+    }
+
     @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
     @EqualsAndHashCode
     static class DataTypesTestBean {
         def id
         @Field(marshall = { FieldUtils.marshallDate(it) },
-            unmarshall = { FieldUtils.unmarshallDate(it) } )
+            unmarshall = { FieldUtils.unmarshallDate(it) },
+            applyToQuery = { key, value -> FieldUtils.applyToQueryDate.rehydrate(delegate, owner, thisObject).call(key, value) },
+            queryPhase = 'TOPLEVEL')
         def dt
         @Field
         def str

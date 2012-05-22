@@ -29,7 +29,7 @@ class ElasticSearchMarshaller {
             }
         } else {
             //map << [(key):value]
-            throw  new IllegalArgumentException("Value must be Expando but was $value")
+            throw  new IllegalArgumentException("Value must be Expando or Collection or Map but was $value")
         }
         map
     }

@@ -15,8 +15,9 @@ class Engine {
 
     static def search = { queryParam ->
         def context = ContextBuilder.build queryParam
-        def flattenedParams = ElasticSearchMarshaller.marshallSearchParameters(Marshaller.marshall(queryParam))
-        //log.debug "flattenedParams: $flattenedParams"
+        def queryParams = ElasticSearchMarshaller.marshallSearchParameters(Marshaller.marshall(queryParam))
+
+        log.debug "queryParams: $queryParams"
         Engine.doInElasticSearch(context) { client ->
             def search = client.search (({
                 indices context.index
@@ -25,16 +26,14 @@ class Engine {
                     query {
                         filtered {
                             query {
-                                def reqs = []
-                                flattenedParams.entrySet().each { entry ->
-                                    reqs << entry.value
-                                                 .annotation
-                                                 .applyToQuery()
-                                                 .newInstance(null, null)
-                                                 .rehydrate(delegate, owner, thisObject)
-                                                 .call(entry.key, entry.value.value)
-                                }      
-                                must: reqs                          
+                                queryParams.entrySet().each { entry ->
+                                    entry.value
+                                         .annotation
+                                         .applyToQuery()
+                                         .newInstance(null, null)
+                                         .rehydrate(delegate, owner, thisObject)
+                                         .call(entry.key, entry.value.value)
+                                }            
                             }
                             filter = context.filters
                                             .newInstance(null, null)
