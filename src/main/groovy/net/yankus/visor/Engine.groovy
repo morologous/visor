@@ -27,11 +27,18 @@ class Engine {
                             query {
                                 def reqs = []
                                 flattenedParams.entrySet().each { entry ->
-                                    reqs << field((entry.key): entry.value)
+                                    reqs << entry.value
+                                                 .annotation
+                                                 .applyToQuery()
+                                                 .newInstance(null, null)
+                                                 .rehydrate(delegate, owner, thisObject)
+                                                 .call(entry.key, entry.value.value)
                                 }      
                                 must: reqs                          
                             }
-                            filter = context.filters.newInstance(null, null).rehydrate(delegate, owner, thisObject)
+                            filter = context.filters
+                                            .newInstance(null, null)
+                                            .rehydrate(delegate, owner, thisObject)
                         }
                     }
                 }  

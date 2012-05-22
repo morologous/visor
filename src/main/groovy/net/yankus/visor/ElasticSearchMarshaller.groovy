@@ -9,6 +9,8 @@ class ElasticSearchMarshaller {
     
     private static def flattenParameter = {key, value ->
         def map = [:]
+
+        //log.debug 'value is ' + value.getClass()
         if (value instanceof Collection) {
             value.each {
                 map << ElasticSearchMarshaller.flattenParameter(key, it)                
@@ -18,15 +20,23 @@ class ElasticSearchMarshaller {
                 map << ElasticSearchMarshaller.flattenParameter(key+'.'+it.key, it.value)
             }
         } else if (value instanceof Expando) {
-            map << ElasticSearchMarshaller.flattenParameter(key, value.value)
+            //log.debug 'value.value is ' + value.value.getClass()
+            // if the next step is a collection or map, go on, otherwise stop
+            if (value.value instanceof Collection || value.value instanceof Map) {
+                map << ElasticSearchMarshaller.flattenParameter(key, value.value)
+            } else {
+                map << [(key):value]
+            }
         } else {
-            map << [(key):value]
+            //map << [(key):value]
+            throw  new IllegalArgumentException("Value must be Expando but was $value")
         }
         map
     }
 
     static def marshallSearchParameters = { parameters -> 
         def map = [:]
+        log.debug parameters
         parameters.entrySet().each {
             map << ElasticSearchMarshaller.flattenParameter(it.key, it.value)
         }
