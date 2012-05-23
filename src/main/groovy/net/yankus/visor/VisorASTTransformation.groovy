@@ -8,6 +8,7 @@ import org.codehaus.groovy.ast.AnnotationNode
 import org.codehaus.groovy.ast.builder.AstBuilder
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.transform.GroovyASTTransformation
+import org.codehaus.groovy.ast.PropertyNode
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.control.CompilePhase
@@ -40,6 +41,8 @@ class VisorASTTransformation extends AbstractASTTransformation {
             classNode.addMethod(makeIndexMethod())
             classNode.addMethod(makeDeleteMethod())
             classNode.addMethod(makeUpdateMethod())
+
+            classNode.addProperty(makeQueryStringField())
         }
     }
 
@@ -126,5 +129,16 @@ class VisorASTTransformation extends AbstractASTTransformation {
         MethodNode method = ast[0]
 
         method
+    }
+
+    private def makeQueryStringField() {
+        def ast = new AstBuilder().buildFromSpec {
+            propertyNode "queryString", ACC_PUBLIC, String, this.class, {
+                constant null
+            }
+        }
+        PropertyNode field = ast[0]
+
+        field
     }
 }

@@ -16,11 +16,8 @@ class Engine {
     static def search = { queryParam ->
         def context = ContextBuilder.build queryParam
         def queryParams = ElasticSearchMarshaller.marshallSearchParameters(Marshaller.marshall(queryParam))
-        def queryStrFields = ElasticSearchMarshaller.findFieldWithAnnotation(Query, queryParam)
-        def queryStrVal = ''
-        queryStrFields.each {
-            queryStrVal += ' ' + queryParam[it.name]
-        }
+
+        def queryStrVal = queryParam['queryString']
         log.debug "queryStrVal $queryStrVal"
         //log.debug "queryParams: $queryParams"
         Engine.doInElasticSearch(context) { client ->
@@ -31,7 +28,7 @@ class Engine {
                     query {
                         filtered {
                             query {
-                                if (queryStrVal.length() > 0) {
+                                if (queryStrVal) {
                                     query_string (query:queryStrVal)
                                 }
                                 queryParams.entrySet().each { entry ->

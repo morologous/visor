@@ -29,7 +29,7 @@ class QueryStringTest {
 
     @Test
     public void testSearchItaly() {
-        def results = new QueryStringTestBean(query:'italy').search()
+        def results = new QueryStringTestBean(queryString:'italy').search()
         assertEquals 2, results.count
         assertTrue results.list.contains(qstr1)
         assertTrue results.list.contains(qstr2)
@@ -38,14 +38,14 @@ class QueryStringTest {
 
     @Test
     public void testSearchWheat() {
-        def results = new QueryStringTestBean(query:'wheat').search()
+        def results = new QueryStringTestBean(queryString:'wheat').search()
         assertEquals 1, results.count
         assertTrue results.list.contains(qstr2)
 
     }
 
     public void testSearchItalyAndVolcano() {
-        def results = new QueryStringTestBean(query:'italy AND volcano')
+        def results = new QueryStringTestBean(queryString:'italy AND volcano')
         assertEquals 1, results.count
         assertTrue results.list.contains(qstr1)
     }
@@ -59,7 +59,5 @@ class QueryStringTest {
         def id
         @Field
         def text
-        @Query
-        def query
     }
 }
