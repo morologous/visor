@@ -2,6 +2,19 @@ apply plugin: 'eclipse'
 apply plugin: 'groovy'
 apply plugin: 'maven'
 
+
+configure(install.repositories.mavenInstaller) {
+    pom.project {
+        groupId 'net.yankus'
+        version '0.1'
+        artifactId 'visor'
+        packaging 'jar'
+        name 'Visor'
+        description 'A simplistic bridge API for groovy projects that want to search with ElasticSearch'
+        url 'http://morologous.github.com/visor'
+    }
+}
+
 repositories {
     mavenCentral()
     mavenRepo name: 'sonatype', urls:'https://oss.sonatype.org/content/repositories/releases'
