@@ -97,7 +97,7 @@ results.list.each {
 
 ##### Date Ranges
 
-Visor can perform Date Range searches as well.  When performing a date range search simply substitute the DateRange object for the Date in the bean.  Here is an example:
+Visor can perform Date Range searches as well.  When performing a date range search simply substitute the DateRange object for the Date in the bean.  Here is an example of a 'Between' range query:
 
 ```groovy
 // search for books published in 2010.
@@ -112,6 +112,9 @@ results.list.each {
     println it
 }
 ```
+
+For 'Before' or 'After' simply omit the 'from' property (for 'Before' queries) or the 'to' property (for 'After' queries).  In all cases the search will be inclusive of the 'to' and 'from' dates, so consider the time values provided for the dates accordingly.
+
 ##### Query String
 
 The Visor annotation also adds a 'queryString' property to the bean, for free form text searching of the documents in the index.
@@ -125,6 +128,8 @@ results.list.each {
     println it
 }
 ```
+
+The query string syntax adheres to the [Lucene Query Syntax](http://lucene.apache.org/core/3_6_0/queryparsersyntax.html) rules.  By default, the all fields in the document will be searched. 
 
 [![Visor](https://github.com/morologous/visor/raw/master/site/visor.png)](http://morologous.github.com/visor)
 
