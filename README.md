@@ -1,14 +1,27 @@
                
-### Visor 
-Visor is a bridge API to help Groovy applications store and search information in ElasticSearch.  The intent of this API is to be as low-impact as possible for the user while still providing a high level of available customization.
+### What is Visor 
+Visor is a bridge API to help [Groovy](http://groovy.codehaus.org/) applications store and search information in [ElasticSearch](http://www.elasticsearch.org).  The intent of this API is to be as low-impact as possible for the user while still providing a high level of available customization.
 
 ### Get Visor
 
-Get Visor from github or by using Maven
+#### Github
 
-### How does it work?
+Fork, clone or download this project at its [github page](http://github.com/morologous/visor)
 
-Visor interacts with the ElasticSearch server using it's [Groovy API](http://www.elasticsearch.org/guide/reference/groovy-api/).   Visor is configured using class- and property-level annotations.
+#### Maven
+
+Visor artifacts will soon be available on the open source Sonatype repository at https://oss.sonatype.org
+```xml
+<dependency>
+    <groupId>net.yankus</groupId>
+    <artifactId>visor</artifactId>
+    <version>0.1</version>
+</dependency>
+```
+
+### How does Visor work?
+
+Visor interacts with the ElasticSearch server using the [ElasticSearch Groovy API](http://www.elasticsearch.org/guide/reference/groovy-api/).   Visor is configured using class- and property-level annotations.
 
 Let's say you have a bean like this:
 
