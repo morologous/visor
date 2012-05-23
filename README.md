@@ -1,5 +1,5 @@
                
-### What is Visor 
+### What is Visor? 
 Visor is a bridge API to help [Groovy](http://groovy.codehaus.org/) applications store and search information in [ElasticSearch](http://www.elasticsearch.org).  The intent of this API is to be as low-impact as possible for the user while still providing a high level of available customization.
 
 ### Get Visor
