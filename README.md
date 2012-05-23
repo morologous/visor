@@ -95,6 +95,8 @@ results.list.each {
 }
 ```
 
+##### Date Ranges
+
 Visor can perform Date Range searches as well.  When performing a date range search simply substitute the DateRange object for the Date in the bean.  Here is an example:
 
 ```groovy
@@ -105,6 +107,25 @@ def results = new Book(
 ).search()
 
 // print the results
+println "$results.count books returned from search:"
+results.list.each {
+    println it
+}
+```
+##### Query String
+
+Free form text queries may be performed using fields annotated with the Query annotation.
+
+```groovy
+// add this field to the book class
+...
+@Query
+def queryStr
+...
+
+// search for books with titles
+def results = new Book(queryStr:'Pitfalls OR Pratfalls').search()
+
 println "$results.count books returned from search:"
 results.list.each {
     println it
