@@ -10,7 +10,7 @@ Fork, clone or download this project at its [github page](http://github.com/moro
 
 #### Maven
 
-Visor artifacts will soon be available on the open source Sonatype repository at https://oss.sonatype.org
+Visor artifacts are available on the open source Sonatype repository at https://oss.sonatype.org
 ```xml
 <dependency>
     <groupId>net.yankus</groupId>
