@@ -114,17 +114,11 @@ results.list.each {
 ```
 ##### Query String
 
-Free form text queries may be performed using fields annotated with the Query annotation.
+The Visor annotation also adds a 'queryString' property to the bean, for free form text searching of the documents in the index.
 
 ```groovy
-// add this field to the book class
-...
-@Query
-def queryStr
-...
-
 // search for books with titles
-def results = new Book(queryStr:'Pitfalls OR Pratfalls').search()
+def results = new Book(queryString:'Pitfalls OR Pratfalls').search()
 
 println "$results.count books returned from search:"
 results.list.each {
