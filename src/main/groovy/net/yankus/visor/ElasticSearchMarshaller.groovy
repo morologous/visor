@@ -43,20 +43,27 @@ class ElasticSearchMarshaller {
         map
     }
 
-    static def findIdField = { bean -> 
-        def idField
+    static def findFieldWithAnnotation = { annotationType, bean -> 
+        def fields = []
         bean.class.declaredFields.each {
-            def annotation = it.getAnnotation Id 
+            def annotation = it.getAnnotation annotationType
             if (annotation) {
-                if (idField) {
-                    def className = bean.class
-                    throw new IllegalStateException("Bean $className has more than one @Id field annotation.")
-                }
-                idField = it
+                fields << it
             }
         }
+        fields
+    }
 
-        idField
+    static def findIdField = { bean -> 
+        def fields = ElasticSearchMarshaller.findFieldWithAnnotation(Id, bean) 
+        if (fields.size() > 1) {
+            def className = bean.getClass()
+            throw new IllegalStateException("Bean $className has more than one @Id field annotation.")
+        }
+        if (fields.size() == 1) {
+            return fields[0]
+        } 
+        return null
     }
 
     static def unmarshall = { SearchHit hit, context ->
