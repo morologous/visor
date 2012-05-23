@@ -22,7 +22,7 @@ class Book {
    def categories
 }                 
 ```
-To make this bean searchable using Visor, judiciously add @Visor, @Id and @Field annotations
+To make this bean searchable using Visor, judiciously add Visor, Id and Field annotations
 
 ```groovy
 @Visor(index='books')
@@ -43,7 +43,7 @@ class Book {
 ```
 In this example, we've annotated the appropriate fields.  One important note is the publishDate field.  To unlock some additional functionality for date searching the type property has been set on the Field annotation.  This hints Visor to watch out for Date data or Date range type searches.  More on that later.
 
-When the @Visor annotation is added to the bean several instance methods are added.  These are:
+When the Visor annotation is added to the bean several instance methods are added.  These are:
 
 * **book.index()**   add this object to the index
 * **book.search()**   search for objects like this one in the index
