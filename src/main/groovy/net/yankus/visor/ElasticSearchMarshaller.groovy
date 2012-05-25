@@ -75,6 +75,9 @@ class ElasticSearchMarshaller {
             unmarshalled[idField.name] = hit.id
         }
 
+        unmarshalled.score = hit.score        
+
+
         unmarshalled
     }
 

@@ -14,7 +14,8 @@ import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.control.CompilePhase
 
 /**
- * Full disclosure: I figured out how to do this from reading the groovy transform ToString tranformation
+ * Full disclosure: I figured out how to do this from reading the groovy
+ *                  ToString tranformation class and the Groovy AST unittests.
  */
 @GroovyASTTransformation(phase=CompilePhase.CANONICALIZATION)
 class VisorASTTransformation extends AbstractASTTransformation {
@@ -43,6 +44,7 @@ class VisorASTTransformation extends AbstractASTTransformation {
             classNode.addMethod(makeUpdateMethod())
 
             classNode.addProperty(makeQueryStringField())
+            classNode.addProperty(makeScoreField())
         }
     }
 
@@ -135,6 +137,17 @@ class VisorASTTransformation extends AbstractASTTransformation {
         def ast = new AstBuilder().buildFromSpec {
             propertyNode "queryString", ACC_PUBLIC, String, this.class, {
                 constant null
+            }
+        }
+        PropertyNode field = ast[0]
+
+        field
+    }
+
+    private def makeScoreField() {
+        def ast = new AstBuilder().buildFromSpec {
+            propertyNode "score", ACC_PUBLIC, Double, this.class, {
+                constant 0.0d
             }
         }
         PropertyNode field = ast[0]

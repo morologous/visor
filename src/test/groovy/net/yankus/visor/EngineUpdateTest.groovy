@@ -44,7 +44,7 @@ class EngineUpdateTest {
 
     @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
-    @EqualsAndHashCode
+    @EqualsAndHashCode(excludes="score")
     static class EngineUpdateTestBean {
         @Id
         def id

@@ -42,7 +42,7 @@ class QueryByComplexTypeTest {
            settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
 
     @ToString
-    @EqualsAndHashCode
+    @EqualsAndHashCode(excludes="score")
     static class ComplexTypeParent {
         @Id
         def id

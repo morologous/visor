@@ -7,7 +7,7 @@ import groovy.transform.EqualsAndHashCode
        index = "test",
        settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(excludes="score")
 public class TestBean {
     @Id
     def id
