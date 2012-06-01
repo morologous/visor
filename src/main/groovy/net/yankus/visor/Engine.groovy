@@ -20,12 +20,23 @@ class Engine {
 
         log.debug "Marshalled query parameters: $queryParams"
 
-        def queryStrVal = queryParam['queryString']
+        def queryStrVal = queryParam.queryString
         if (queryStrVal) { log.debug "Detected query_string param: $queryStrVal" }
 
+        // Paging
         def pageSize = queryParam.pageSize
         def startingIndex = queryParam.startingIndex
         log.debug "Paging information: pageSize $pageSize startingIndex $startingIndex"
+
+        // sorting
+        def sortOrder = []
+        if (queryParam.sortOrder) {
+            sortOrder << queryParam.sortOrder
+        }
+        // at the bottom ALWAYS sort by score asc
+        sortOrder << "_score" 
+        log.debug "Sorting: $sortOrder"
+
         Engine.doInElasticSearch(context) { client ->
             def search = client.search (({
                 indices context.index
@@ -33,6 +44,7 @@ class Engine {
                 source {   
                     from=startingIndex
                     size=pageSize
+                    sort = sortOrder
                     query {
                         filtered {
                             query {
