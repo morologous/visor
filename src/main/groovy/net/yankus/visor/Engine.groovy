@@ -14,6 +14,8 @@ class Engine {
     }
 
     static def search = { queryParam ->
+        def startInstant = new Date().time
+
         def context = ContextBuilder.build queryParam
         def queryParams = ElasticSearchMarshaller.marshallSearchParameters(Marshaller.marshall(queryParam))
         log.info "Searching $context.index for type $context.returnType.simpleName"
@@ -36,6 +38,9 @@ class Engine {
         // at the bottom ALWAYS sort by score asc
         sortOrder << "_score" 
         log.debug "Sorting: $sortOrder"
+
+        // metrics
+        def assemblyDoneInstant = new Date().time 
 
         Engine.doInElasticSearch(context) { client ->
             def search = client.search (({
@@ -70,15 +75,39 @@ class Engine {
                 }  
             }))
 
+            def queryBuiltInstant = new Date().time
+            
+            def response = search.response '5s'
+            log.debug "Search Response: $response"
+
+            def responseInstant = new Date().time
+
             def results = new Expando()
-            log.debug search.response
-            results.response = search.response '5s'
-            results.count = search.response.hits().totalHits()
+            results.response = response
 
-            log.debug "Found $results.count hits."
+            results.list = ElasticSearchMarshaller.unmarshallAll(response.hits, context)
+            
+            def unmarshallInstant = new Date().time
 
-            results.list = ElasticSearchMarshaller.unmarshallAll(search.response.hits, context)
+            results.count = response.hits().totalHits()
+            results.pageSize = results.list.size()
 
+            log.debug "Search matched $results.count hits, returned $results.pageSize"
+
+            results.stats = new Expando()
+            results.stats.engineTook = response.tookInMillis
+            //results.stats.shards = response.shards
+            //results.stats.timedOut = response.timedOut
+            results.stats.maxScore = response.hits().maxScore
+            results.stats.detailTime = [:]
+            results.stats.detailTime << ['assemblyDone': assemblyDoneInstant - startInstant]
+            results.stats.detailTime << ['queryBuilt': queryBuiltInstant - assemblyDoneInstant]
+            results.stats.detailTime << ['response': responseInstant - queryBuiltInstant]
+            results.stats.detailTime << ['unmarshall': unmarshallInstant - responseInstant]
+            results.stats.detailTime << ['statsDone': new Date().time - unmarshallInstant ]
+            results.stats.detailTime << ['overall': new Date().time - startInstant ]
+
+            log.debug "Search Execution Stats: $results.stats"
             results
         }
     }
