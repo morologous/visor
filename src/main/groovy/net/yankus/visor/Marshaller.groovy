@@ -36,17 +36,19 @@ class Marshaller {
 
     static def marshall = { bean, mode='QUERY' -> 
         def props = [:]
-        
+        log.debug "Marshalling mode: $mode"
+
         Marshaller.foreachProperty(bean) { field, annotation ->
             def marshallContext = new Expando()
+        
             marshallContext.fieldName = field.name
             marshallContext.targetBean = bean
             marshallContext.mode = mode
             marshallContext.annotation = annotation
 
-            //log.debug "marshallContext $marshallContext"
-
             def value = annotation.marshall().newInstance(null, null).call(marshallContext)
+
+            log.debug "Marshalled $marshallContext.fieldName to $value"
             
             def prop
             // this is sorta kludgey.  We need to add extra info for QUERY operations
@@ -54,10 +56,8 @@ class Marshaller {
             // be done better with a closure at index time extracting only the value
             // but for today, my brain hurts too much to write that.
             if (mode == 'INDEX') {
-                //log.debug 'Marshalling for INDEX operation'
                 prop = value
             } else {
-                //log.debug "Marshalling for $mode operation"
                 prop = new Expando()
                 prop.annotation = annotation
                 prop.field = field

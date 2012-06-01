@@ -8,18 +8,24 @@ import static org.elasticsearch.groovy.node.GNodeBuilder.*
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.common.settings.ImmutableSettings
+import groovy.util.logging.Log4j 
 
+@Log4j
 class ElasticSearchClientFactory {
     
     static def create = { context -> 
         // short circuit
         if (ElasticSearchClientHolder.INSTANCE.get().clients[context.returnType]) {
+                log.debug "Returning pre-existing client for $context.returnType"
                 return ElasticSearchClientHolder.INSTANCE.get().clients[context.returnType]
         }
+
+        log.debug "Creating new client for $context.returnType"
 
         def datasource = new Expando()
 
         if (context.remoteAddresses.length > 0) {
+                log.info "Creating transportClient for $context.remoteAddresses"
                 def settings = ImmutableSettings.settingsBuilder()
 
                 def settingsClosure = context.settings.newInstance(settings, settings).call()
@@ -35,6 +41,7 @@ class ElasticSearchClientFactory {
                 datasource.close = { /* no op? */ }
 
         } else {
+                log.info 'Creating nodeBuilder client.'
                 datasource.nodeBuilder = nodeBuilder()
 
                 def settingsClosure = context.settings.newInstance(datasource.nodeBuilder.getSettings(), datasource.nodeBuilder.getSettings())

@@ -9,7 +9,7 @@ class ElasticSearchMarshaller {
     
     private static def flattenParameter = {key, value ->
         def map = [:]
-
+        log.debug "Flattening $key : $value"
         //log.debug 'value is ' + value.getClass()
         if (value instanceof Collection) {
             value.each {
@@ -36,7 +36,7 @@ class ElasticSearchMarshaller {
 
     static def marshallSearchParameters = { parameters -> 
         def map = [:]
-        log.debug parameters
+        log.debug "Marshalling search parameters: $parameters"
         parameters.entrySet().each {
             map << ElasticSearchMarshaller.flattenParameter(it.key, it.value)
         }
@@ -67,6 +67,7 @@ class ElasticSearchMarshaller {
     }
 
     static def unmarshall = { SearchHit hit, context ->
+        log.debug "Unmarshalling hit: $hit"
         def unmarshalled = Marshaller.unmarshall(hit.source, context.returnType)
         
         // detect and set Id

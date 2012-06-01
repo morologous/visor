@@ -1,7 +1,9 @@
 package net.yankus.visor
 
 import groovy.util.Expando
+import groovy.util.logging.Log4j 
 
+@Log4j
 final class ContextBuilder {
 
 	public static def build = { bean ->
@@ -17,6 +19,8 @@ final class ContextBuilder {
 		context.remoteAddresses = annotation.remoteAddresses()
 
 		context.returnType = bean.class
+
+		log.debug "Constructed context: $context"
 
 		context
 	}

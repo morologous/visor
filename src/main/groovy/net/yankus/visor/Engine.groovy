@@ -16,10 +16,13 @@ class Engine {
     static def search = { queryParam ->
         def context = ContextBuilder.build queryParam
         def queryParams = ElasticSearchMarshaller.marshallSearchParameters(Marshaller.marshall(queryParam))
+        log.info "Searching $context.index for type $context.returnType.simpleName"
+
+        log.debug "Marshalled query parameters: $queryParams"
 
         def queryStrVal = queryParam['queryString']
-        log.debug "queryStrVal $queryStrVal"
-        //log.debug "queryParams: $queryParams"
+        if (queryStrVal) { log.debug "Detected query_string param: $queryStrVal" }
+        
         Engine.doInElasticSearch(context) { client ->
             def search = client.search (({
                 indices context.index
@@ -29,9 +32,11 @@ class Engine {
                         filtered {
                             query {
                                 if (queryStrVal) {
+                                    log.debug "Applying query_string $queryStrVal"
                                     query_string (query:queryStrVal)
                                 }
                                 queryParams.entrySet().each { entry ->
+                                    log.debug "Adding query parameter $entry.key : $entry.value.value"
                                     entry.value
                                          .annotation
                                          .applyToQuery()
@@ -52,6 +57,9 @@ class Engine {
             log.debug search.response
             results.response = search.response '5s'
             results.count = search.response.hits().totalHits()
+
+            log.debug "Found $results.count hits."
+
             results.list = ElasticSearchMarshaller.unmarshallAll(search.response.hits, context)
 
             results
@@ -62,7 +70,6 @@ class Engine {
         def context = ContextBuilder.build(target)
 
         def indexParams = Marshaller.marshall(target, 'INDEX')
-
         def targetIdField = ElasticSearchMarshaller.findIdField(target)
         if (!targetIdField) {
             throw new IllegalArgumentException('Bean must have Id-annotated field to be stored in search index')
@@ -71,8 +78,8 @@ class Engine {
         if (!targetId) {
             throw new IllegalArgumentException('Bean must have populated Id-annotated field to be stored in search index.')
         }
-
-        log.debug "Indexing $context.parameters as id $targetId of type $context.returnType.simpleName into $context.index with parameters $indexParams"
+        log.info "Indexing to $context.index id $targetId"
+        log.debug "Indexed values: $indexParams"
         Engine.doInElasticSearch(context) { client -> 
             def result = client.index {
                 index context.index
@@ -89,12 +96,14 @@ class Engine {
     static def delete = { target ->
         def context = ContextBuilder.build target 
         def idField = ElasticSearchMarshaller.findIdField target
+        def idValue = target[idField.name]
+        log.info "Deleting $context.index id $idValue"
         if (idField && target[idField.name]) {
             Engine.doInElasticSearch(context) { client ->
                 def result = client.delete {
                     index context.index
                     type context.returnType.simpleName
-                    id target[idField.name]
+                    id "$idValue"
                 }
 
                 result 
