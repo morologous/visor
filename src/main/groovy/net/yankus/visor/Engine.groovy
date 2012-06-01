@@ -45,10 +45,10 @@ class Engine {
         Engine.doInElasticSearch(context) { client ->
             def search = client.search (({
                 indices context.index
-                types context.returnType.simpleName           
+                types context.returnType.simpleName         
                 source {   
-                    from=startingIndex
-                    size=pageSize
+                    from = startingIndex
+                    size = pageSize
                     sort = sortOrder
                     query {
                         filtered {
@@ -91,6 +91,7 @@ class Engine {
 
             results.count = response.hits().totalHits()
             results.pageSize = results.list.size()
+            results.query = queryParam
 
             log.debug "Search matched $results.count hits, returned $results.pageSize"
 
