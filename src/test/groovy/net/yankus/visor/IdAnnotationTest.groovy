@@ -33,6 +33,20 @@ class IdAnnotationTest {
     }
 
     @Test
+    void testCoerceIdToStringInEngine() {
+        def gazonk = new SingleIdAnnotationTestBean(id:123L, name:'gazonk')
+        gazonk.index()
+
+        SearchEngineTestHelper.snooze()
+
+        def results = new SingleIdAnnotationTestBean(name:'gazonk').search()
+        assertEquals 1, results.count
+        assertEquals gazonk.id.toString(), results.list[0].id
+
+        gazonk.delete()
+    }
+
+    @Test
     void testSearchEach() {
         def results = new SingleIdAnnotationTestBean(name:'aaa').search()
 

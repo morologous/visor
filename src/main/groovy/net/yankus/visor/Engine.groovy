@@ -118,21 +118,19 @@ class Engine {
         def context = ContextBuilder.build(target)
 
         def indexParams = Marshaller.marshall(target, 'INDEX')
-        def targetIdField = ElasticSearchMarshaller.findIdField(target)
-        if (!targetIdField) {
-            throw new IllegalArgumentException('Bean must have Id-annotated field to be stored in search index')
-        }
-        def targetId = target[targetIdField.name]
+
+        def targetId = ElasticSearchMarshaller.getIdValueFromBean target
         if (!targetId) {
             throw new IllegalArgumentException('Bean must have populated Id-annotated field to be stored in search index.')
         }
+
         log.info "Indexing to $context.index id $targetId"
         log.debug "Indexed values: $indexParams"
         Engine.doInElasticSearch(context) { client -> 
             def result = client.index {
                 index context.index
                 type context.returnType.simpleName
-                id "$targetId"
+                id targetId
                 source indexParams
             }
             
@@ -143,15 +141,14 @@ class Engine {
 
     static def delete = { target ->
         def context = ContextBuilder.build target 
-        def idField = ElasticSearchMarshaller.findIdField target
-        def idValue = target[idField.name]
+        def idValue = ElasticSearchMarshaller.getIdValueFromBean target
         log.info "Deleting $context.index id $idValue"
-        if (idField && target[idField.name]) {
+        if (idValue) {
             Engine.doInElasticSearch(context) { client ->
                 def result = client.delete {
                     index context.index
                     type context.returnType.simpleName
-                    id "$idValue"
+                    id idValue
                 }
 
                 result 

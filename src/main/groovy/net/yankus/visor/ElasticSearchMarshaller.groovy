@@ -66,6 +66,13 @@ class ElasticSearchMarshaller {
         return null
     }
 
+    static def getIdValueFromBean = { bean ->
+        def field = ElasticSearchMarshaller.findIdField bean
+        def rawValue = bean[field.name]
+
+        rawValue.toString()
+    }
+
     static def unmarshall = { SearchHit hit, context ->
         log.debug "Unmarshalling hit: $hit"
         def unmarshalled = Marshaller.unmarshall(hit.source, context.returnType)
