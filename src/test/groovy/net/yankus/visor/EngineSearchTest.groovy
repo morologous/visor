@@ -48,7 +48,8 @@ class EngineSearchTest {
 
     @Test
     public void testQuery() {
-        def results = new TestBean(value:'foo').search()
+        def query = new TestBean(value:'foo')
+        def results = query.search()
         assertEquals 1, results.count
         // results.list.each { println "result $it" }
         results.response.hits.each { SearchHit hit ->
@@ -59,7 +60,10 @@ class EngineSearchTest {
            assertEquals 1, it.num
         }
 
+        assertSame query, results.query
     }
+
+
 
     @Test
     public void testMultiFieldQuery() {
