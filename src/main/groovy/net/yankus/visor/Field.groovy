@@ -11,13 +11,11 @@ public @interface Field {
     Class marshall() default { 
         def value = it.targetBean[it.fieldName]
         AnnotationDefaultClosureLogger.debug "Attempting to marshall $it"
-        if (it.annotation?.type() == Date) {
-            if (value instanceof DateRange) {
+        if (value instanceof Date) {
+            value?.time
+        } else if (value instanceof DateRange) {
                 AnnotationDefaultClosureLogger.debug 'Marshalling to DateRange.'
                 new DateRange(from:value?.from?.time, to:value?.to?.time)
-            } else {
-                value?.time
-            }
         } else if (value instanceof Collection) {
             AnnotationDefaultClosureLogger.debug 'Marshalling to Collection.'
             def coll = []
@@ -67,6 +65,5 @@ public @interface Field {
             must: field ((key):value)
         }
     }
-    String queryPhase() default 'QUERY'
     Class type() default java.lang.String 
 }
