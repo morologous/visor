@@ -72,7 +72,7 @@ class SearchEngineTestHelper {
             }
 
             def response = deleteR.response '5s'
-            assertEquals bean.id, response.id
+            assertEquals '' + bean.id, response.id
 
 
             response

@@ -22,12 +22,17 @@ class Engine {
 
         def queryStrVal = queryParam['queryString']
         if (queryStrVal) { log.debug "Detected query_string param: $queryStrVal" }
-        
+
+        def pageSize = queryParam.pageSize
+        def startingIndex = queryParam.startingIndex
+        log.debug "Paging information: pageSize $pageSize startingIndex $startingIndex"
         Engine.doInElasticSearch(context) { client ->
             def search = client.search (({
                 indices context.index
-                types context.returnType.simpleName
-                source {
+                types context.returnType.simpleName           
+                source {   
+                    from=startingIndex
+                    size=pageSize
                     query {
                         filtered {
                             query {

@@ -45,6 +45,8 @@ class VisorASTTransformation extends AbstractASTTransformation {
 
             classNode.addProperty(makeQueryStringField())
             classNode.addProperty(makeScoreField())
+            classNode.addProperty(makePageSizeField())
+            classNode.addProperty(makeStartingIndexField())
         }
     }
 
@@ -148,6 +150,30 @@ class VisorASTTransformation extends AbstractASTTransformation {
         def ast = new AstBuilder().buildFromSpec {
             propertyNode "score", ACC_PUBLIC, Double, this.class, {
                 constant 0.0d
+            }
+        }
+        PropertyNode field = ast[0]
+
+        field
+    }
+
+
+    private def makePageSizeField() {
+        def ast = new AstBuilder().buildFromSpec {
+            propertyNode "pageSize", ACC_PUBLIC, Long, this.class, {
+                constant 25L
+            }
+        }
+        PropertyNode field = ast[0]
+
+        field
+    }
+
+
+    private def makeStartingIndexField() {
+        def ast = new AstBuilder().buildFromSpec {
+            propertyNode "startingIndex", ACC_PUBLIC, Long, this.class, {
+                constant 0L
             }
         }
         PropertyNode field = ast[0]
