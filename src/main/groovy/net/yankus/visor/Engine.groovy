@@ -95,6 +95,7 @@ class Engine {
 
             log.debug "Search matched $results.count hits, returned $results.pageSize"
 
+            // TODO: probably don't need an expando here.
             results.stats = new Expando()
             results.stats.engineTook = response.tookInMillis
             //results.stats.shards = response.shards

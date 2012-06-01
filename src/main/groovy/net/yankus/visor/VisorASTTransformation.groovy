@@ -36,6 +36,16 @@ class VisorASTTransformation extends AbstractASTTransformation {
         if (parent instanceof ClassNode) {
             ClassNode classNode = (ClassNode) parent
             checkNotInterface(classNode, VISOR_NODE_NAME)
+            
+            def methodNames =['search', 'index', 'update', 'delete']
+            if (classNode.getAllDeclaredMethods().name.find { methodNames.contains it }) {
+                throw new IllegalStateException("Visor annotated classes should not have any of the following methods declared: $methodNames")
+            }
+
+            def propertyNames = ['queryString', 'score', 'pageSize', 'startingIndex', 'sortOrder']
+            if (classNode.getProperties().name.find { propertyNames.contains it}) {
+                throw new IllegalStateException("Visor annotated classes should not have any properties with the following names: $propertyNames")
+            }
 
             // TODO: preconfirm that the methods don't already exist, for sanity (i.e., what about if they're already gormified.)
             classNode.addMethod(makeSearchMethod())
