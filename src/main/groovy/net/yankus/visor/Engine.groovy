@@ -39,6 +39,16 @@ class Engine {
         sortOrder << "_score" 
         log.debug "Sorting: $sortOrder"
 
+        def highlights
+        Marshaller.foreachProperty(queryParam) { field, annotation -> 
+            if (annotation.highlight()) {
+                if (!highlights) {
+                    highlights = []
+                }
+                highlights << field.name
+            }
+        }
+
         // metrics
         def assemblyDoneInstant = new Date().time 
 
@@ -72,6 +82,17 @@ class Engine {
                                             .rehydrate(delegate, owner, thisObject)
                         }
                     }
+                    if (highlights) {
+                        log.debug "Highlighting: $highlights"
+                        highlight {
+                            fields {
+                                highlights.each {
+                                    "$it" { }
+                                }
+                            } 
+                        }
+                    }
+   
                 }  
             }))
 
@@ -87,6 +108,10 @@ class Engine {
 
             results.list = ElasticSearchMarshaller.unmarshallAll(response.hits, context)
             
+            response.hits.each {
+                log.debug it.highlightFields
+            }
+
             def unmarshallInstant = new Date().time
 
             results.count = response.hits().totalHits()

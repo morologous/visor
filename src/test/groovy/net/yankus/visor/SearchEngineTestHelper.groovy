@@ -108,6 +108,11 @@ class SearchEngineTestHelper {
                 query {
                     ids(values:[bean.id])
                 }
+                highlight {
+                    fields {
+                        all { }
+                    }
+                }
             }
         } 
 

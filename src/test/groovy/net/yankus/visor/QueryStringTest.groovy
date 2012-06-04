@@ -19,6 +19,8 @@ class QueryStringTest {
     
         SearchEngineTestHelper.index qstr1
         SearchEngineTestHelper.index qstr2
+
+        SearchEngineTestHelper.search qstr1
     }
 
     @AfterClass
@@ -57,7 +59,7 @@ class QueryStringTest {
     static class QueryStringTestBean {
         @Id
         def id
-        @Field
+        @Field(highlight=true)
         def text
     }
 }

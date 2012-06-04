@@ -72,4 +72,5 @@ public @interface Field {
         }
     }
     Class type() default java.lang.String 
+    boolean highlight() default false
 }
