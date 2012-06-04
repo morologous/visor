@@ -24,6 +24,9 @@ public @interface Field {
             }
             AnnotationDefaultClosureLogger.debug 'Marshalled Collection: $coll'
             coll
+        } else if (Marshaller.isChildBean(value)) {
+            AnnotationDefaultClosureLogger.debug 'Marshalling complex child type: ' + value.class
+            Marshaller.marshall(value, it.mode)        
         } else {
             AnnotationDefaultClosureLogger.debug 'Performing default marshalling.'
             value
@@ -41,6 +44,9 @@ public @interface Field {
                 coll << Marshaller.unmarshall(val, it.annotation.type())
             }
             it.targetBean[it.fieldName] = coll
+        } else if (Marshaller.isChildBean(it.annotation?.type().newInstance())) {
+            AnnotationDefaultClosureLogger.debug '' + it.annotation.type() + ' is child bean -- performing Map unmarshalling on object type.'
+            it.targetBean[it.fieldName] = Marshaller.unmarshall(it.fieldValue, it.annotation.type())
         } else {
             AnnotationDefaultClosureLogger.debug 'Performing default unmarshalling.'
             it.targetBean[it.fieldName] = it.fieldValue 
