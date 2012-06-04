@@ -43,19 +43,8 @@ class ElasticSearchMarshaller {
         map
     }
 
-    static def findFieldWithAnnotation = { annotationType, bean -> 
-        def fields = []
-        bean.class.declaredFields.each {
-            def annotation = it.getAnnotation annotationType
-            if (annotation) {
-                fields << it
-            }
-        }
-        fields
-    }
-
     static def findIdField = { bean -> 
-        def fields = ElasticSearchMarshaller.findFieldWithAnnotation(Id, bean) 
+        def fields = Marshaller.findFieldWithAnnotation(Id, bean) 
         if (fields.size() > 1) {
             def className = bean.getClass()
             throw new IllegalStateException("Bean $className has more than one @Id field annotation.")
