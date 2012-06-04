@@ -28,7 +28,7 @@ class Marshaller {
         Marshaller.getProperties(bean).keySet().each {
             def field = bean.class.getDeclaredField it
             def annotation = field.getAnnotation Field
-            if (annotation && bean[it]) {
+            if (annotation && bean[it] != null) {
                 callback(field, annotation)
             }
         }
