@@ -15,6 +15,7 @@ class QueryByComplexTypeTest {
     static void setUp() {
         foo = new ComplexTypeParent(id:'foo',
             name:'foo',
+            firstChild:new ComplexTypeChild(name:'1kid', num:1),
             children:[new ComplexTypeChild(name:'child', num:2)])
 
         SearchEngineTestHelper.index(foo)
@@ -48,6 +49,8 @@ class QueryByComplexTypeTest {
         def id
         @Field
         def name
+        @Field(type=ComplexTypeChild)
+        def firstChild
         @Field(type=ComplexTypeChild)
         def children
     }
