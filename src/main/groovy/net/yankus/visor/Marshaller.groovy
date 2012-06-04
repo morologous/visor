@@ -24,6 +24,21 @@ class Marshaller {
         field
     }
 
+    static def findFieldWithAnnotation = { annotationType, bean -> 
+        def fields = []
+        bean.class.declaredFields.each {
+            def annotation = it.getAnnotation annotationType
+            if (annotation) {
+                fields << it
+            }
+        }
+        fields
+    }
+
+    static boolean isChildBean (o) {
+        return !Marshaller.findFieldWithAnnotation(Field, o).isEmpty()
+    }
+
     static def foreachProperty = { bean, callback ->
         Marshaller.getProperties(bean).keySet().each {
             def field = bean.class.getDeclaredField it
