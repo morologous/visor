@@ -40,7 +40,6 @@ artifacts {
 
 /*
 if (deploymentOperations) {
-    /*
     apply plugin: 'signing'
 
     signing {
@@ -89,7 +88,7 @@ if (deploymentOperations) {
             }
         }
     }
-    */
+    
 }
 */
 
