@@ -24,7 +24,7 @@ class ElasticSearchClientFactory {
 
         def datasource = new Expando()
 
-        if (context.remoteAddresses.length > 0) {
+        if (context.remoteAddresses.size() > 0) {
                 log.info "Creating transportClient for $context.remoteAddresses"
                 def settings = ImmutableSettings.settingsBuilder()
 
