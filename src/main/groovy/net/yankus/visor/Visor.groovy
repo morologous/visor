@@ -16,6 +16,7 @@ public @interface Visor {
         http { enabled = false }
     };
     public String index()
-    public String[] remoteAddresses() default []
+    public Class remoteAddresses() default { [] }
+
 
 }

@@ -16,7 +16,7 @@ final class ContextBuilder {
 		context.filters = annotation.filters()
 		context.index = annotation.index()
 		context.settings = annotation.settings()
-		context.remoteAddresses = annotation.remoteAddresses()
+		context.remoteAddresses = annotation.remoteAddresses().newInstance(null, null).call()
 
 		context.returnType = bean.class
 
