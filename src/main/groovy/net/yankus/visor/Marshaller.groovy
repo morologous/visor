@@ -43,6 +43,16 @@ class Marshaller {
         Marshaller.getProperties(bean).keySet().each {
             def field = bean.class.getDeclaredField it
             def annotation = field.getAnnotation Field
+            if (annotation) {
+                callback(field, annotation)
+            }
+        }
+    }
+
+        static def foreachNotNullProperty = { bean, callback ->
+        Marshaller.getProperties(bean).keySet().each {
+            def field = bean.class.getDeclaredField it
+            def annotation = field.getAnnotation Field
             if (annotation && bean[it] != null) {
                 callback(field, annotation)
             }
@@ -53,7 +63,7 @@ class Marshaller {
         def props = [:]
         log.debug "Marshalling mode: $mode"
 
-        Marshaller.foreachProperty(bean) { field, annotation ->
+        Marshaller.foreachNotNullProperty(bean) { field, annotation ->
             def marshallContext = new Expando()
         
             marshallContext.fieldName = field.name

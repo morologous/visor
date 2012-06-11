@@ -2,8 +2,9 @@ package net.yankus.visor
 
 import groovy.transform.ToString
 import groovy.transform.EqualsAndHashCode
+import static org.elasticsearch.index.query.FilterBuilders.*
 
-@Visor(filters = { terms(security:['low', 'none']) }, 
+@Visor(filters = { inFilter('security', ['low', 'none'] as String[]) }, 
        index = "test",
        settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
 @ToString

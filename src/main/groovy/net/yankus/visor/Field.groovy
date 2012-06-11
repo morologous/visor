@@ -4,6 +4,7 @@ import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
 import java.lang.annotation.ElementType
+import static org.elasticsearch.index.query.QueryBuilders.*
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -57,18 +58,15 @@ public @interface Field {
         AnnotationDefaultClosureLogger.debug "Applying $key : $value"
         if (value instanceof MultiSelect) {
             AnnotationDefaultClosureLogger.debug 'Applying MultiSelect'
-            must: terms((key): value.values)
+            inQuery key, value.values as Object[]        
         } else if (value instanceof DateRange) {
             AnnotationDefaultClosureLogger.debug 'Applying DateRange'
-            range {
-                "$key" {
-                    from: value.from
-                    to: value.to                          
-                }
-            }
+            rangeQuery(key)
+                .from(value.from)
+                .to(value.to)
         } else {
-            AnnotationDefaultClosureLogger.debug 'Performing default apply.'
-            must: field ((key):value)
+            AnnotationDefaultClosureLogger.debug 'Performing default apply.'            
+            text key, value
         }
     }
     Class type() default java.lang.String 

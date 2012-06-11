@@ -4,6 +4,9 @@ import org.elasticsearch.search.SearchHit
 import groovy.util.Expando
 import org.elasticsearch.action.index.IndexResponse
 import groovy.util.logging.Log4j 
+import static org.elasticsearch.index.query.FilterBuilders.*
+import static org.elasticsearch.index.query.QueryBuilders.*
+import org.elasticsearch.search.sort.SortOrder
 
 @Log4j
 class Engine {
@@ -39,12 +42,9 @@ class Engine {
         sortOrder << "_score" 
         log.debug "Sorting: $sortOrder"
 
-        def highlights
+        def highlights = []
         Marshaller.foreachProperty(queryParam) { field, annotation -> 
             if (annotation.highlight()) {
-                if (!highlights) {
-                    highlights = []
-                }
                 highlights << field.name
             }
         }
@@ -53,52 +53,55 @@ class Engine {
         def assemblyDoneInstant = new Date().time 
 
         Engine.doInElasticSearch(context) { client ->
-            def search = client.search (({
-                indices context.index
-                types context.returnType.simpleName         
-                source {   
-                    from = startingIndex
-                    size = pageSize
-                    sort = sortOrder
-                    query {
-                        filtered {
-                            query {
-                                if (queryStrVal) {
-                                    log.debug "Applying query_string $queryStrVal"
-                                    query_string (query:queryStrVal)
-                                }
-                                queryParams.entrySet().each { entry ->
-                                    log.debug "Adding query parameter $entry.key : $entry.value.value"
-                                    entry.value
-                                         .annotation
-                                         .applyToQuery()
-                                         .newInstance(null, null)
-                                         .rehydrate(delegate, owner, thisObject)
-                                         .call(entry.key, entry.value.value)
-                                }            
-                            }
-                            filter = context.filters
-                                            .newInstance(null, null)
-                                            .rehydrate(delegate, owner, thisObject)
-                        }
+
+            def query = boolQuery()
+
+            def s = client.prepareSearch(context.index)
+                          .setFrom(startingIndex as int)
+                          .setSize(pageSize as int)
+                          .setTypes(context.returnType.simpleName)
+
+            highlights.each {
+                log.debug "Adding highlighted field: $it"
+                s.addHighlightedField(it)
+            }               
+
+            sortOrder.each {
+                if (it instanceof String) {
+                    s.addSort(it, SortOrder.ASC)
+                } else { // presume map
+                    it.entrySet().each {
+                        s.addSort(it.key, SortOrder.ASC.toString().equalsIgnoreCase(it.value)? SortOrder.ASC : SortOrder.DESC)
                     }
-                    if (highlights) {
-                        log.debug "Highlighting: $highlights"
-                        highlight {
-                            fields {
-                                highlights.each {
-                                    "$it" { }
-                                }
-                            } 
-                        }
-                    }
-   
-                }  
-            }))
+                }
+                    
+            }
+
+            def bool = boolQuery()            
+            queryParams.entrySet().each { entry -> 
+                bool.must(entry.value
+                               .annotation
+                               .applyToQuery()
+                               .newInstance(null, null)
+                               .rehydrate(delegate, owner, thisObject)
+                               .call(entry.key, entry.value.value))
+            }
+
+            if (queryStrVal) {
+                log.debug "Applying query_string $queryStrVal"
+                bool.must(queryString(queryStrVal))
+            }
+
+            s.setQuery(bool)
+
+            def filterClosure = context.filters.newInstance(null, null)            
+            s.setFilter filterClosure.call()
+
+            def searchR = s.gexecute()
 
             def queryBuiltInstant = new Date().time
             
-            def response = search.response '5s'
+            def response = searchR.response '5s'
             log.debug "Search Response: $response"
 
             def responseInstant = new Date().time
