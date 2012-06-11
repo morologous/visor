@@ -50,7 +50,7 @@ class RemoteClientTestIntegration {
                      /* put('client.transport.sniff', true) */ }
               )
     @ToString
-    @EqualsAndHashCode(excludes="score")
+    @EqualsAndHashCode(excludes="score, snippets")
     static class RemoteClientTestBean {
         @Id
         def id

@@ -42,7 +42,7 @@ class VisorASTTransformation extends AbstractASTTransformation {
                 throw new IllegalStateException("Visor annotated classes should not have any of the following methods declared: $methodNames")
             }
 
-            def propertyNames = ['queryString', 'score', 'pageSize', 'startingIndex', 'sortOrder']
+            def propertyNames = ['queryString', 'score', 'pageSize', 'startingIndex', 'sortOrder', 'snippets']
             if (classNode.getProperties().name.find { propertyNames.contains it}) {
                 throw new IllegalStateException("Visor annotated classes should not have any properties with the following names: $propertyNames")
             }
@@ -55,6 +55,7 @@ class VisorASTTransformation extends AbstractASTTransformation {
 
             classNode.addProperty(makeQueryStringField())
             classNode.addProperty(makeScoreField())
+            classNode.addProperty(makeSnippetField())
             classNode.addProperty(makePageSizeField())
             classNode.addProperty(makeStartingIndexField())
             classNode.addProperty(makeSortOrderField())
@@ -195,6 +196,17 @@ class VisorASTTransformation extends AbstractASTTransformation {
     private def makeSortOrderField() {
         def ast = new AstBuilder().buildFromSpec {
             propertyNode "sortOrder", ACC_PUBLIC, Object, this.class, {
+               null
+            }
+        }
+        PropertyNode field = ast[0]
+
+        field
+    }
+
+    private def makeSnippetField() {
+        def ast = new AstBuilder().buildFromSpec {
+            propertyNode "snippets", ACC_PUBLIC, Object, this.class, {
                null
             }
         }

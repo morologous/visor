@@ -73,7 +73,8 @@ class ElasticSearchMarshaller {
         }
 
         unmarshalled.score = hit.score        
-
+        unmarshalled.snippets = [:]
+        unmarshalled.snippets << hit.highlightFields()        
 
         unmarshalled
     }

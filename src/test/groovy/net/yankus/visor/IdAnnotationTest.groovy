@@ -67,7 +67,7 @@ class IdAnnotationTest {
 
     @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
-    @EqualsAndHashCode(excludes="score")
+    @EqualsAndHashCode(excludes="score, snippets")
     static class SingleIdAnnotationTestBean {
         @Id
         def id
@@ -77,7 +77,7 @@ class IdAnnotationTest {
 
     @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
-    @EqualsAndHashCode(excludes="score")
+    @EqualsAndHashCode(excludes="score, snippets")
     static class MultipleIdAnnotationTestBean {
         @Id
         def id
@@ -91,7 +91,7 @@ class IdAnnotationTest {
 
     @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
-    @EqualsAndHashCode(excludes="score")
+    @EqualsAndHashCode(excludes="score, snippets")
     static class NoIdAnnotationTestBean {
         def id
         @Field

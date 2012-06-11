@@ -20,6 +20,7 @@ class ElasticSearchUnmarshallerTest {
 		mock = new MockFor(SearchHit)
 		mock.demand.getSource() { source }
 		mock.demand.getScore() { 0.75d }
+		mock.demand.highlightFields() { [ text:[fragments:'foo']] }
 		searchHit = mock.proxyInstance()
 		context = new Expando()
 		context.returnType = TestBean.class

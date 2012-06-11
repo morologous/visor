@@ -8,7 +8,7 @@ import static org.elasticsearch.index.query.FilterBuilders.*
        index = "test",
        settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
 @ToString
-@EqualsAndHashCode(excludes="score")
+@EqualsAndHashCode(excludes="score, snippets")
 public class TestBean {
     @Id
     def id

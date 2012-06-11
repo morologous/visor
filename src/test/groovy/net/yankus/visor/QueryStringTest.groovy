@@ -43,19 +43,22 @@ class QueryStringTest {
         def results = new QueryStringTestBean(queryString:'wheat').search()
         assertEquals 1, results.count
         assertTrue results.list.contains(qstr2)
-
+        assertNotNull(results.list[0].snippets)
+        assertEquals ' or flour and water. Italian dried spaghetti is made from durum <em>wheat</em> semolina, but outside of Italy', results.list[0].snippets.text.fragments[0]
     }
 
+    @Test
     public void testSearchItalyAndVolcano() {
-        def results = new QueryStringTestBean(queryString:'italy AND volcano')
+        def results = new QueryStringTestBean(queryString:'italy AND volcano').search()
+        assertNotNull results
         assertEquals 1, results.count
-        assertTrue results.list.contains(qstr1)
+        assertTrue results.list.contains(qstr1)        
     }
 
     @Visor ( index = 'test',
            settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
-    @EqualsAndHashCode(excludes="score")
+    @EqualsAndHashCode(excludes="score, snippets")
     static class QueryStringTestBean {
         @Id
         def id
