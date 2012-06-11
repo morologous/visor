@@ -16,7 +16,7 @@ class SearchPagingTest {
     @BeforeClass
     public static void setUp() throws Exception {
         for (i in 0..24) {
-            def bean = new SearchPagingTestBean(id:"$i", name:"bean $i")
+            def bean = new SearchPagingTestBean(id:"$i", name:'bean_'+i)
             bean.index()
             testBeans << bean
         }
@@ -32,14 +32,14 @@ class SearchPagingTest {
 
     @Test
     void testPaging() {
-        def results =  new SearchPagingTestBean(queryString:'bean 1', pageSize:5, startingIndex:10).search()
+        def results =  new SearchPagingTestBean(queryString:'bean*', pageSize:5, startingIndex:10, sortOrder: 'name').search()
 
         assertEquals 5, results.list.size()
         assertEquals 25, results.count
 
         def third = results.list[2]
 
-        results = new SearchPagingTestBean(queryString:'bean 1', pageSize:5, startingIndex:12).search()
+        results = new SearchPagingTestBean(queryString:'bean*', pageSize:5, startingIndex:12, sortOrder: 'name').search()
 
         assertEquals third, results.list[0]
     }
