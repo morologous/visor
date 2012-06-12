@@ -49,6 +49,16 @@ class Engine {
             }
         }
 
+        def idField = ElasticSearchMarshaller.findIdField queryParam
+        def ids = []
+        if (idField && queryParam[idField.name] != null) {
+            ids << queryParam[idField.name]
+            ids = ids.collect {
+                '' + it
+            }
+            log.debug "Detected IDs for query: $ids"
+        }
+
         // metrics
         def assemblyDoneInstant = new Date().time 
 
@@ -85,6 +95,10 @@ class Engine {
                                .newInstance(null, null)
                                .rehydrate(delegate, owner, thisObject)
                                .call(entry.key, entry.value.value))
+            }
+
+            if (!ids.isEmpty()) {
+                bool.must(idsQuery(context.returnType.simpleName).addIds(ids as String[]))
             }
 
             if (queryStrVal) {

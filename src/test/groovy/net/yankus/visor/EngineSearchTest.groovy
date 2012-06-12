@@ -15,12 +15,12 @@ import groovy.transform.ToString
 class EngineSearchTest {
     
 //    static def datasource
-
+    static def foo
     static def testBeans = []    
     @BeforeClass
     public static void setUp() throws Exception {
         
-        def foo = new TestBean(id:'1', num:1, value:'foo', security:'none')
+        foo = new TestBean(id:'1', num:1, value:'foo', security:'none')
         def bar = new TestBean(id:'2', num:2, value:'bar', security:'low')
         def baz = new TestBean(id:'3', num:2, value:'baz', security:'medium')
         
@@ -53,6 +53,13 @@ class EngineSearchTest {
         testBeans.each {
             SearchEngineTestHelper.delete it
         }
+    }
+
+    @Test
+    public void testSearchById() {
+        def results = new TestBean(id:'1').search()
+        assertEquals 1, results.count
+        assertEquals foo, results.list[0]       
     }
 
     @Test
