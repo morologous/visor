@@ -39,6 +39,19 @@ class QueryByComplexTypeTest {
         assertEquals foo, results.list[0]
     }
 
+    @Test
+    public void testChildHighlight() {
+
+        def results = new ComplexTypeParent(queryString:'child').search()
+        assertEquals 1, results.count
+
+        def result = results.list[0]
+        assertEquals foo, result
+        assertNotNull result.snippets
+        assertNotNull result.snippets['children.name']
+        assertEquals '<em>child</em>', result.snippets['children.name'].fragments[0]
+    }
+
     @Visor ( index = 'test',
            settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
 
@@ -58,7 +71,7 @@ class QueryByComplexTypeTest {
     @ToString
     @EqualsAndHashCode
     static class ComplexTypeChild {
-        @Field
+        @Field(highlight=true)
         def name
         @Field
         def num

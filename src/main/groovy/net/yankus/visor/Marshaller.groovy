@@ -53,13 +53,13 @@ class Marshaller {
         }
     }
 
-    static def foreachMappedProperty = { type, callback ->
+    static def foreachMappedProperty = { type, fieldPrefix='', callback ->
         type.getDeclaredFields().each {
             def annotation = it.getAnnotation Field
             if (annotation != null) {
-                callback(it, annotation)
-                if (isChildBean(it.type)) {
-                    Marshaller.forEachMappedProperty(it.type, callback)
+                callback(fieldPrefix + it.name, it, annotation)
+                if (isChildBean(annotation.type())) {
+                    Marshaller.foreachMappedProperty(annotation.type(), it.name + '.', callback)
                 }                
             }
         }
