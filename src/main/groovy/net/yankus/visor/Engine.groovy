@@ -43,7 +43,7 @@ class Engine {
         log.debug "Sorting: $sortOrder"
 
         def highlights = []
-        Marshaller.foreachProperty(queryParam) { field, annotation -> 
+        Marshaller.foreachMappedProperty(queryParam.class) { field, annotation -> 
             if (annotation.highlight()) {
                 highlights << field.name
             }

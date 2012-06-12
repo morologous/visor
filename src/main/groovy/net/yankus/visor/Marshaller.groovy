@@ -24,32 +24,49 @@ class Marshaller {
         field
     }
 
-    static def findFieldWithAnnotation = { annotationType, bean -> 
-        def fields = []
-        bean.class.declaredFields.each {
-            def annotation = it.getAnnotation annotationType
-            if (annotation) {
-                fields << it
+    static def findFieldWithAnnotation = { annotationType, o -> 
+        if (o instanceof Class) {
+            def fields = []
+            o.declaredFields.each {
+                def annotation = it.getAnnotation annotationType
+                if (annotation) {
+                    fields << it
+                }
             }
+            fields
+        } else {
+            Marshaller.findFieldWithAnnotation(annotationType, o.class)
         }
-        fields
     }
 
     static boolean isChildBean (o) {
         return !Marshaller.findFieldWithAnnotation(Field, o).isEmpty()
     }
 
-    static def foreachProperty = { bean, callback ->
+    static def foreachProperty = { bean, notNull=false, callback ->
         Marshaller.getProperties(bean).keySet().each {
             def field = bean.class.getDeclaredField it
             def annotation = field.getAnnotation Field
-            if (annotation) {
+            if (annotation && (notNull && bean[it] != null)) {
                 callback(field, annotation)
             }
         }
     }
 
-        static def foreachNotNullProperty = { bean, callback ->
+    static def foreachMappedProperty = { type, callback ->
+        type.getDeclaredFields().each {
+            def annotation = it.getAnnotation Field
+            if (annotation != null) {
+                callback(it, annotation)
+                if (isChildBean(it.type)) {
+                    Marshaller.forEachMappedProperty(it.type, callback)
+                }                
+            }
+        }
+    }
+
+/*
+    static def foreachNotNullProperty = { bean, callback ->
         Marshaller.getProperties(bean).keySet().each {
             def field = bean.class.getDeclaredField it
             def annotation = field.getAnnotation Field
@@ -58,12 +75,12 @@ class Marshaller {
             }
         }
     }
-
+*/
     static def marshall = { bean, mode='QUERY' -> 
         def props = [:]
         log.debug "Marshalling mode: $mode"
 
-        Marshaller.foreachNotNullProperty(bean) { field, annotation ->
+        Marshaller.foreachProperty(bean, true) { field, annotation ->
             def marshallContext = new Expando()
         
             marshallContext.fieldName = field.name
