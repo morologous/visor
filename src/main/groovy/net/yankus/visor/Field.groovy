@@ -66,7 +66,7 @@ public @interface Field {
                 .to(value.to)
         } else {
             AnnotationDefaultClosureLogger.debug 'Performing default apply.'            
-            text key, value
+            fieldQuery key, value
         }
     }
     Class type() default java.lang.String 
