@@ -124,10 +124,6 @@ class Engine {
             results.response = response
 
             results.list = ElasticSearchMarshaller.unmarshallAll(response.hits, context)
-            
-            response.hits.each {
-                log.debug it.highlightFields
-            }
 
             def unmarshallInstant = new Date().time
 
