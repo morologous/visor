@@ -66,7 +66,10 @@ public @interface Field {
                 .to(value.to)
         } else {
             AnnotationDefaultClosureLogger.debug 'Performing default apply.'            
-            fieldQuery key, value
+            def query = fieldQuery key, value
+            query.analyzeWildcard = true
+
+            query
         }
     }
     Class type() default java.lang.String 
