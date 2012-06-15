@@ -54,11 +54,11 @@ public @interface Field {
         }
         AnnotationDefaultClosureLogger.debug 'Unmarshalled value: ' + it.targetBean[it.fieldName]
     }
-    Class applyToQuery() default { key, value ->
+    Class applyToQuery() default { key, value, annotation ->
         AnnotationDefaultClosureLogger.debug "Applying $key : $value"
         if (value instanceof MultiSelect) {
             AnnotationDefaultClosureLogger.debug 'Applying MultiSelect'
-            inQuery key, value.values as Object[]        
+            inQuery key + annotation.inQueryFieldSuffix(), value.values as Object[]        
         } else if (value instanceof DateRange) {
             AnnotationDefaultClosureLogger.debug 'Applying DateRange'
             rangeQuery(key)
@@ -74,4 +74,5 @@ public @interface Field {
     }
     Class type() default java.lang.String 
     boolean highlight() default false
+    String inQueryFieldSuffix() default ''
 }

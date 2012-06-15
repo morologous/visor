@@ -94,7 +94,7 @@ class Engine {
                                .applyToQuery()
                                .newInstance(null, null)
                                .rehydrate(delegate, owner, thisObject)
-                               .call(entry.key, entry.value.value))
+                               .call(entry.key, entry.value.value, entry.value.annotation))
             }
 
             if (!ids.isEmpty()) {
