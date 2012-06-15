@@ -17,7 +17,7 @@ final class ContextBuilder {
 		context.index = annotation.index()
 		context.settings = annotation.settings()
 		context.remoteAddresses = annotation.remoteAddresses().newInstance(null, null).call()
-
+		context.queryBean = bean
 		context.returnType = bean.class
 
 		log.debug "Constructed context: $context"

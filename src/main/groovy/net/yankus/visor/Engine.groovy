@@ -109,7 +109,7 @@ class Engine {
             s.setQuery(bool)
 
             def filterClosure = context.filters.newInstance(null, null)            
-            s.setFilter filterClosure.call()
+            s.setFilter filterClosure.call(context)
 
             def searchR = s.gexecute()
 
