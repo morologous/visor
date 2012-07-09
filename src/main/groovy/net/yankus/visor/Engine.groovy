@@ -43,9 +43,13 @@ class Engine {
         log.debug "Sorting: $sortOrder"
 
         def highlights = []
+        def excludes = []
         Marshaller.foreachMappedProperty(queryParam.class) { flattenedFieldName, field, annotation -> 
             if (annotation.highlight()) {
                 highlights << flattenedFieldName
+            }
+            if (annotation.excludeFromResults()) {
+                excludes << flattenedFieldName
             }
         }
 
@@ -70,7 +74,7 @@ class Engine {
                           .setFrom(startingIndex as int)
                           .setSize(pageSize as int)
                           .setTypes(context.returnType.simpleName)
-                          .addPartialField('results', ['*'] as String[], null)
+                          .addPartialField('results', ['*'] as String[], excludes as String[])
 
             highlights.each {
                 log.debug "Adding highlighted field: $it"

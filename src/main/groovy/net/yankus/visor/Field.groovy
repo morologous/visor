@@ -75,4 +75,5 @@ public @interface Field {
     Class type() default java.lang.String 
     boolean highlight() default false
     String inQueryFieldSuffix() default ''
+    boolean excludeFromResults() default false
 }
