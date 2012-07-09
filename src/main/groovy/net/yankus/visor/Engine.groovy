@@ -70,6 +70,7 @@ class Engine {
                           .setFrom(startingIndex as int)
                           .setSize(pageSize as int)
                           .setTypes(context.returnType.simpleName)
+                          .addPartialField('results', ['*'] as String[], null)
 
             highlights.each {
                 log.debug "Adding highlighted field: $it"

@@ -5,30 +5,23 @@ import org.junit.Before
 import org.junit.After
 import static org.junit.Assert.*
 import org.elasticsearch.search.SearchHit
+import org.elasticsearch.search.SearchHitField
 import groovy.mock.interceptor.MockFor
 import groovy.util.Expando
 
 class ElasticSearchUnmarshallerTest {
 	
 	def source = [foo:'foo', bar:'bar', gazonk:'gazonk']
-	def mock
 	def searchHit
+	def searchHitField
 	def context
 
 	@Before
 	public void setUp() {
-		mock = new MockFor(SearchHit)
-		mock.demand.getSource() { source }
-		mock.demand.getScore() { 0.75d }
-		mock.demand.highlightFields() { [ text:[fragments:'foo']] }
-		searchHit = mock.proxyInstance()
+		searchHitField = [getValues:{[source]}] as SearchHitField
+		searchHit = [field:{searchHitField}, getScore: { 0.75f }, highlightFields:{ [ text:[fragments:'foo']] }] as SearchHit
 		context = new Expando()
 		context.returnType = TestBean.class
-	}
-
-	@After
-	public void tearDown() {
-		mock.verify(searchHit)
 	}
 
 	@Test

@@ -64,7 +64,8 @@ class ElasticSearchMarshaller {
 
     static def unmarshall = { SearchHit hit, context ->
         log.debug "Unmarshalling hit: $hit"
-        def unmarshalled = Marshaller.unmarshall(hit.source, context.returnType)
+        //log.debug "field: ${hit.field('results').values}"
+        def unmarshalled = Marshaller.unmarshall(hit.field('results').values[0], context.returnType)
         
         // detect and set Id
         def idField = ElasticSearchMarshaller.findIdField(unmarshalled)
