@@ -52,7 +52,7 @@ class QueryByComplexTypeTest {
         assertEquals '<em>child</em>', result.snippets['children.name'].fragments[0]
     }
 
-    @Visor ( index = 'test',
+    @net.yankus.visor.Visor ( index = 'test',
            settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
 
     @ToString

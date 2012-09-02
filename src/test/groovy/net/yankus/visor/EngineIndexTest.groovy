@@ -40,7 +40,7 @@ class EngineIndexTest {
         assertEquals flurgle, result.list[0]
     }
 
-    @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
+    @net.yankus.visor.Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
     @EqualsAndHashCode(excludes="score, snippets")
     static class EngineIndexTestBean {

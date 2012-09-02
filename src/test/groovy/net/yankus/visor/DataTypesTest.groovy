@@ -109,7 +109,7 @@ class DataTypesTest {
         assertEquals alpha.subs, retrievedAlpha.subs
     }
 
-    @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
+    @net.yankus.visor.Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
     @EqualsAndHashCode(excludes="score, snippets")
     static class DataTypesTestBean {

@@ -37,7 +37,7 @@ class ElasticSearchUnmarshallerTest {
 		
 	}
 
-	@Visor(index='test')
+	@net.yankus.visor.Visor(index='test')
 	public class TestBean {
 		@Field
 		def foo

@@ -13,3 +13,11 @@ src/test/groovy/net/yankus/.DS_Store
 src/test/groovy/net/yankus/visor/.DS_Store
 
 site/.DS_Store
+
+.classpath
+
+.project
+
+bin
+
+.settings

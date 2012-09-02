@@ -32,7 +32,7 @@ class ContextBuilderTest {
 
 	}
 
-	@Visor(filters={it=='foo'}, settings={it.foo='bar'}, index='foo')
+	@net.yankus.visor.Visor(filters={it=='foo'}, settings={it.foo='bar'}, index='foo')
 	public class AnnotationTestBean {
 		@Field
 		def test

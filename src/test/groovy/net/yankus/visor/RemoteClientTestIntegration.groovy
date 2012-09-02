@@ -44,7 +44,7 @@ class RemoteClientTestIntegration {
         assertEquals beta, results.list[0]
     }
 
-    @Visor ( index = 'test', 
+    @net.yankus.visor.Visor ( index = 'test', 
         remoteAddresses = { [ 'localhost:9300' ] },
         settings = { put('node.client', true)
                      /* put('client.transport.sniff', true) */ }
