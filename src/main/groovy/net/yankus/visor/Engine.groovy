@@ -1,11 +1,9 @@
 package net.yankus.visor
 
-import org.elasticsearch.search.SearchHit
-import groovy.util.Expando
-import org.elasticsearch.action.index.IndexResponse
-import groovy.util.logging.Log4j 
 import static org.elasticsearch.index.query.FilterBuilders.*
 import static org.elasticsearch.index.query.QueryBuilders.*
+import groovy.util.logging.Log4j
+
 import org.elasticsearch.search.sort.SortOrder
 
 @Log4j
@@ -20,7 +18,7 @@ class Engine {
         def startInstant = new Date().time
 
         def context = ContextBuilder.build queryParam
-        def queryParams = ElasticSearchMarshaller.marshallSearchParameters(Marshaller.marshall(queryParam))
+        def queryParams = Marshaller.marshallSearchParameters(Marshaller.marshall(queryParam))
         log.info "Searching $context.index for type $context.returnType.simpleName"
 
         log.debug "Marshalled query parameters: $queryParams"
@@ -53,7 +51,7 @@ class Engine {
             }
         }
 
-        def idField = ElasticSearchMarshaller.findIdField queryParam
+        def idField = Marshaller.findIdField queryParam
         def ids = []
         if (idField && queryParam[idField.name] != null) {
             ids << queryParam[idField.name]
@@ -128,7 +126,7 @@ class Engine {
             def results = new Expando()
             results.response = response
 
-            results.list = ElasticSearchMarshaller.unmarshallAll(response.hits, context)
+            results.list = Marshaller.unmarshallAll(response.hits, context)
 
             def unmarshallInstant = new Date().time
 
@@ -162,7 +160,7 @@ class Engine {
 
         def indexParams = Marshaller.marshall(target, 'INDEX')
 
-        def targetId = ElasticSearchMarshaller.getIdValueFromBean target
+        def targetId = Marshaller.getIdValueFromBean target
         if (!targetId) {
             throw new IllegalArgumentException('Bean must have populated Id-annotated field to be stored in search index.')
         }
@@ -184,7 +182,7 @@ class Engine {
 
     static def delete = { target ->
         def context = ContextBuilder.build target 
-        def idValue = ElasticSearchMarshaller.getIdValueFromBean target
+        def idValue = Marshaller.getIdValueFromBean target
         log.info "Deleting $context.index id $idValue"
         if (idValue) {
             Engine.doInElasticSearch(context) { client ->

@@ -42,12 +42,12 @@ public @interface Field {
             AnnotationDefaultClosureLogger.debug 'Unmarshalling to Collection.'
             def coll = []
             it.fieldValue.each { val ->
-                coll << Marshaller.unmarshall(val, it.annotation.type())
+                coll << Marshaller.unmarshallMap(val, it.annotation.type())
             }
             it.targetBean[it.fieldName] = coll
         } else if (Marshaller.isChildBean(it.annotation?.type().newInstance())) {
             AnnotationDefaultClosureLogger.debug '' + it.annotation.type() + ' is child bean -- performing Map unmarshalling on object type.'
-            it.targetBean[it.fieldName] = Marshaller.unmarshall(it.fieldValue, it.annotation.type())
+            it.targetBean[it.fieldName] = Marshaller.unmarshallMap(it.fieldValue, it.annotation.type())
         } else {
             AnnotationDefaultClosureLogger.debug 'Performing default unmarshalling.'
             it.targetBean[it.fieldName] = it.fieldValue 

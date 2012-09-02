@@ -1,10 +1,98 @@
 package net.yankus.visor
 
-import groovy.util.logging.Log4j 
+import groovy.util.logging.Log4j
+
+import org.elasticsearch.search.SearchHit
+import org.elasticsearch.search.SearchHits
 
 @Log4j
 class Marshaller {
-    
+	
+    /** from ElasticSearchMarshaller */
+	
+	private static def flattenParameter = {key, value ->
+		def map = [:]
+		log.debug "Flattening $key : $value"
+		//log.debug 'value is ' + value.getClass()
+		if (value instanceof Collection) {
+			value.each {
+				map << Marshaller.flattenParameter(key, it)
+			}
+		} else if (value instanceof Map) {
+			value.entrySet().each {
+				map << Marshaller.flattenParameter(key+'.'+it.key, it.value)
+			}
+		} else if (value instanceof Expando) {
+			//log.debug 'value.value is ' + value.value.getClass()
+			// if the next step is a collection or map, go on, otherwise stop
+			if (value.value instanceof Collection || value.value instanceof Map) {
+				map << Marshaller.flattenParameter(key, value.value)
+			} else {
+				map << [(key):value]
+			}
+		} else {
+			//map << [(key):value]
+			throw  new IllegalArgumentException("Value must be Expando or Collection or Map but was $value")
+		}
+		map
+	}
+
+	static def marshallSearchParameters = { parameters ->
+		def map = [:]
+		log.debug "Marshalling search parameters: $parameters"
+		parameters.entrySet().each {
+			map << Marshaller.flattenParameter(it.key, it.value)
+		}
+		map
+	}
+
+	static def findIdField = { bean ->
+		def fields = Marshaller.findFieldWithAnnotation(Id, bean)
+		if (fields.size() > 1) {
+			def className = bean.getClass()
+			throw new IllegalStateException("Bean $className has more than one @Id field annotation.")
+		}
+		if (fields.size() == 1) {
+			return fields[0]
+		}
+		return null
+	}
+
+	static def getIdValueFromBean = { bean ->
+		def field = Marshaller.findIdField bean
+		def rawValue = bean[field.name]
+
+		rawValue.toString()
+	}
+
+	static def unmarshall = { SearchHit hit, context ->
+		log.debug "Unmarshalling hit: $hit"
+		//log.debug "field: ${hit.field('results').values}"
+		def unmarshalled = Marshaller.unmarshallMap(hit.field('results').values[0], context.returnType)
+		
+		// detect and set Id
+		def idField = Marshaller.findIdField(unmarshalled)
+		if (idField) {
+			unmarshalled[idField.name] = hit.id
+		}
+
+		unmarshalled.score = hit.score
+		unmarshalled.snippets = [:]
+		unmarshalled.snippets << hit.highlightFields()
+
+		unmarshalled
+	}
+
+	static def unmarshallAll = { SearchHits hits, context ->
+		def unmarshalled = []
+		hits.each { hit ->
+			unmarshalled << Marshaller.unmarshall(hit, context)
+		}
+
+		unmarshalled
+	}
+	
+	/** End ElasticSearchMarshaller */
     private static def getProperties = { bean ->
         def props = bean.getProperties()
 
@@ -111,7 +199,7 @@ class Marshaller {
         props
     }
 
-    static def unmarshall = { data, type -> 
+    static def unmarshallMap = { data, type -> 
         def targetBean = type.newInstance()
         data.entrySet().each {
             def field = Marshaller.getField(targetBean, it.key)
