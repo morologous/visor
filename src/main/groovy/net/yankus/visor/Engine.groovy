@@ -118,7 +118,7 @@ class Engine {
 
             def queryBuiltInstant = new Date().time
             
-            def response = searchR.response '5s'
+            def response = searchR.response '300s'
             log.debug "Search Response: $response"
 
             def responseInstant = new Date().time
