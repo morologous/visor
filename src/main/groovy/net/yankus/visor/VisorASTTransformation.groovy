@@ -52,6 +52,7 @@ class VisorASTTransformation extends AbstractASTTransformation {
             classNode.addMethod(makeIndexMethod())
             classNode.addMethod(makeDeleteMethod())
             classNode.addMethod(makeUpdateMethod())
+            classNode.addMethod(makeCountMethod())
 
             classNode.addProperty(makeQueryStringField())
             classNode.addProperty(makeScoreField())
@@ -70,6 +71,27 @@ class VisorASTTransformation extends AbstractASTTransformation {
                 block { 
                     returnStatement {
                         staticMethodCall(net.yankus.visor.Engine, 'search') {
+                            argumentList {
+                                variable 'this'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        MethodNode method = ast[0]
+
+        method
+    }
+
+    private def makeCountMethod() {
+        def ast = new AstBuilder().buildFromSpec {
+            method('count', ACC_PUBLIC, Object) {
+                parameters { }
+                exceptions {}
+                block { 
+                    returnStatement {
+                        staticMethodCall(net.yankus.visor.Engine, 'count') {
                             argumentList {
                                 variable 'this'
                             }

@@ -1,9 +1,9 @@
-apply plugin: 'eclipse'
-apply plugin: 'groovy'
+apply plugin: 'eclipse' 
+apply plugin: 'groovy' 
 apply plugin: 'maven'
 
 group = 'net.yankus'
-version = '0.3.1'
+version = '0.4'
 
 repositories {
     mavenCentral()
@@ -41,7 +41,7 @@ artifacts {
     archives sourcesJar
 }
 
-/*
+
 if (deploymentOperations) {
     apply plugin: 'signing'
 
@@ -93,7 +93,7 @@ if (deploymentOperations) {
     }
     
 }
-*/
+
 
 test {
     if (testall == 'false') {

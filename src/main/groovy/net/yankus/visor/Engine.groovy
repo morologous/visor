@@ -14,10 +14,8 @@ class Engine {
         return operation.call(datasource.client)
     }
 
-    static def search = { queryParam ->
-        def startInstant = new Date().time
+    static def doSearch (context, queryParam, stats = [:], countOnly = false) {
 
-        def context = ContextBuilder.build queryParam
         def queryParams = Marshaller.marshallSearchParameters(Marshaller.marshall(queryParam))
         log.info "Searching $context.index for type $context.returnType.simpleName"
 
@@ -62,32 +60,37 @@ class Engine {
         }
 
         // metrics
-        def assemblyDoneInstant = new Date().time 
+        stats.assemblyDoneInstant = new Date().time 
 
         Engine.doInElasticSearch(context) { client ->
 
             def query = boolQuery()
 
-            def s = client.prepareSearch(context.index)
-                          .setFrom(startingIndex as int)
-                          .setSize(pageSize as int)
-                          .setTypes(context.returnType.simpleName)
-                          .addPartialField('results', ['*'] as String[], excludes as String[])
+            def s
 
-            highlights.each {
-                log.debug "Adding highlighted field: $it"
-                s.addHighlightedField(it)
-            }               
+            s = countOnly? client.prepareCount(context.index) : client.prepareSearch(context.index)            
+            s.setTypes(context.returnType.simpleName)
+             
+            if (!countOnly) {
+                s.addPartialField('results', ['*'] as String[], excludes as String[])
+                 .setFrom(startingIndex as int)
+                .setSize(pageSize as int)
+   
+                highlights.each {
+                    log.debug "Adding highlighted field: $it"
+                    s.addHighlightedField(it)
+                }               
 
-            sortOrder.each {
-                if (it instanceof String) {
-                    s.addSort(it, SortOrder.ASC)
-                } else { // presume map
-                    it.entrySet().each {
-                        s.addSort(it.key, SortOrder.ASC.toString().equalsIgnoreCase(it.value)? SortOrder.ASC : SortOrder.DESC)
+                sortOrder.each {
+                    if (it instanceof String) {
+                        s.addSort(it, SortOrder.ASC)
+                    } else { // presume map
+                        it.entrySet().each {
+                            s.addSort(it.key, SortOrder.ASC.toString().equalsIgnoreCase(it.value)? SortOrder.ASC : SortOrder.DESC)
+                        }
                     }
+                        
                 }
-                    
             }
 
             def bool = boolQuery()            
@@ -114,45 +117,82 @@ class Engine {
             def filterClosure = context.filters.newInstance(null, null)            
             s.setFilter filterClosure.call(context)
 
-            def searchR = s.gexecute()
+            stats.queryBuiltInstant = new Date().time
 
-            def queryBuiltInstant = new Date().time
-            
-            def response = searchR.response '300s'
-            log.debug "Search Response: $response"
+            def response = s.gexecute()
 
-            def responseInstant = new Date().time
-
-            def results = new Expando()
-            results.response = response
-
-            results.list = Marshaller.unmarshallAll(response.hits, context)
-
-            def unmarshallInstant = new Date().time
-
-            results.count = response.hits().totalHits()
-            results.pageSize = results.list.size()
-            results.query = queryParam
-
-            log.debug "Search matched $results.count hits, returned $results.pageSize"
-
-            // TODO: probably don't need an expando here.
-            results.stats = new Expando()
-            results.stats.engineTook = response.tookInMillis
-            //results.stats.shards = response.shards
-            //results.stats.timedOut = response.timedOut
-            results.stats.maxScore = response.hits().maxScore
-            results.stats.detailTime = [:]
-            results.stats.detailTime << ['assemblyDone': assemblyDoneInstant - startInstant]
-            results.stats.detailTime << ['queryBuilt': queryBuiltInstant - assemblyDoneInstant]
-            results.stats.detailTime << ['response': responseInstant - queryBuiltInstant]
-            results.stats.detailTime << ['unmarshall': unmarshallInstant - responseInstant]
-            results.stats.detailTime << ['statsDone': new Date().time - unmarshallInstant ]
-            results.stats.detailTime << ['overall': new Date().time - startInstant ]
-
-            log.debug "Search Execution Stats: $results.stats"
-            results
+            response
         }
+    }
+
+    static def search(queryParam) {
+        def context = ContextBuilder.build queryParam
+
+        def stats = [:]
+        stats.startInstant = new Date().time
+        
+        def esResult = doSearch(context, queryParam, stats)
+
+        def response = esResult.response '300s'
+        log.debug "Search Response: $response"
+
+        stats.responseInstant = new Date().time
+
+        def results = new Expando()
+        results.response = response
+
+        results.list = Marshaller.unmarshallAll(response.hits, context)
+
+        stats.unmarshallInstant = new Date().time
+
+        results.count = response.hits().totalHits()
+        results.pageSize = results.list.size()
+        results.query = queryParam
+
+        log.debug "Search matched $results.count hits, returned $results.pageSize"
+
+        // TODO: probably don't need an expando here.
+        results.stats = assembleStats(response, stats)
+
+        log.debug "Search Execution Stats: $results.stats"
+        results
+    }
+
+    static def count(queryParam) {
+        def context = ContextBuilder.build queryParam
+
+        def stats = [:]
+        stats.startInstant = new Date().time
+        
+        def esResult = doSearch(context, queryParam, stats, true)
+
+        def response = esResult.response '300s'
+        log.debug "Search Response: $response"
+
+        stats.responseInstant = new Date().time
+
+        def results = new Expando()
+        results.response = response
+        results.count = response.count
+
+        results
+    }
+
+    static def assembleStats(response, stats) {
+        if (stats) {
+            if (response) {
+                stats.engineTook = response.tookInMillis
+            }
+            stats.detailTime = [:]
+
+            stats.detailTime.assemblyDone = stats.assemblyDoneInstant?:0 - stats.startInstant?:0
+            stats.detailTime.queryBuilt = stats.queryBuiltInstant?:0 - stats.assemblyDoneInstant?:0
+            stats.detailTime.response = stats.responseInstant?:0 - stats.queryBuiltInstant?:0
+            stats.detailTime.unmarshall = stats.unmarshallInstant?:0 - stats.responseInstant?:0
+            stats.detailTime.statsDone = new Date().time - stats.unmarshallInstant?:0
+            stats.detailTime.overall = new Date().time - stats.startInstant?:0
+        }
+        stats
     }
 
     static def index = { target -> 
