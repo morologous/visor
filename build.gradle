@@ -41,7 +41,7 @@ artifacts {
     archives sourcesJar
 }
 
-
+/*
 if (deploymentOperations) {
     apply plugin: 'signing'
 
@@ -93,7 +93,7 @@ if (deploymentOperations) {
     }
     
 }
-
+*/
 
 test {
     if (testall == 'false') {
