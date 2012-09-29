@@ -12,8 +12,7 @@ class Marshaller {
 	
 	private static def flattenParameter = {key, value ->
 		def map = [:]
-		log.debug "Flattening $key : $value"
-		//log.debug 'value is ' + value.getClass()
+		log.trace "Flattening $key : $value"
 		if (value instanceof Collection) {
 			value.each {
 				map << Marshaller.flattenParameter(key, it)
@@ -23,7 +22,6 @@ class Marshaller {
 				map << Marshaller.flattenParameter(key+'.'+it.key, it.value)
 			}
 		} else if (value instanceof Expando) {
-			//log.debug 'value.value is ' + value.value.getClass()
 			// if the next step is a collection or map, go on, otherwise stop
 			if (value.value instanceof Collection || value.value instanceof Map) {
 				map << Marshaller.flattenParameter(key, value.value)
@@ -31,7 +29,6 @@ class Marshaller {
 				map << [(key):value]
 			}
 		} else {
-			//map << [(key):value]
 			throw  new IllegalArgumentException("Value must be Expando or Collection or Map but was $value")
 		}
 		map
@@ -39,7 +36,7 @@ class Marshaller {
 
 	static def marshallSearchParameters = { parameters ->
 		def map = [:]
-		log.debug "Marshalling search parameters: $parameters"
+		log.trace "Marshalling search parameters: $parameters"
 		parameters.entrySet().each {
 			map << Marshaller.flattenParameter(it.key, it.value)
 		}
@@ -66,8 +63,8 @@ class Marshaller {
 	}
 
 	static def unmarshall = { SearchHit hit, context ->
-		log.debug "Unmarshalling hit: $hit"
-		//log.debug "field: ${hit.field('results').values}"
+		log.trace "Unmarshalling hit: $hit"
+
 		def unmarshalled = Marshaller.unmarshallMap(hit.field('results').values[0], context.returnType)
 		
 		// detect and set Id
@@ -152,21 +149,10 @@ class Marshaller {
             }
         }
     }
-
-/*
-    static def foreachNotNullProperty = { bean, callback ->
-        Marshaller.getProperties(bean).keySet().each {
-            def field = bean.class.getDeclaredField it
-            def annotation = field.getAnnotation Field
-            if (annotation && bean[it] != null) {
-                callback(field, annotation)
-            }
-        }
-    }
-*/
+    
     static def marshall = { bean, mode='QUERY' -> 
         def props = [:]
-        log.debug "Marshalling mode: $mode"
+        log.trace "Marshalling mode: $mode"
 
         Marshaller.foreachProperty(bean, true) { field, annotation ->
             def marshallContext = new Expando()
@@ -178,7 +164,7 @@ class Marshaller {
 
             def value = annotation.marshall().newInstance(null, null).call(marshallContext)
 
-            log.debug "Marshalled $marshallContext.fieldName to $value"
+            log.trace "Marshalled $marshallContext.fieldName to $value"
             
             def prop
             // this is sorta kludgey.  We need to add extra info for QUERY operations

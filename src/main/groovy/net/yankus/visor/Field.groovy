@@ -11,61 +11,61 @@ import static org.elasticsearch.index.query.QueryBuilders.*
 public @interface Field { 
     Class marshall() default { 
         def value = it.targetBean[it.fieldName]
-        AnnotationDefaultClosureLogger.debug "Attempting to marshall $it"
+        AnnotationDefaultClosureLogger.trace "Attempting to marshall $it"
         if (value instanceof Date) {
             value?.time
         } else if (value instanceof DateRange) {
-                AnnotationDefaultClosureLogger.debug 'Marshalling to DateRange.'
+                AnnotationDefaultClosureLogger.trace 'Marshalling to DateRange.'
                 new DateRange(from:value?.from?.time, to:value?.to?.time)
         } else if (value instanceof Collection) {
-            AnnotationDefaultClosureLogger.debug 'Marshalling to Collection.'
+            AnnotationDefaultClosureLogger.trace 'Marshalling to Collection.'
             def coll = []
             value.each { val -> 
                 coll << Marshaller.marshall(val, it.mode)            
             }
-            AnnotationDefaultClosureLogger.debug 'Marshalled Collection: $coll'
+            AnnotationDefaultClosureLogger.trace 'Marshalled Collection: $coll'
             coll
         } else if (Marshaller.isChildBean(value)) {
-            AnnotationDefaultClosureLogger.debug 'Marshalling complex child type: ' + value.class
+            AnnotationDefaultClosureLogger.trace 'Marshalling complex child type: ' + value.class
             Marshaller.marshall(value, it.mode)        
         } else {
-            AnnotationDefaultClosureLogger.debug 'Performing default marshalling.'
+            AnnotationDefaultClosureLogger.trace 'Performing default marshalling.'
             value
         }
     }
     Class unmarshall() default { 
-        AnnotationDefaultClosureLogger.debug "Attempting to unmarshall $it"
+        AnnotationDefaultClosureLogger.trace "Attempting to unmarshall $it"
         if (it.annotation?.type() == Date) {
-            AnnotationDefaultClosureLogger.debug 'Unmarshalling to Date.'
+            AnnotationDefaultClosureLogger.trace 'Unmarshalling to Date.'
             it.targetBean[it.fieldName] = new Date(it.fieldValue)
         } else if (it.fieldValue instanceof Collection) {
-            AnnotationDefaultClosureLogger.debug 'Unmarshalling to Collection.'
+            AnnotationDefaultClosureLogger.trace 'Unmarshalling to Collection.'
             def coll = []
             it.fieldValue.each { val ->
                 coll << Marshaller.unmarshallMap(val, it.annotation.type())
             }
             it.targetBean[it.fieldName] = coll
         } else if (Marshaller.isChildBean(it.annotation?.type().newInstance())) {
-            AnnotationDefaultClosureLogger.debug '' + it.annotation.type() + ' is child bean -- performing Map unmarshalling on object type.'
+            AnnotationDefaultClosureLogger.trace '' + it.annotation.type() + ' is child bean -- performing Map unmarshalling on object type.'
             it.targetBean[it.fieldName] = Marshaller.unmarshallMap(it.fieldValue, it.annotation.type())
         } else {
-            AnnotationDefaultClosureLogger.debug 'Performing default unmarshalling.'
+            AnnotationDefaultClosureLogger.trace 'Performing default unmarshalling.'
             it.targetBean[it.fieldName] = it.fieldValue 
         }
-        AnnotationDefaultClosureLogger.debug 'Unmarshalled value: ' + it.targetBean[it.fieldName]
+        AnnotationDefaultClosureLogger.trace 'Unmarshalled value: ' + it.targetBean[it.fieldName]
     }
     Class applyToQuery() default { key, value, annotation ->
-        AnnotationDefaultClosureLogger.debug "Applying $key : $value"
+        AnnotationDefaultClosureLogger.trace "Applying $key : $value"
         if (value instanceof MultiSelect) {
-            AnnotationDefaultClosureLogger.debug 'Applying MultiSelect'
+            AnnotationDefaultClosureLogger.trace 'Applying MultiSelect'
             inQuery key + annotation.inQueryFieldSuffix(), value.values as Object[]        
         } else if (value instanceof DateRange) {
-            AnnotationDefaultClosureLogger.debug 'Applying DateRange'
+            AnnotationDefaultClosureLogger.trace 'Applying DateRange'
             rangeQuery(key)
                 .from(value.from)
                 .to(value.to)
         } else {
-            AnnotationDefaultClosureLogger.debug 'Performing default apply.'            
+            AnnotationDefaultClosureLogger.trace 'Performing default apply.'            
             def query = fieldQuery key, value
             query.analyzeWildcard = true
 

@@ -65,11 +65,9 @@ class Engine {
 
         Engine.doInElasticSearch(context) { client ->
 
+            def s = client.prepareSearch(context.index)            
+
             def query = boolQuery()
-
-            def s
-
-            s = client.prepareSearch(context.index)            
 
             if (countOnly) {
                 s.setSearchType(SearchType.COUNT)
@@ -142,7 +140,7 @@ class Engine {
         def esResult = doSearch(context, queryParam, stats)
 
         def response = esResult.response '300s'
-        log.debug "Search Response: $response"
+        log.trace "Search Response: $response"
 
         stats.responseInstant = new Date().time
 
