@@ -55,6 +55,14 @@ class QueryStringTest {
     }
 
     @Test
+    public void testSearchHighlightsDisabled() {
+        def results = new QueryStringTestBean(queryString:'wheat', visorOpts:['visor.highlight.disabled':true]).search()
+        assertEquals 1, results.count
+        assertTrue results.list.contains(qstr2)
+        assertEquals ([:], results.list[0].snippets)
+    }
+
+    @Test
     public void testSearchItalyAndVolcano() {
         def results = new QueryStringTestBean(queryString:'italy AND volcano').search()
         assertNotNull results

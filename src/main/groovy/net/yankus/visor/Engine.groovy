@@ -80,12 +80,14 @@ class Engine {
             if (!countOnly) {
                 s.addPartialField('results', ['*'] as String[], excludes as String[])
                  .setFrom(startingIndex as int)
-                .setSize(pageSize as int)
-   
-                highlights.each {
-                    log.debug "Adding highlighted field: $it"
-                    s.addHighlightedField(it)
-                }               
+                 .setSize(pageSize as int)
+
+                if (context.visorOpts['visor.highlight.disabled'] == null) {
+                    highlights.each {
+                        log.debug "Adding highlighted field: $it"
+                        s.addHighlightedField(it)
+                    }                                   
+                }
 
                 sortOrder.each {
                     if (it instanceof String) {

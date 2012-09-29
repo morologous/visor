@@ -19,7 +19,8 @@ final class ContextBuilder {
 		context.remoteAddresses = annotation.remoteAddresses().newInstance(null, null).call()
 		context.queryBean = bean
 		context.returnType = bean.class
-
+		context.visorOpts = bean.visorOpts?:[:]
+		log.info "visor opts: ${bean.visorOpts}"
 		log.debug "Constructed context: $context"
 
 		context

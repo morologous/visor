@@ -60,6 +60,7 @@ class VisorASTTransformation extends AbstractASTTransformation {
             classNode.addProperty(makePageSizeField())
             classNode.addProperty(makeStartingIndexField())
             classNode.addProperty(makeSortOrderField())
+            classNode.addProperty(makeVisorOptsField())
         }
     }
 
@@ -229,6 +230,17 @@ class VisorASTTransformation extends AbstractASTTransformation {
     private def makeSnippetField() {
         def ast = new AstBuilder().buildFromSpec {
             propertyNode "snippets", ACC_PUBLIC, Object, this.class, {
+               null
+            }
+        }
+        PropertyNode field = ast[0]
+
+        field
+    }
+
+    private def makeVisorOptsField() {
+        def ast = new AstBuilder().buildFromSpec {
+            propertyNode "visorOpts", ACC_PUBLIC, Object, this.class, {
                null
             }
         }
