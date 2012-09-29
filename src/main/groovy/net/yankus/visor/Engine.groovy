@@ -1,5 +1,6 @@
 package net.yankus.visor
 
+import org.elasticsearch.action.search.SearchType;
 import static org.elasticsearch.index.query.FilterBuilders.*
 import static org.elasticsearch.index.query.QueryBuilders.*
 import groovy.util.logging.Log4j
@@ -68,7 +69,12 @@ class Engine {
 
             def s
 
-            s = countOnly? client.prepareCount(context.index) : client.prepareSearch(context.index)            
+            s = client.prepareSearch(context.index)            
+
+            if (countOnly) {
+                s.setSearchType(SearchType.COUNT)
+            }
+
             s.setTypes(context.returnType.simpleName)
              
             if (!countOnly) {
@@ -173,7 +179,7 @@ class Engine {
 
         def results = new Expando()
         results.response = response
-        results.count = response.count
+        results.count = response.hits().totalHits()
 
         results
     }
