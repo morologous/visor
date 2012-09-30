@@ -17,9 +17,12 @@ final class ContextBuilder {
 		context.index = annotation.index()
 		context.settings = annotation.settings()
 		context.remoteAddresses = annotation.remoteAddresses().newInstance(null, null).call()
+		context.defaultTimeout = annotation.defaultTimeout()
+		
 		context.queryBean = bean
 		context.returnType = bean.class
 		context.visorOpts = bean.visorOpts?:[:]
+
 		log.info "visor opts: ${bean.visorOpts}"
 		log.debug "Constructed context: $context"
 

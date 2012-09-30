@@ -241,7 +241,7 @@ class VisorASTTransformation extends AbstractASTTransformation {
     private def makeVisorOptsField() {
         def ast = new AstBuilder().buildFromSpec {
             propertyNode "visorOpts", ACC_PUBLIC, Object, this.class, {
-               null
+               [:]
             }
         }
         PropertyNode field = ast[0]

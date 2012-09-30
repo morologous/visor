@@ -20,7 +20,8 @@ class ContextBuilderTest {
 		assertNotNull result.returnType
 		assertNotNull result.index
 		assertNotNull result.filters
-
+		assertNotNull result.visorOpts
+		assertEquals '300s', result.defaultTimeout
 		assertTrue result.filters.newInstance(null, null).call('foo')
 		
 		def harness = new Expando()

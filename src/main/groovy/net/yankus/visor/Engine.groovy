@@ -37,7 +37,7 @@ class Engine {
         }
         // at the bottom ALWAYS sort by score asc
         sortOrder << "_score" 
-        log.debug "Sorting: $sortOrder"
+        log.debug "Sorting: ${sortOrder}"
 
         def highlights = []
         def excludes = []
@@ -57,7 +57,7 @@ class Engine {
             ids = ids.collect {
                 '' + it
             }
-            log.debug "Detected IDs for query: $ids"
+            log.debug "Detected IDs for query: ${ids}"
         }
 
         // metrics
@@ -82,7 +82,7 @@ class Engine {
 
                 if (context.visorOpts['visor.highlight.disabled'] == null) {
                     highlights.each {
-                        log.debug "Adding highlighted field: $it"
+                        log.debug "Adding highlighted field: ${it}"
                         s.addHighlightedField(it)
                     }                                   
                 }
@@ -114,7 +114,7 @@ class Engine {
             }
 
             if (queryStrVal) {
-                log.debug "Applying query_string $queryStrVal"
+                log.debug "Applying query_string ${queryStrVal}"
                 bool.must(queryString(queryStrVal))
             }
 
@@ -139,8 +139,8 @@ class Engine {
         
         def esResult = doSearch(context, queryParam, stats)
 
-        def response = esResult.response '300s'
-        log.trace "Search Response: $response"
+        def response = esResult.response context.defaultTimeout
+        log.trace "Search Response: ${response}"
 
         stats.responseInstant = new Date().time
 
@@ -155,12 +155,12 @@ class Engine {
         results.pageSize = results.list.size()
         results.query = queryParam
 
-        log.debug "Search matched $results.count hits, returned $results.pageSize"
+        log.debug "Search matched ${results.count} hits, returned ${results.pageSize}"
 
         // TODO: probably don't need an expando here.
         results.stats = assembleStats(response, stats)
 
-        log.debug "Search Execution Stats: $results.stats"
+        log.debug "Search Execution Stats: ${results.stats}"
         results
     }
 
@@ -172,8 +172,8 @@ class Engine {
         
         def esResult = doSearch(context, queryParam, stats, true)
 
-        def response = esResult.response '300s'
-        log.debug "Search Response: $response"
+        def response = esResult.response context.defaultTimeout
+        log.debug "Search Response: ${response}"
 
         stats.responseInstant = new Date().time
 

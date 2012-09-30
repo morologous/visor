@@ -18,5 +18,5 @@ public @interface Visor {
     };
     public String index()
     public Class remoteAddresses() default { [] }    
-
+    public String defaultTimeout() default "300s"
 }
