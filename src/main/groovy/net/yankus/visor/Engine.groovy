@@ -243,4 +243,16 @@ class Engine {
         }
     }
 
+    static def health = { target ->
+        def context = ContextBuilder.build target
+        Engine.doInElasticSearch(context) { client ->
+            // gotta dig down for the admin client.
+            def adminClient = client.client.admin
+
+            def response = adminClient.cluster() .prepareHealth().execute()
+
+            response.actionGet()
+        }
+    }
+
 }
