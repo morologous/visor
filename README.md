@@ -146,4 +146,4 @@ The query string syntax adheres to the [Lucene Query Syntax](http://lucene.apach
 
 [![Visor](https://github.com/morologous/visor/raw/master/site/visor.png)](http://morologous.github.com/visor)
 
-[![Build Status](https://secure.travis-ci.org/morologous/visor.png)](http://travis-ci.org/morologous/visor)
+[![Build Status](https://buildhive.cloudbees.com/job/morologous/job/visor/badge/icon)](https://buildhive.cloudbees.com/job/morologous/job/visor/)
