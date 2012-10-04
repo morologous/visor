@@ -13,7 +13,7 @@ import groovy.util.logging.Log4j
 @Log4j
 class ElasticSearchClientFactory {
     
-    static def create = { context -> 
+    def create = { context -> 
         // short circuit
         if (ElasticSearchClientHolder.INSTANCE.get().clients[context.returnType]) {
                 log.debug "Returning pre-existing client for $context.returnType"

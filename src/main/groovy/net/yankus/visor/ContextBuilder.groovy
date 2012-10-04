@@ -19,6 +19,7 @@ final class ContextBuilder {
 		context.remoteAddresses = annotation.remoteAddresses().newInstance(null, null).call()
 		context.defaultTimeout = annotation.defaultTimeout()
 		
+		context.connectionFactory = annotation.connectionFactory().newInstance(null, null)
 		context.queryBean = bean
 		context.returnType = bean.class
 		context.visorOpts = bean.visorOpts?:[:]
