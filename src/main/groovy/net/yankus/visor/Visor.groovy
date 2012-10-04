@@ -20,6 +20,6 @@ public @interface Visor {
     public Class remoteAddresses() default { [] }    
     public String defaultTimeout() default "300s"
     public Class connectionFactory() default {
-    	new ElasticSearchClientFactory()
+    	new ElasticSearchClientFactory(context:it)
     }
 }

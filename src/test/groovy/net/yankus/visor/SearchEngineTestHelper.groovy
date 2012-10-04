@@ -14,7 +14,7 @@ class SearchEngineTestHelper {
 
     static def index = { bean ->
         def context = ContextBuilder.build(bean)
-        def datasource = new ElasticSearchClientFactory().create(context) 
+        def datasource = new ElasticSearchClientFactory(context:context).create() 
 
         def indexParams = Marshaller.marshall(bean, 'INDEX')
         log.debug "indexParams: $indexParams"
@@ -44,7 +44,7 @@ class SearchEngineTestHelper {
 
     static def get = { bean -> 
         def context = ContextBuilder.build(bean)
-        def datasource = new ElasticSearchClientFactory().create(context)
+        def datasource = new ElasticSearchClientFactory(context:context).create()
 
         def getR = datasource.client.get {
             index context.index
@@ -62,7 +62,7 @@ class SearchEngineTestHelper {
     static def delete = { bean -> 
         if (bean) {            
             def context = ContextBuilder.build(bean)
-            def datasource = new ElasticSearchClientFactory().create(context)
+            def datasource = new ElasticSearchClientFactory(context:context).create()
 
             // TODO detect id
             def deleteR = datasource.client.delete {
@@ -99,7 +99,7 @@ class SearchEngineTestHelper {
 
     static def search = { bean -> 
         def context = ContextBuilder.build(bean)
-        def datasource = new ElasticSearchClientFactory().create(context)
+        def datasource = new ElasticSearchClientFactory(context:context).create()
 
         def searchR = datasource.client.search {
             indices context.index
@@ -123,7 +123,7 @@ class SearchEngineTestHelper {
     static def showAll = { beanType ->
         def bean = beanType.newInstance()
         def context = ContextBuilder.build bean
-        def datasource = new ElasticSearchClientFactory().create context
+        def datasource = new ElasticSearchClientFactory(context:context).create()
 
         def searchR = datasource.client.search {
             indices context.index
