@@ -191,10 +191,10 @@ class Engine {
             }
             stats.detailTime = [:]
 
-            stats.detailTime.assemblyDone = stats.assemblyDoneInstant?:0 - stats.startInstant?:0
-            stats.detailTime.queryBuilt = stats.queryBuiltInstant?:0 - stats.assemblyDoneInstant?:0
-            stats.detailTime.response = stats.responseInstant?:0 - stats.queryBuiltInstant?:0
-            stats.detailTime.unmarshall = stats.unmarshallInstant?:0 - stats.responseInstant?:0
+            stats.detailTime.assemblyDone = (stats.assemblyDoneInstant?:0) - stats.startInstant?:0
+            stats.detailTime.queryBuilt = (stats.queryBuiltInstant?:0) - stats.assemblyDoneInstant?:0
+            stats.detailTime.response = (stats.responseInstant?:0) - stats.queryBuiltInstant?:0
+            stats.detailTime.unmarshall = (stats.unmarshallInstant?:0) - stats.responseInstant?:0
             stats.detailTime.statsDone = new Date().time - stats.unmarshallInstant?:0
             stats.detailTime.overall = new Date().time - stats.startInstant?:0
         }
