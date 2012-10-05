@@ -11,7 +11,7 @@ import org.elasticsearch.common.settings.ImmutableSettings
 import groovy.util.logging.Log4j 
 
 @Log4j
-class ThreadLocalClientFactor implements ElasticSearchClientFactory {
+class ThreadLocalClientFactory implements ElasticSearchClientFactory {
     
     def context
 
@@ -56,7 +56,7 @@ class ThreadLocalClientFactor implements ElasticSearchClientFactory {
                 datasource.close = { datasource.node.stop().close() }                        
         }
 
-        ElasticSearchClientHolder.INSTANCE.get().clients[context.returnType] = datasource
+        ElasticSearchClientHolder.INSTANCE.get().clients[context.returnType] = datasource.client
 
         datasource.client
     }
