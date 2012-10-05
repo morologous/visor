@@ -9,6 +9,7 @@ class SearchEngineTestHelper {
     
     static def testESSettings = { 
         node { local = true } 
+        discovery { cluster { name = 'visorTest' } }
         http { enabled = false }
         path { data = './build/data' }
     }

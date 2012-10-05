@@ -7,6 +7,9 @@ import org.junit.BeforeClass
 import org.junit.AfterClass
 import static org.junit.Assert.*
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class HealthTest {
 
@@ -26,7 +29,19 @@ class HealthTest {
 
     @Test
     void testHealthRequest() {
-    	def response = Engine.health(zeta)
+
+    	def response
+
+        ExecutorService executor = Executors.newFixedThreadPool(1)
+        executor.execute( {
+                response = Engine.health(zeta)
+                while (ClusterHealthStatus.GREEN != response.status) {                    
+                    Thread.sleep(250)
+                    response = Engine.health(zeta)
+                }
+                return
+             } as Runnable)
+        executor.awaitTermination(10, TimeUnit.SECONDS)        
 
     	assertEquals ClusterHealthStatus.GREEN, response.status
     }
