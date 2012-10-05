@@ -51,6 +51,7 @@ class EngineIndexTest {
 		def blargle = new EngineIndexTestBean(id:''+'blargle'.hashCode(), name:'blargle', num:300) 
 		def indexR = blargle.index()
 		indexR.success = {
+            SearchEngineTestHelper.refresh(blargle)
 			def result = new EngineIndexTestBean(num:300).search()
 			assertEquals 1, result.count
 			assertEquals blargle, result.list[0]
