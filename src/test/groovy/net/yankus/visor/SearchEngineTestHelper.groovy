@@ -36,13 +36,13 @@ class SearchEngineTestHelper {
     }
 
     static def refresh(bean) {
-        snooze(500)
+        snooze()
         def context = ContextBuilder.build(bean)
         def datasource = new ElasticSearchClientFactory(context:context).create()
         datasource.client.admin.indices.refresh(new RefreshRequest(context.index)).response '5s'
     }    
 
-    private static def snooze(time=2000) {        
+    private static def snooze(time=1000) {        
         try {
             Thread.sleep(time)
         } catch (InterruptedException ie) {
