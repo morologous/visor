@@ -63,7 +63,7 @@ class EngineIndexTest {
 				}
 				return
 			 } as Runnable)
-		executor.awaitTermination(5, TimeUnit.SECONDS)
+		executor.awaitTermination(10, TimeUnit.SECONDS)
 		assertTrue callbackCalled
 	}
 
