@@ -17,10 +17,10 @@ class SearchPagingTest {
     public static void setUp() throws Exception {
         for (i in 0..24) {
             def bean = new SearchPagingTestBean(id:"$i", name:'bean_'+i)
-            bean.index()
+            bean.index().actionGet()
             testBeans << bean
         }
-        SearchEngineTestHelper.snooze()
+        SearchEngineTestHelper.refresh(testBeans[0])
     }
 
     @AfterClass

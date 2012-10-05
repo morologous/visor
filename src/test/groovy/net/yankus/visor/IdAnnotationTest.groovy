@@ -23,6 +23,8 @@ class IdAnnotationTest {
         SearchEngineTestHelper.index foo
         SearchEngineTestHelper.index bar
         SearchEngineTestHelper.index baz
+
+        SearchEngineTestHelper.refresh foo
     }
 
     @AfterClass
@@ -37,7 +39,7 @@ class IdAnnotationTest {
         def gazonk = new SingleIdAnnotationTestBean(id:123L, name:'gazonk')
         gazonk.index()
 
-        SearchEngineTestHelper.snooze()
+        SearchEngineTestHelper.refresh(gazonk)
 
         def results = new SingleIdAnnotationTestBean(name:'gazonk').search()
         assertEquals 1, results.count

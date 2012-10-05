@@ -37,7 +37,7 @@ class RemoteClientTestIntegration {
         def indexR = beta.index()
 
         indexR.response '5s'
-        SearchEngineTestHelper.snooze()
+        SearchEngineTestHelper.refresh(beta)
 
         def results = Engine.search new RemoteClientTestBean(num:2000)
         assertEquals 1, results.count

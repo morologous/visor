@@ -2,6 +2,7 @@ package net.yankus.visor
 
 import static org.junit.Assert.*
 import groovy.util.logging.Log4j 
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 
 @Log4j
 class SearchEngineTestHelper {
@@ -28,13 +29,20 @@ class SearchEngineTestHelper {
         def response = indexR.response '5s'
         log.debug ("index response: $response.index/$response.type/$response.id")
         assertEquals bean.id, response.id
-
-        snooze()
+        
+        refresh(bean)
 
         response
     }
 
-    static def snooze(time=2000) {
+    static def refresh(bean) {
+        snooze(500)
+        def context = ContextBuilder.build(bean)
+        def datasource = new ElasticSearchClientFactory(context:context).create()
+        datasource.client.admin.indices.refresh(new RefreshRequest(context.index)).response '5s'
+    }    
+
+    private static def snooze(time=2000) {        
         try {
             Thread.sleep(time)
         } catch (InterruptedException ie) {

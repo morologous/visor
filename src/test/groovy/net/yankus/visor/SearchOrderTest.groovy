@@ -2,7 +2,7 @@ package net.yankus.visor
 
 
 import org.junit.BeforeClass
-import org.junit.AfterClass
+import org.junit.AfterClass 
 import org.junit.Test
 import static org.junit.Assert.*
 import groovy.transform.ToString
@@ -17,10 +17,11 @@ class SearchOrderTest {
     public static void setUp() throws Exception {
         for (i in 0..9) {
             def bean = new SearchOrderTestBean(id:"$i", index:9-i, name:"bean $i")
-            bean.index()
+            def response = bean.index().actionGet()
+            assertEquals bean.id.toString(), response.id
             testBeans << bean
         }
-        SearchEngineTestHelper.snooze()
+        SearchEngineTestHelper.refresh(testBeans[0])
     }
 
     @AfterClass

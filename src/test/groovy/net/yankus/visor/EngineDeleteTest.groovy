@@ -38,7 +38,7 @@ class EngineDeleteTest {
         def deleteR = val1.delete()
         deleteR.response '5s'
 
-        SearchEngineTestHelper.snooze()
+        SearchEngineTestHelper.refresh(val1)
 
         searchR = val1.search()
         assertEquals 0, searchR.count
@@ -53,7 +53,7 @@ class EngineDeleteTest {
         def deleteR = val2.delete()
         deleteR.response '5s'
 
-        SearchEngineTestHelper.snooze()
+        SearchEngineTestHelper.refresh(val2)
 
         searchR = val2.search()
         assertEquals 0, searchR.count
@@ -61,7 +61,7 @@ class EngineDeleteTest {
         deleteR = val2.delete()
         deleteR.response '5s'
 
-        SearchEngineTestHelper.snooze()
+        SearchEngineTestHelper.refresh(val2)
 
         searchR = val2.search() 
         assertEquals 0, searchR.count

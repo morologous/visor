@@ -38,7 +38,7 @@ class EngineIndexTest {
         def indexR = flurgle.index()
 
         indexR.response '5s'
-        SearchEngineTestHelper.snooze()
+        SearchEngineTestHelper.refresh(flurgle)
 
         def result = new EngineIndexTestBean(num:200).search()
         assertEquals 1, result.count

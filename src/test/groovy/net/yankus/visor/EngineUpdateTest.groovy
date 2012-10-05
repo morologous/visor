@@ -33,7 +33,7 @@ class EngineUpdateTest {
         newFoo.name = 'bar'
         newFoo.update()
 
-        SearchEngineTestHelper.snooze()
+        SearchEngineTestHelper.refresh(newFoo)
 
         results = new EngineUpdateTestBean(num:100).search()
         assertEquals 1, results.count

@@ -30,7 +30,7 @@ class MultiSelectTest {
         SearchEngineTestHelper.index alpha
         SearchEngineTestHelper.index i
 
-        //SearchEngineTestHelper.snooze(4000)
+        SearchEngineTestHelper.refresh(a)
     }
     @AfterClass
     public static void tearDown() {

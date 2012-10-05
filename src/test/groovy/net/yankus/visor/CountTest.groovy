@@ -23,7 +23,7 @@ class CountTest {
 		SearchEngineTestHelper.index o2
 		SearchEngineTestHelper.index o3
 
-		SearchEngineTestHelper.snooze()
+		SearchEngineTestHelper.refresh(o1)
 	}
 
 	@After
