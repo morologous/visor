@@ -11,8 +11,8 @@ import org.elasticsearch.search.sort.SortOrder
 class Engine {
 
     static def doInElasticSearch = { context, operation ->
-        def datasource = context.connectionFactory.create()    
-        return operation.call(datasource.client)
+        def client = context.connectionFactory.create()    
+        return operation.call(client)
     }
 
     static def doSearch (context, queryParam, stats = [:], countOnly = false) {

@@ -16,6 +16,10 @@ import org.codehaus.groovy.control.CompilePhase
 /**
  * Full disclosure: I figured out how to do this from reading the groovy
  *                  ToString tranformation class and the Groovy AST unittests.
+ *
+ * TODO: maybe make these properties and methods less common and more specific to visor
+ *       like visorSearch or visorIndex... though, GORM doesn't do those things.
+ *       The properties may just want underscores or something.
  */
 @GroovyASTTransformation(phase=CompilePhase.CANONICALIZATION)
 class VisorASTTransformation extends AbstractASTTransformation {

@@ -15,11 +15,11 @@ class SearchEngineTestHelper {
 
     static def index = { bean ->
         def context = ContextBuilder.build(bean)
-        def datasource = new ElasticSearchClientFactory(context:context).create() 
+        def client = new ThreadLocalClientFactory(context:context).create() 
 
         def indexParams = Marshaller.marshall(bean, 'INDEX')
         log.debug "indexParams: $indexParams"
-        def indexR = datasource.client.index {
+        def indexR = client.index {
             index context.index
             type context.returnType.simpleName
             id SearchEngineTestHelper.getId(bean)
@@ -38,8 +38,8 @@ class SearchEngineTestHelper {
     static def refresh(bean) {
         snooze()
         def context = ContextBuilder.build(bean)
-        def datasource = new ElasticSearchClientFactory(context:context).create()
-        datasource.client.admin.indices.refresh(new RefreshRequest(context.index)).response '5s'
+        def client = new ThreadLocalClientFactory(context:context).create()
+        client.admin.indices.refresh(new RefreshRequest(context.index)).response '5s'
     }    
 
     private static def snooze(time=1000) {        
@@ -52,9 +52,9 @@ class SearchEngineTestHelper {
 
     static def get = { bean -> 
         def context = ContextBuilder.build(bean)
-        def datasource = new ElasticSearchClientFactory(context:context).create()
+        def client = new ThreadLocalClientFactory(context:context).create()
 
-        def getR = datasource.client.get {
+        def getR = client.get {
             index context.index
             type context.returnType.simpleName
             id SearchEngineTestHelper.getId(bean)
@@ -70,10 +70,10 @@ class SearchEngineTestHelper {
     static def delete = { bean -> 
         if (bean) {            
             def context = ContextBuilder.build(bean)
-            def datasource = new ElasticSearchClientFactory(context:context).create()
+            def client = new ThreadLocalClientFactory(context:context).create()
 
             // TODO detect id
-            def deleteR = datasource.client.delete {
+            def deleteR = client.delete {
                 index context.index
                 type context.returnType.simpleName
                 id SearchEngineTestHelper.getId(bean)
@@ -107,9 +107,9 @@ class SearchEngineTestHelper {
 
     static def search = { bean -> 
         def context = ContextBuilder.build(bean)
-        def datasource = new ElasticSearchClientFactory(context:context).create()
+        def client = new ThreadLocalClientFactory(context:context).create()
 
-        def searchR = datasource.client.search {
+        def searchR = client.search {
             indices context.index
             types context.returnType.simpleName
             source {
@@ -131,9 +131,9 @@ class SearchEngineTestHelper {
     static def showAll = { beanType ->
         def bean = beanType.newInstance()
         def context = ContextBuilder.build bean
-        def datasource = new ElasticSearchClientFactory(context:context).create()
+        def client = new ThreadLocalClientFactory(context:context).create()
 
-        def searchR = datasource.client.search {
+        def searchR = client.search {
             indices context.index
             types context.returnType.simpleName
             source {
