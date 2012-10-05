@@ -17,8 +17,8 @@ class SearchOrderTest {
     public static void setUp() throws Exception {
         for (i in 0..9) {
             def bean = new SearchOrderTestBean(id:"$i", index:9-i, name:"bean $i")
-            def response = bean.index().actionGet()
-            assertEquals bean.id.toString(), response.id
+            def response = SearchEngineTestHelper.index bean
+
             testBeans << bean
         }
         SearchEngineTestHelper.refresh(testBeans[0])

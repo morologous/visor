@@ -28,7 +28,7 @@ class SearchEngineTestHelper {
 
         def response = indexR.response '5s'
         log.debug ("index response: $response.index/$response.type/$response.id")
-        assertEquals bean.id, response.id
+        assertEquals '' + bean.id, response.id
         
         refresh(bean)
 
