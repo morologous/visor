@@ -27,33 +27,9 @@ class ThreadLocalClientFactory implements ElasticSearchClientFactory {
         def datasource = new Expando()
 
         if (context.remoteAddresses.size() > 0) {
-                log.info "Creating transportClient for $context.remoteAddresses"
-                def settings = ImmutableSettings.settingsBuilder()
-
-                def settingsClosure = context.settings.newInstance(settings, settings).call()
-
-                datasource.transportClient = new TransportClient(settings.build())
-                context.remoteAddresses.each {
-                        def (host, port) = it.split(':')
-                        datasource.transportClient.addTransportAddress(new InetSocketTransportAddress(host, port as int)) 
-                }
-
-                datasource.client = new GClient(datasource.transportClient)
-
-                datasource.close = { /* no op? */ }
-
+               datasource = new TransportClientBuilder(settings:context.settings.newInstance(null, null), remoteAddresses:context.remoteAddresses).build()
         } else {
-                log.info 'Creating nodeBuilder client.'
-                datasource.nodeBuilder = nodeBuilder()
-
-                def settingsClosure = context.settings.newInstance(datasource.nodeBuilder.getSettings(), datasource.nodeBuilder.getSettings())
-
-                datasource.nodeBuilder.settings(settingsClosure) 
-                
-                datasource.node = datasource.nodeBuilder.node()
-                datasource.client = datasource.node.client
-
-                datasource.close = { datasource.node.stop().close() }                        
+               datasource = new NodeClientBuilder(settings:context.settings.newInstance(null, null)).build()
         }
 
         ElasticSearchClientHolder.INSTANCE.get().clients[context.returnType] = datasource.client

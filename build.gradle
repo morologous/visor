@@ -3,7 +3,7 @@ apply plugin: 'groovy'
 apply plugin: 'maven'
 
 group = 'net.yankus'
-version = '0.5'
+version = '0.6'
 
 repositories {
     mavenCentral()
@@ -59,8 +59,8 @@ if (deploymentOperations) {
                 }
      
                 pom.project {
-                    groupId "$group"
-                    version "$version"
+                    groupId 'net.yankus'
+                    version '0.6'
                     artifactId 'visor'
                     packaging 'jar'
                     name 'Visor'
