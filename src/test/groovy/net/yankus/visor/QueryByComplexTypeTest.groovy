@@ -49,7 +49,7 @@ class QueryByComplexTypeTest {
         assertEquals foo, result
         assertNotNull result.snippets
         assertNotNull result.snippets['children.name']
-        assertEquals '<em>child</em>', result.snippets['children.name'].fragments[0]
+        assertEquals '<strong>child</strong>', result.snippets['children.name'].fragments[0]
     }
 
     @net.yankus.visor.Visor ( index = 'test',

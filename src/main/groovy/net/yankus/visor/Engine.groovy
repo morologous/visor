@@ -84,7 +84,10 @@ class Engine {
                     highlights.each {
                         log.debug "Adding highlighted field: ${it}"
                         s.addHighlightedField(it)
-                    }                                   
+                    }       
+                    s.setHighlighterPreTags('<strong>')
+                    s.setHighlighterPostTags('</strong>')
+                    s.setHighlighterEncoder('html')
                 }
 
                 sortOrder.each {
