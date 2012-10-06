@@ -41,7 +41,7 @@ class HealthTest {
                 }
                 return
              } as Runnable)
-        executor.awaitTermination(10, TimeUnit.SECONDS)        
+        executor.awaitTermination(20, TimeUnit.SECONDS)        
 
     	assertEquals ClusterHealthStatus.GREEN, response.status
     }
