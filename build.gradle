@@ -4,8 +4,6 @@ apply plugin: 'maven'
 
 group = 'net.yankus'
 version = '0.6.1'
-sonatypeUsername='usernameInProps'
-sonatypePassword='passwordInProps'
 
 repositories {
     mavenCentral()
@@ -43,7 +41,7 @@ artifacts {
     archives sourcesJar
 }
 
-
+/*
 if (deploymentOperations) {
     apply plugin: 'signing'
 
@@ -95,7 +93,7 @@ if (deploymentOperations) {
     }
     
 }
-
+*/
 
 test {
     if (testall == 'false') {
