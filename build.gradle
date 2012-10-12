@@ -4,6 +4,8 @@ apply plugin: 'maven'
 
 group = 'net.yankus'
 version = '0.6.1'
+sonatypeUsername='usernameInProps'
+sonatypePassword='passwordInProps'
 
 repositories {
     mavenCentral()
