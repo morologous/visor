@@ -3,7 +3,7 @@ apply plugin: 'groovy'
 apply plugin: 'maven'
 
 group = 'net.yankus'
-version = '0.6'
+version = '0.6.1'
 
 repositories {
     mavenCentral()
@@ -41,7 +41,7 @@ artifacts {
     archives sourcesJar
 }
 
-/*
+
 if (deploymentOperations) {
     apply plugin: 'signing'
 
@@ -60,7 +60,7 @@ if (deploymentOperations) {
      
                 pom.project {
                     groupId 'net.yankus'
-                    version '0.6'
+                    version '0.6.1'
                     artifactId 'visor'
                     packaging 'jar'
                     name 'Visor'
@@ -93,7 +93,7 @@ if (deploymentOperations) {
     }
     
 }
-*/
+
 
 test {
     if (testall == 'false') {

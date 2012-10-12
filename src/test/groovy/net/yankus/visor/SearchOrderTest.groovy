@@ -16,7 +16,7 @@ class SearchOrderTest {
     @BeforeClass
     public static void setUp() throws Exception {
         for (i in 0..9) {
-            def bean = new SearchOrderTestBean(id:"$i", index:9-i, name:"bean $i")
+            def bean = new SearchOrderTestBean(id:"$i", index:9-i, name:"bean $i", content:'foo ' * i)
             def response = SearchEngineTestHelper.index bean
 
             testBeans << bean
@@ -48,6 +48,18 @@ class SearchOrderTest {
         assertEquals 'bean 0', results.list[0].name
     }
 
+    @Test
+    void testOrderByScore() {
+        def results = new SearchOrderTestBean(queryString:'foo').search()
+
+        def score = 99.0d
+        results.list.each {
+            println "${it} - ${it.score}"
+            assertTrue "${it.score} was not less that ${score}", it.score <= score
+            score = it.score
+        }
+    }
+
     @net.yankus.visor.Visor ( index = 'test',
            settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
@@ -59,5 +71,7 @@ class SearchOrderTest {
         def index
         @Field
         def name
+        @Field
+        def content
     }
 }

@@ -36,7 +36,7 @@ class Engine {
             sortOrder << queryParam.sortOrder
         }
         // at the bottom ALWAYS sort by score asc
-        sortOrder << "_score" 
+        sortOrder <<['_score':'desc'] 
         log.debug "Sorting: ${sortOrder}"
 
         def highlights = []
