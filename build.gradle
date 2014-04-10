@@ -13,7 +13,7 @@ repositories {
 configurations.compile.transitive = true
 
 dependencies {
-    groovy group: 'org.codehaus.groovy', name: 'groovy', version: '1.8.6'
+    groovy group: 'org.codehaus.groovy', name: 'groovy', version: '2.0.5'
     compile 'joda-time:joda-time:2.1'
     compile ('org.elasticsearch:elasticsearch-lang-groovy:1.1.0') {
         exclude module: 'groovy-all'
