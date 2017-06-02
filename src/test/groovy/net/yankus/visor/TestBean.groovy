@@ -2,11 +2,15 @@ package net.yankus.visor
 
 import groovy.transform.ToString
 import groovy.transform.EqualsAndHashCode
-import static org.elasticsearch.index.query.FilterBuilders.*
 
 @net.yankus.visor.Visor(filters = { inFilter('security', ['low', 'none'] as String[]) }, 
        index = "test",
-       settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
+       settings = {settings ->
+        settings.put('node.local',true)
+        settings.put('discovery.cluster.name','visorTest')
+        settings.put('http.enabled', false)
+        settings.put('path.data','./build/data')
+        settings.put('path.home','./build')}  )
 @ToString
 @EqualsAndHashCode(excludes="score, snippets")
 public class TestBean {

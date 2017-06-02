@@ -3,15 +3,17 @@ package net.yankus.visor
 import static org.junit.Assert.*
 import groovy.util.logging.Log4j 
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
+import org.elasticsearch.action.index.*
+import static org.elasticsearch.client.Requests.*
 
 @Log4j
 class SearchEngineTestHelper {
     
-    static def testESSettings = { 
-        node { local = true } 
-        discovery { cluster { name = 'visorTest' } }
-        http { enabled = false }
-        path { data = './build/data' }
+    static def testESSettings = { settings ->
+        settings.put('node.local',true)
+        settings.put('discovery.cluster.name','visorTest')
+        settings.put('http.enabled', false)
+        settings.put('path.data','./build/data')
     }
 
     static def index = { bean ->
@@ -20,14 +22,14 @@ class SearchEngineTestHelper {
 
         def indexParams = Marshaller.marshall(bean, 'INDEX')
         log.debug "indexParams: $indexParams"
-        def indexR = client.index {
-            index context.index
-            type context.returnType.simpleName
-            id SearchEngineTestHelper.getId(bean)
-            source indexParams
-        }
+        
+        def request = indexRequest(context.index).type(context.returnType.simpleName)
+                                                 .id(SearchEngineTestHelper.getId(bean))
+                                                 .source(indexParams)
 
-        def response = indexR.response '5s'
+        def indexR = client.index(request)                            
+
+        def response = indexR.actionGet 5000
         log.debug ("index response: $response.index/$response.type/$response.id")
         assertEquals '' + bean.id, response.id
         
@@ -40,7 +42,7 @@ class SearchEngineTestHelper {
         snooze()
         def context = ContextBuilder.build(bean)
         def client = new ThreadLocalClientFactory(context:context).create()
-        client.admin.indices.refresh(new RefreshRequest(context.index)).response '5s'
+        client.admin().indices().refresh(new RefreshRequest(context.index)).actionGet 5000
     }    
 
     private static def snooze(time=1000) {        
