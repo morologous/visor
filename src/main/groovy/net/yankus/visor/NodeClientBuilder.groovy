@@ -1,13 +1,13 @@
 package net.yankus.visor
 
 import groovy.util.Expando
-import org.elasticsearch.groovy.client.GClient
-import org.elasticsearch.groovy.node.GNode
-import org.elasticsearch.groovy.node.GNodeBuilder
-import static org.elasticsearch.groovy.node.GNodeBuilder.*
+import org.elasticsearch.client.Client
+import org.elasticsearch.node.Node
+import org.elasticsearch.node.NodeBuilder
+import static org.elasticsearch.node.NodeBuilder.*
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
-import org.elasticsearch.common.settings.ImmutableSettings
+import org.elasticsearch.common.settings.Settings
 import groovy.util.logging.Log4j 
 
 @Log4j
@@ -17,18 +17,20 @@ class NodeClientBuilder {
 
 	def build() {
 		log.info 'Creating nodeBuilder client.'
-        def datasource = new Expando()
-        datasource.nodeBuilder = nodeBuilder()
 
-        def settingsClosure = settings.rehydrate(datasource.nodeBuilder.getSettings(), datasource.nodeBuilder.getSettings(), datasource.nodeBuilder.getSettings())
+                def datasource = new Expando()
+                datasource.nodeBuilder = nodeBuilder()
 
-        datasource.nodeBuilder.settings(settingsClosure) 
+                def nodeSettings = Settings.settingsBuilder()
+                settings(nodeSettings)
+
+                datasource.nodeBuilder.settings(nodeSettings) 
              
-        datasource.node = datasource.nodeBuilder.node()
-        datasource.client = datasource.node.client
+                datasource.node = datasource.nodeBuilder.node()
+                datasource.client = datasource.node.client
 
-        datasource.close = { datasource.node.stop().close() }  
+                datasource.close = { datasource.node.stop().close() }  
 
-        datasource
+                datasource
 	}
 }
