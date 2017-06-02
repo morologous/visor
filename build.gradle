@@ -1,11 +1,11 @@
 apply plugin: 'groovy' 
 
 group = 'net.yankus'
-version = '0.7.0'
+version = '0.8.0'
 
 repositories {
     mavenCentral()
-    mavenRepo name: 'sonatype', urls:'https://oss.sonatype.org/content/repositories/releases'
+    //mavenRepo name: 'sonatype', urls:'https://oss.sonatype.org/content/repositories/releases'
 }
 
 configurations.compile.transitive = true
@@ -13,9 +13,11 @@ configurations.compile.transitive = true
 dependencies {
     compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.5'
     compile 'joda-time:joda-time:2.1'
-    compile ('org.elasticsearch:elasticsearch-lang-groovy:1.1.0') {
-        exclude module: 'groovy-all'
-    }
+    compile 'org.elasticsearch:elasticsearch:2.4.4'
+    compile 'log4j:log4j:1.2.17'
+    //compile ('org.elasticsearch:elasticsearch-groovy:2.1.2') {
+    //    exclude module: 'groovy-all'
+    //}
     testCompile group: 'junit', name: 'junit', version: '4.8.2'
 }
 
