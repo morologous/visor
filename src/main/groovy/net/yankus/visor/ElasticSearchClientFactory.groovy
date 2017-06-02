@@ -1,9 +1,9 @@
 package net.yankus.visor
 
-import org.elasticsearch.groovy.client.GClient
+import org.elasticsearch.client.Client
 
 public interface ElasticSearchClientFactory {
 	
-	GClient create()
+	Client create()
 
 }

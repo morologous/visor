@@ -6,9 +6,9 @@ import org.junit.After
 import org.junit.BeforeClass
 import org.junit.AfterClass
 import static org.junit.Assert.*
-import org.elasticsearch.groovy.node.GNode
-import org.elasticsearch.groovy.node.GNodeBuilder
-import static org.elasticsearch.groovy.node.GNodeBuilder.*
+import org.elasticsearch.node.Node
+import org.elasticsearch.node.NodeBuilder
+import static org.elasticsearch.node.NodeBuilder.*
 import org.elasticsearch.search.SearchHit
 import groovy.transform.ToString
 

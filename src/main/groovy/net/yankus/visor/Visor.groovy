@@ -5,7 +5,6 @@ import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
 import java.lang.annotation.ElementType
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
-import static org.elasticsearch.index.query.FilterBuilders.*
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

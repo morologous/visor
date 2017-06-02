@@ -1,14 +1,14 @@
 package net.yankus.visor
 
 import org.elasticsearch.action.search.SearchType;
-import static org.elasticsearch.index.query.FilterBuilders.*
-import static org.elasticsearch.index.query.QueryBuilders.*
+import org.elasticsearch.index.query.*
 import groovy.util.logging.Log4j
 
 import org.elasticsearch.search.sort.SortOrder
 
 @Log4j
 class Engine {
+
 
     static def doInElasticSearch = { context, operation ->
         def client = context.connectionFactory.create()    
@@ -67,7 +67,7 @@ class Engine {
 
             def s = client.prepareSearch(context.index)            
 
-            def query = boolQuery()
+            def query = new BoolQueryBuilder()
 
             if (countOnly) {
                 s.setSearchType(SearchType.COUNT)
@@ -102,7 +102,7 @@ class Engine {
                 }
             }
 
-            def bool = boolQuery()            
+            def bool = new BoolQueryBuilder()            
             queryParams.entrySet().each { entry -> 
                 bool.must(entry.value
                                .annotation

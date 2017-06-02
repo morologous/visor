@@ -6,7 +6,7 @@ import org.junit.After
 import org.junit.BeforeClass
 import org.junit.AfterClass
 import static org.junit.Assert.*
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus
+import org.elasticsearch.cluster.health.ClusterHealthStatus
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
