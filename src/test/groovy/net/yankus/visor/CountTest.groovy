@@ -1,11 +1,9 @@
 package net.yankus.visor
 
-import org.junit.Before
 import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import static org.junit.Assert.*
-import groovy.transform.ToString
-import groovy.transform.EqualsAndHashCode
 
 class CountTest {
 	

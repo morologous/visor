@@ -1,12 +1,15 @@
 package net.yankus.visor
 
 
-import org.junit.BeforeClass
 import org.junit.AfterClass
-import org.junit.Test
 import static org.junit.Assert.*
-import groovy.transform.ToString
+
+import org.junit.BeforeClass
+import org.junit.Test
+
+import groovy.lang.Closure
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 class EngineDeleteTest {
     
@@ -67,7 +70,7 @@ class EngineDeleteTest {
         assertEquals 0, searchR.count
     }
 
-    @net.yankus.visor.Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
+    @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
     @EqualsAndHashCode(excludes="score, snippets")
     static class EngineDeleteTestBean {

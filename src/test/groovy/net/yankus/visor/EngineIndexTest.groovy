@@ -1,17 +1,16 @@
 package net.yankus.visor
 
 
-import static org.junit.Assert.*
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
-
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
+import static org.junit.Assert.*
 
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.junit.Test
+
+import groovy.lang.Closure
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 class EngineIndexTest {
     
@@ -68,7 +67,7 @@ class EngineIndexTest {
 		assertTrue callbackCalled
 	}
 
-    @net.yankus.visor.Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
+    @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
     @EqualsAndHashCode(excludes="score, snippets")
     static class EngineIndexTestBean {

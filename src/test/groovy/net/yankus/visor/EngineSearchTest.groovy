@@ -1,16 +1,11 @@
 package net.yankus.visor
 
-import org.junit.Test
-import org.junit.Before
-import org.junit.After
-import org.junit.BeforeClass
-import org.junit.AfterClass
-import static org.junit.Assert.*
-import org.elasticsearch.node.Node
-import org.elasticsearch.node.NodeBuilder
-import static org.elasticsearch.node.NodeBuilder.*
 import org.elasticsearch.search.SearchHit
-import groovy.transform.ToString
+import static org.junit.Assert.*
+
+import org.junit.AfterClass
+import org.junit.BeforeClass
+import org.junit.Test
 
 class EngineSearchTest {
     

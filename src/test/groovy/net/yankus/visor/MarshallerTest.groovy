@@ -3,6 +3,7 @@ package net.yankus.visor
 import org.junit.Test
 import static org.junit.Assert.*
 
+
 class MarshallerTest  {
 	
 	@Test

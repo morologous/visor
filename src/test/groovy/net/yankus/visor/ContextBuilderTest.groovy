@@ -3,6 +3,9 @@ package net.yankus.visor
 import org.junit.Test
 import static org.junit.Assert.*
 
+
+import groovy.lang.Closure
+
 class ContextBuilderTest {
 	
 	def expected = [
@@ -33,7 +36,7 @@ class ContextBuilderTest {
 
 	}
 
-	@net.yankus.visor.Visor(filters={it=='foo'}, settings={it.foo='bar'}, index='foo')
+	@Visor(filters={it=='foo'}, settings={it.foo='bar'}, index='foo')
 	public class AnnotationTestBean {
 		@Field
 		def test

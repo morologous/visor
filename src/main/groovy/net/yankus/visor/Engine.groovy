@@ -5,10 +5,14 @@ import org.elasticsearch.index.query.*
 import groovy.util.logging.Log4j
 
 import org.elasticsearch.search.sort.SortOrder
+import static org.elasticsearch.index.query.QueryBuilders.*
 
 @Log4j
 class Engine {
-
+	
+	static def inFilter(String field, String[] values) {
+		termsQuery(field, Arrays.asList(values))
+	}
 
     static def doInElasticSearch = { context, operation ->
         def client = context.connectionFactory.create()    
@@ -123,12 +127,12 @@ class Engine {
 
             s.setQuery(bool)
 
-            def filterClosure = context.filters.newInstance(null, null)            
-            s.setFilter filterClosure.call(context)
+            def filterClosure = context.filters.newInstance(context, this)         
+			bool.filter filterClosure.call(context)
 
             stats.queryBuiltInstant = new Date().time
 
-            def response = s.gexecute()
+            def response = s.execute()
 
             response
         }
@@ -142,7 +146,7 @@ class Engine {
         
         def esResult = doSearch(context, queryParam, stats)
 
-        def response = esResult.response context.defaultTimeout
+        def response = esResult.actionGet context.defaultTimeout
         log.trace "Search Response: ${response}"
 
         stats.responseInstant = new Date().time
@@ -175,14 +179,14 @@ class Engine {
         
         def esResult = doSearch(context, queryParam, stats, true)
 
-        def response = esResult.response context.defaultTimeout
+        def response = esResult.actionGet context.defaultTimeout
         log.debug "Search Response: ${response}"
 
         stats.responseInstant = new Date().time
 
         def results = new Expando()
         results.response = response
-        results.count = response.hits().totalHits()
+        results.count = response.getHits().totalHits()
 
         results
     }

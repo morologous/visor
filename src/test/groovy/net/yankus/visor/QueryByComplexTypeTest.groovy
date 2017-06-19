@@ -1,11 +1,14 @@
 package net.yankus.visor
 
-import org.junit.BeforeClass
 import org.junit.AfterClass
-import org.junit.Test
 import static org.junit.Assert.*
-import groovy.transform.ToString
+
+import org.junit.BeforeClass
+import org.junit.Test
+
+import groovy.lang.Closure
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 class QueryByComplexTypeTest { 
 

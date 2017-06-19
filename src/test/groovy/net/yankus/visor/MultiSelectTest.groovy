@@ -1,11 +1,14 @@
 package net.yankus.visor
 
-import org.junit.BeforeClass
 import org.junit.AfterClass
-import org.junit.Test
 import static org.junit.Assert.*
-import groovy.transform.ToString
+
+import org.junit.BeforeClass
+import org.junit.Test
+
+import groovy.lang.Closure
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 class MultiSelectTest {
     
@@ -50,7 +53,7 @@ class MultiSelectTest {
     }
     
 
-    @net.yankus.visor.Visor ( index = 'test',
+    @Visor ( index = 'test',
            settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
     @EqualsAndHashCode(excludes="score, snippets")

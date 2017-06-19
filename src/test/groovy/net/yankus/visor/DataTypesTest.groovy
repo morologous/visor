@@ -1,11 +1,15 @@
 package net.yankus.visor
 
-import org.junit.BeforeClass
-import org.junit.AfterClass
-import org.junit.Test
+import java.util.Date
 import static org.junit.Assert.*
-import groovy.transform.ToString
+
+import org.junit.AfterClass
+import org.junit.BeforeClass
+import org.junit.Test
+
+import groovy.lang.Closure
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 class DataTypesTest {
     
@@ -109,7 +113,7 @@ class DataTypesTest {
         assertEquals alpha.subs, retrievedAlpha.subs
     }
 
-    @net.yankus.visor.Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
+    @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
     @ToString
     @EqualsAndHashCode(excludes="score, snippets")
     static class DataTypesTestBean {

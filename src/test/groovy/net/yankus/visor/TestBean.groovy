@@ -1,9 +1,10 @@
 package net.yankus.visor
 
-import groovy.transform.ToString
+import groovy.lang.Closure
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
-@net.yankus.visor.Visor(filters = { inFilter('security', ['low', 'none'] as String[]) }, 
+@Visor(filters = { inFilter('security', ['low', 'none'] as String[]) }, 
        index = "test",
        settings = {settings ->
         settings.put('node.local',true)

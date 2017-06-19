@@ -1,13 +1,11 @@
 package net.yankus.visor
 
-import org.junit.Test
-import org.junit.Before
-import org.junit.After
-import static org.junit.Assert.*
 import org.elasticsearch.search.SearchHit
+import static org.junit.Assert.*
+
 import org.elasticsearch.search.SearchHitField
-import groovy.mock.interceptor.MockFor
-import groovy.util.Expando
+import org.junit.Before
+import org.junit.Test
 
 class UnmarshallerTest {
 	
@@ -37,7 +35,7 @@ class UnmarshallerTest {
 		
 	}
 
-	@net.yankus.visor.Visor(index='test')
+	@Visor(index='test')
 	public class TestBean {
 		@Field
 		def foo

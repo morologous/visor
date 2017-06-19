@@ -66,7 +66,8 @@ public @interface Field {
                 .to(value.to)
         } else {
             AnnotationDefaultClosureLogger.trace 'Performing default apply.'            
-            def query = fieldQuery key, value
+            def query = queryStringQuery '' + value
+            query.defaultField = key
             query.analyzeWildcard = true
 
             query
