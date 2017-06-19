@@ -1,10 +1,11 @@
 package net.yankus.visor
 
+import groovy.util.logging.Log4j
 import static org.junit.Assert.*
-import groovy.util.logging.Log4j 
+
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
-import org.elasticsearch.action.index.*
 import static org.elasticsearch.client.Requests.*
+import static org.junit.Assert.*
 
 @Log4j
 class SearchEngineTestHelper {
