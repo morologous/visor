@@ -6,6 +6,7 @@ import static org.junit.Assert.*
 import org.elasticsearch.search.SearchHitField
 import org.junit.Before
 import org.junit.Test
+import net.yankus.visor.Visor
 
 class UnmarshallerTest {
 	

@@ -3,19 +3,24 @@ package net.yankus.visor
 import groovy.util.logging.Log4j
 import static org.junit.Assert.*
 
+
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
+import org.elasticsearch.common.settings.Settings;
+
 import static org.elasticsearch.client.Requests.*
 import static org.junit.Assert.*
 
 @Log4j
 class SearchEngineTestHelper {
     
-    static def testESSettings = { settings ->
-        settings.put('node.local',true)
-        settings.put('discovery.cluster.name','visorTest')
-        settings.put('http.enabled', false)
-        settings.put('path.data','./build/data')
+    static final Closure testESSettings = { settings -> 
+		settings.put('node.local',true)
+		settings.put('discovery.cluster.name','visorTest')
+		settings.put('http.enabled', false)
+		settings.put('path.data','./data')
+		settings.put('path.home','./build')
     }
+    
 
     static def index = { bean ->
         def context = ContextBuilder.build(bean)
@@ -77,13 +82,8 @@ class SearchEngineTestHelper {
             def client = new ThreadLocalClientFactory(context:context).create()
 
             // TODO detect id
-            def deleteR = client.delete {
-                index context.index
-                type context.returnType.simpleName
-                id SearchEngineTestHelper.getId(bean)
-            }
+            def response = client.prepareDelete(context.index, context.returnType.simpleName, SearchEngineTestHelper.getId(bean)).get()
 
-            def response = deleteR.response '5s'
             assertEquals '' + bean.id, response.id
 
 

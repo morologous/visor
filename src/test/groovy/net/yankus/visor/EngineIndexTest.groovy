@@ -11,6 +11,7 @@ import org.junit.Test
 import groovy.lang.Closure
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import net.yankus.visor.Visor
 
 class EngineIndexTest {
     
@@ -36,7 +37,7 @@ class EngineIndexTest {
     void testIndex() {
         def indexR = flurgle.index()
 
-        indexR.response '5s'
+//        indexR.response '5s'
         SearchEngineTestHelper.refresh(flurgle)
 
         def result = new EngineIndexTestBean(num:200).search()
@@ -67,7 +68,7 @@ class EngineIndexTest {
 		assertTrue callbackCalled
 	}
 
-    @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
+    @Visor(index='test', settings={ SearchEngineTestHelper.testESSettings(it) }  )
     @ToString
     @EqualsAndHashCode(excludes="score, snippets")
     static class EngineIndexTestBean {

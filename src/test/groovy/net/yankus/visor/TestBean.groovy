@@ -1,10 +1,13 @@
 package net.yankus.visor
 
+import org.elasticsearch.index.query.QueryBuilders;
+
 import groovy.lang.Closure
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import net.yankus.visor.Visor
 
-@Visor(filters = { inFilter('security', ['low', 'none'] as String[]) }, 
+@Visor(filters = { it.filter(QueryBuilders.termsQuery('security', ['low', 'none'] as String[])) }, 
        index = "test",
        settings = {settings ->
         settings.put('node.local',true)

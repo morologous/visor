@@ -1,10 +1,13 @@
 package net.yankus.visor
 
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.*
+
 import groovy.util.logging.Log4j
 
 import org.elasticsearch.search.sort.SortOrder
+
 import static org.elasticsearch.index.query.QueryBuilders.*
 
 @Log4j
@@ -69,7 +72,7 @@ class Engine {
 
         Engine.doInElasticSearch(context) { client ->
 
-            def s = client.prepareSearch(context.index)            
+            SearchRequestBuilder s = client.prepareSearch(context.index)            
 
             def query = new BoolQueryBuilder()
 
@@ -80,7 +83,7 @@ class Engine {
             s.setTypes(context.returnType.simpleName)
              
             if (!countOnly) {
-                s.addPartialField('results', ['*'] as String[], excludes as String[])
+                s.setFetchSource(['*'] as String[], excludes as String[])
                  .setFrom(startingIndex as int)
                  .setSize(pageSize as int)
 
@@ -127,8 +130,8 @@ class Engine {
 
             s.setQuery(bool)
 
-            def filterClosure = context.filters.newInstance(context, this)         
-			bool.filter filterClosure.call(context)
+            def filterClosure = context.filters.newInstance(null, this)         
+			filterClosure.call(bool)
 
             stats.queryBuiltInstant = new Date().time
 
@@ -221,13 +224,10 @@ class Engine {
         log.info "Indexing to $context.index id $targetId"
         log.debug "Indexed values: $indexParams"
         Engine.doInElasticSearch(context) { client -> 
-            def result = client.index {
-                index context.index
-                type context.returnType.simpleName
-                id targetId
-                source indexParams
-            }
+            def request = client.prepareIndex(context.index, context.returnType.simpleName, targetId)
+			request.setSource(indexParams)
             
+			def result = request.get()
             result
         }
 
@@ -239,12 +239,9 @@ class Engine {
         log.info "Deleting $context.index id $idValue"
         if (idValue) {
             Engine.doInElasticSearch(context) { client ->
-                def result = client.delete {
-                    index context.index
-                    type context.returnType.simpleName
-                    id idValue
-                }
+                def request = client.prepareDelete(context.index, context.returnType.simpleName, idValue)
 
+				def result = request.get()
                 result 
             }            
         }

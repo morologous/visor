@@ -9,6 +9,7 @@ import org.junit.Test
 import groovy.lang.Closure
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import net.yankus.visor.Visor
 
 class MultiSelectTest {
     

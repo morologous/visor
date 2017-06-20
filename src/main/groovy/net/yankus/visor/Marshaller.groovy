@@ -64,7 +64,7 @@ class Marshaller {
 
 	static def unmarshall = { SearchHit hit, context ->
 		log.trace "Unmarshalling hit: $hit"
-
+		println("Unmarshalling hit: $hit")
 		def unmarshalled = Marshaller.unmarshallMap(hit.field('results').values[0], context.returnType)
 		
 		// detect and set Id
