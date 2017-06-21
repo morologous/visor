@@ -5,6 +5,8 @@ import static org.junit.Assert.*
 
 
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
+import org.elasticsearch.action.search.SearchRequestBuilder
+import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.common.settings.Settings;
 
 import static org.elasticsearch.client.Requests.*
@@ -137,18 +139,15 @@ class SearchEngineTestHelper {
         def context = ContextBuilder.build bean
         def client = new ThreadLocalClientFactory(context:context).create()
 
-        def searchR = client.search {
-            indices context.index
-            types context.returnType.simpleName
-            source {
-                query {
-                    match_all { }
-                }
-            }
-        }
-
-        def response = searchR.response '5s'
+        def search = client.prepareSearch(context.index)
+						    .setTypes(context.returnType.simpleName)
+							.execute()
+		
+		SearchResponse response = search.actionGet()
+        
         log.debug "showAll: $response"
+		
+		response
     }
 
 }
