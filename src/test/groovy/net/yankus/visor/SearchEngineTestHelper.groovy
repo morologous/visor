@@ -1,10 +1,10 @@
 package net.yankus.visor
 
 import groovy.util.logging.Log4j
-import static org.junit.Assert.*
 
-
+import org.elasticsearch.action.ListenableActionFuture
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
+import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.search.SearchRequestBuilder
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.common.settings.Settings;
@@ -37,7 +37,7 @@ class SearchEngineTestHelper {
 
         def indexR = client.index(request)                            
 
-        def response = indexR.actionGet 5000
+        def response = indexR.get()
         log.debug ("index response: $response.index/$response.type/$response.id")
         assertEquals '' + bean.id, response.id
         
@@ -65,13 +65,10 @@ class SearchEngineTestHelper {
         def context = ContextBuilder.build(bean)
         def client = new ThreadLocalClientFactory(context:context).create()
 
-        def getR = client.get {
-            index context.index
-            type context.returnType.simpleName
-            id SearchEngineTestHelper.getId(bean)
-        }
+        ListenableActionFuture<GetResponse> future = client.prepareGet(context.index, context.returnType.simpleName, SearchEngineTestHelper.getId(bean)).execute()
 
-        def response = getR.response '5s'
+        GetResponse response = future.get()
+		
         assertEquals bean.id, response.id
         assertNotNull response.source 
         log.debug "get: $response.source"
