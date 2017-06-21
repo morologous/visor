@@ -1,6 +1,8 @@
 package net.yankus.visor
 
+import org.elasticsearch.action.ListenableActionFuture
 import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.*
 
@@ -135,7 +137,7 @@ class Engine {
 
             stats.queryBuiltInstant = new Date().time
 
-            def response = s.execute()
+            ListenableActionFuture<SearchResponse> response = s.execute()
 
             response
         }
@@ -147,9 +149,9 @@ class Engine {
         def stats = [:]
         stats.startInstant = new Date().time
         
-        def esResult = doSearch(context, queryParam, stats)
+        ListenableActionFuture<SearchResponse> esResult = doSearch(context, queryParam, stats)
 
-        def response = esResult.actionGet context.defaultTimeout
+        SearchResponse response = esResult.actionGet context.defaultTimeout
         log.trace "Search Response: ${response}"
 
         stats.responseInstant = new Date().time
@@ -161,7 +163,7 @@ class Engine {
 
         stats.unmarshallInstant = new Date().time
 
-        results.count = response.hits().totalHits()
+        results.count = response.hits.totalHits()
         results.pageSize = results.list.size()
         results.query = queryParam
 
