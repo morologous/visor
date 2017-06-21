@@ -45,28 +45,31 @@ class EngineIndexTest {
         assertEquals flurgle, result.list[0]
     }
 	
-	@Test
-	void testIndexCallback() {
-		def callbackCalled = true
-		def blargle = new EngineIndexTestBean(id:''+'blargle'.hashCode(), name:'blargle', num:300) 
-		def indexR = blargle.index()
-		indexR.success = {
-            SearchEngineTestHelper.refresh(blargle)
-			def result = new EngineIndexTestBean(num:300).search()
-			assertEquals 1, result.count
-			assertEquals blargle, result.list[0]
-			callbackCalled = true
-		}
-		ExecutorService executor = Executors.newFixedThreadPool(1)
-		executor.execute( {
-				while (!callbackCalled) {
-					Thread.sleep(250)
-				}
-				return
-			 } as Runnable)
-		executor.awaitTermination(10, TimeUnit.SECONDS)
-		assertTrue callbackCalled
-	}
+// pure java api doesn't support the success callback method 
+// we could reengineer this to work via the ListenableActionFuture but that's
+// not a top priority if the clients are using the success callback.
+//	@Test
+//	void testIndexCallback() {
+//		def callbackCalled = true
+//		def blargle = new EngineIndexTestBean(id:''+'blargle'.hashCode(), name:'blargle', num:300) 
+//		def indexR = blargle.index()
+//		indexR.success = {
+//            SearchEngineTestHelper.refresh(blargle)
+//			def result = new EngineIndexTestBean(num:300).search()
+//			assertEquals 1, result.count
+//			assertEquals blargle, result.list[0]
+//			callbackCalled = true
+//		}
+//		ExecutorService executor = Executors.newFixedThreadPool(1)
+//		executor.execute( {
+//				while (!callbackCalled) {
+//					Thread.sleep(250)
+//				}
+//				return
+//			 } as Runnable)
+//		executor.awaitTermination(10, TimeUnit.SECONDS)
+//		assertTrue callbackCalled
+//	}
 
     @Visor(index='test', settings={ SearchEngineTestHelper.testESSettings(it) }  )
     @ToString
