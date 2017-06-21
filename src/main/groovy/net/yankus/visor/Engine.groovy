@@ -129,7 +129,7 @@ class Engine {
 
             if (queryStrVal) {
                 log.debug "Applying query_string ${queryStrVal}"
-                bool.must(queryString(queryStrVal))
+                bool.must(QueryBuilders.queryString(queryStrVal))
             }
 
             s.setQuery(bool)
