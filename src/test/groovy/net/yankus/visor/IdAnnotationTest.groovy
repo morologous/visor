@@ -71,7 +71,7 @@ class IdAnnotationTest {
         assertEquals new NoIdAnnotationTestBean(name:'ccc'), results.list[0]
     }
 
-    @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
+    @Visor(index='test', settings={ SearchEngineTestHelper.testESSettings(it) }  )
     @ToString
     @EqualsAndHashCode(excludes="score, snippets")
     static class SingleIdAnnotationTestBean {
@@ -81,7 +81,7 @@ class IdAnnotationTest {
         def name
     }
 
-    @Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
+    @Visor(index='test', settings={ SearchEngineTestHelper.testESSettings(it) }  )
     @ToString
     @EqualsAndHashCode(excludes="score, snippets")
     static class MultipleIdAnnotationTestBean {
@@ -95,7 +95,7 @@ class IdAnnotationTest {
         def name
     }
 
-    @net.yankus.visor.Visor(index='test', settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
+    @Visor(index='test', settings={ SearchEngineTestHelper.testESSettings(it) }  )
     @ToString
     @EqualsAndHashCode(excludes="score, snippets")
     static class NoIdAnnotationTestBean {

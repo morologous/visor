@@ -109,8 +109,7 @@ class QueryStringTest {
         assertFalse(results.list[0].snippets.text.fragments[0].contains('<em>'))
     }
 
-    @Visor ( index = 'test',
-           settings = { SearchEngineTestHelper.testESSettings.rehydrate(getDelegate(), getOwner(), getThisObject()).call() } )
+    @Visor(index='test', settings={ SearchEngineTestHelper.testESSettings(it) }  )
     @ToString
     @EqualsAndHashCode(excludes="score, snippets, text")
     static class QueryStringTestBean {
