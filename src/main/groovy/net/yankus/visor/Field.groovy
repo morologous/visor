@@ -1,6 +1,7 @@
 package net.yankus.visor
 
 import java.lang.annotation.Retention
+
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
 import java.lang.annotation.ElementType
@@ -58,7 +59,7 @@ public @interface Field {
         AnnotationDefaultClosureLogger.trace "Applying $key : $value"
         if (value instanceof MultiSelect) {
             AnnotationDefaultClosureLogger.trace 'Applying MultiSelect'
-            inQuery key + annotation.inQueryFieldSuffix(), value.values as Object[]        
+            termsQuery key + annotation.inQueryFieldSuffix(), value.values as Object[]        
         } else if (value instanceof DateRange) {
             AnnotationDefaultClosureLogger.trace 'Applying DateRange'
             rangeQuery(key)
