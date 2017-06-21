@@ -1,9 +1,11 @@
 package net.yankus.visor
 
 import org.elasticsearch.action.ListenableActionFuture
+import org.elasticsearch.action.delete.DeleteResponse
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.Client
 import org.elasticsearch.index.query.*
 
 import groovy.util.logging.Log4j
@@ -240,10 +242,10 @@ class Engine {
         def idValue = Marshaller.getIdValueFromBean target
         log.info "Deleting $context.index id $idValue"
         if (idValue) {
-            Engine.doInElasticSearch(context) { client ->
-                def request = client.prepareDelete(context.index, context.returnType.simpleName, idValue)
+            Engine.doInElasticSearch(context) { Client client ->
+				ListenableActionFuture<DeleteResponse> future = client.prepareDelete(context.index, context.returnType.simpleName, idValue).execute()
 
-				def result = request.get()
+				DeleteResponse result = future.get()
                 result 
             }            
         }
