@@ -21,7 +21,7 @@ class SearchEngineTestHelper {
 		settings.put('node.local',true)
 		settings.put('discovery.cluster.name','visorTest')
 		settings.put('http.enabled', false)
-		settings.put('path.data','./data')
+		settings.put('path.data','./build/data')
 		settings.put('path.home','./build')
     }
     
