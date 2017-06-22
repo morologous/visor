@@ -1,5 +1,6 @@
 package net.yankus.visor
 
+import org.elasticsearch.action.ActionResponse;
 import org.elasticsearch.action.ListenableActionFuture
 import org.elasticsearch.action.delete.DeleteResponse
 import org.elasticsearch.action.index.IndexRequestBuilder;
@@ -29,7 +30,11 @@ class Engine {
         return operation.call(client)
     }
 
-    static def doSearch (context, queryParam, stats = [:], countOnly = false) {
+	static <T extends ActionResponse> T getWithTimeout(context, ListenableActionFuture<T> future) {
+		return future.actionGet(context.defaultTimeout)
+	}
+	
+    static ListenableActionFuture doSearch (context, queryParam, stats = [:], countOnly = false) {
 
         def queryParams = Marshaller.marshallSearchParameters(Marshaller.marshall(queryParam))
         log.info "Searching $context.index for type $context.returnType.simpleName"
@@ -154,9 +159,9 @@ class Engine {
 
             stats.queryBuiltInstant = new Date().time
 
-            ListenableActionFuture<SearchResponse> response = s.execute()
+            ListenableActionFuture<SearchResponse> future = s.execute()
 
-            response
+            future
         }
     }
 
@@ -166,9 +171,9 @@ class Engine {
         def stats = [:]
         stats.startInstant = new Date().time
         
-        ListenableActionFuture<SearchResponse> esResult = doSearch(context, queryParam, stats)
+        ListenableActionFuture<SearchResponse> future = doSearch(context, queryParam, stats)
 
-        SearchResponse response = esResult.actionGet context.defaultTimeout
+        SearchResponse response = getWithTimeout context, future 
         log.trace "Search Response: ${response}"
 
         stats.responseInstant = new Date().time
@@ -199,10 +204,10 @@ class Engine {
         def stats = [:]
         stats.startInstant = new Date().time
         
-        def esResult = doSearch(context, queryParam, stats, true)
+        def future = doSearch(context, queryParam, stats, true)
 
-        def response = esResult.actionGet context.defaultTimeout
-        log.debug "Search Response: ${response}"
+        def response = getWithTimeout context, future
+        log.trace "Search Response: ${response}"
 
         stats.responseInstant = new Date().time
 
@@ -248,7 +253,7 @@ class Engine {
             
 			ListenableActionFuture<IndexResponse> future = request.execute()
 			
-			IndexResponse result = future.actionGet()
+			IndexResponse result = getWithTimeout context, future
             result
         }
 
@@ -262,7 +267,7 @@ class Engine {
             Engine.doInElasticSearch(context) { Client client ->
 				ListenableActionFuture<DeleteResponse> future = client.prepareDelete(context.index, context.returnType.simpleName, idValue).execute()
 
-				DeleteResponse result = future.get()
+				DeleteResponse result = getWithTimeout context, future
                 result 
             }            
         }
@@ -276,7 +281,7 @@ class Engine {
 
             def future = adminClient.cluster().prepareHealth().execute()
 
-            return future.actionGet()
+            return getWithTimeout(context, future)
         }
     }
 
