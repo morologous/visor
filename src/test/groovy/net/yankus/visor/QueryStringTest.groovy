@@ -58,7 +58,7 @@ class QueryStringTest {
         assertEquals 1, results.count
         assertTrue results.list.contains(qstr2)
         assertNotNull(results.list[0].snippets)
-        assertEquals ' or flour and water. Italian dried spaghetti is made from durum <strong>wheat</strong> semolina, but outside of Italy', results.list[0].snippets.text.fragments[0]
+        assertTrue results.list[0].snippets.text.fragments[0].contains('made from durum <strong>wheat</strong> semolina, but outside')
     }
 
     @Test
