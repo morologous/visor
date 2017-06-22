@@ -4,6 +4,7 @@ import groovy.util.logging.Log4j
 
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHits
+import org.elasticsearch.search.highlight.HighlightField;
 
 @Log4j
 class Marshaller {
@@ -63,7 +64,7 @@ class Marshaller {
 	}
 
 	static def unmarshall = { SearchHit hit, context ->
-		log.trace "Unmarshalling hit: $hit"
+		log.trace "Unmarshalling hit"
 		def unmarshalled = Marshaller.unmarshallMap(hit.getSource(), context.returnType)
 		
 		// detect and set Id
@@ -72,10 +73,21 @@ class Marshaller {
 			unmarshalled[idField.name] = hit.id
 		}
 
+		log.trace "Hit score: $hit.score"
 		unmarshalled.score = hit.score
+		log.trace "hit highlights: ${hit.highlightFields()}"
 		unmarshalled.snippets = [:]
-		unmarshalled.snippets << hit.highlightFields()
-
+		hit.highlightFields().keySet().each { fieldName ->
+			HighlightField highlightField = hit.highlightFields()[(fieldName)]
+			def snippets = []
+			highlightField.fragments.each { fragment ->
+				snippets.add(fragment.toString())
+			}
+			def highlights = new Expando()
+			highlights.fragments = snippets
+			unmarshalled.snippets.put(fieldName, highlights)
+		}
+		log.trace "unmarshalled snippets: ${unmarshalled.snippets}"
 		unmarshalled
 	}
 
