@@ -7,7 +7,9 @@ import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.search.SearchRequestBuilder
 import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.index.query.QueryBuilders;
 
 import static org.elasticsearch.client.Requests.*
 import static org.junit.Assert.*
@@ -110,25 +112,20 @@ class SearchEngineTestHelper {
 
     static def search = { bean -> 
         def context = ContextBuilder.build(bean)
-        def client = new ThreadLocalClientFactory(context:context).create()
+        Client client = new ThreadLocalClientFactory(context:context).create()
 
-        def searchR = client.search {
-            indices context.index
-            types context.returnType.simpleName
-            source {
-                query {
-                    ids(values:[bean.id])
-                }
-                highlight {
-                    fields {
-                        all { }
-                    }
-                }
-            }
-        } 
-
-        def response = searchR.response '5s'       
-        log.debug("get: $response")
+        def search = client.prepareSearch(context.index)
+		.setTypes(context.returnType.simpleName)
+		.setQuery(QueryBuilders.idsQuery(bean.id))
+		
+		search.highlightBuilder().field("*")
+		
+		def future = search.execute()
+		
+        def response = future.actionGet()
+		log.debug("get: $response")
+		
+		response
     }
 
     static def showAll = { beanType ->
