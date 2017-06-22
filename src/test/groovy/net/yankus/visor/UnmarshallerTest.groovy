@@ -1,12 +1,13 @@
 package net.yankus.visor
 
-import org.elasticsearch.search.SearchHit
 import static org.junit.Assert.*
 
+import org.elasticsearch.common.text.Text
+import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHitField
+import org.elasticsearch.search.highlight.HighlightField
 import org.junit.Before
 import org.junit.Test
-import net.yankus.visor.Visor
 
 class UnmarshallerTest {
 	
@@ -18,7 +19,8 @@ class UnmarshallerTest {
 	@Before
 	public void setUp() {
 		searchHitField = [getValues:{[source]}] as SearchHitField
-		searchHit = [field:{searchHitField}, getScore: { 0.75f }, highlightFields:{ [ text:[fragments:'foo']] }] as SearchHit
+		def highlightField =  new HighlightField('text', [new Text('foo')] as Text[]) 
+		searchHit = [getSource:{source}, field:{searchHitField}, getScore: { 0.75f }, highlightFields:{ [text:highlightField] }] as SearchHit
 		context = new Expando()
 		context.returnType = TestBean.class
 	}
