@@ -52,7 +52,7 @@ class QueryByComplexTypeTest {
         def result = results.list[0]
         assertEquals foo, result
         assertNotNull result.snippets
-        assertNotNull result.snippets['children.name']
+        assertNotNull "result.snippets for children.name was null: ${result.snippets}", result.snippets['children.name']
         assertEquals '<strong>child</strong>', result.snippets['children.name'].fragments[0]
     }
 
