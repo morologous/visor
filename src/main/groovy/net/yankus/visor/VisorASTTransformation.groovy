@@ -54,7 +54,6 @@ class VisorASTTransformation extends AbstractASTTransformation {
                 throw new IllegalStateException("Visor annotated classes should not have any properties with the following names: $propertyNames")
             }
 
-            // TODO: preconfirm that the methods don't already exist, for sanity (i.e., what about if they're already gormified.)
             classNode.addMethod(makeSearchMethod())
             classNode.addMethod(makeIndexMethod())
             classNode.addMethod(makeDeleteMethod())
@@ -153,6 +152,13 @@ class VisorASTTransformation extends AbstractASTTransformation {
     }
 
     private def makeVisorOptsField() {
-		makeProperty 'visorOpts', Map, new HashMap()
+		def ast = new AstBuilder().buildFromSpec {
+			propertyNode 'visorOpts', ACC_PUBLIC, Object, this.class, {
+				[:]
+			}
+		}
+		PropertyNode field = ast[0]
+
+		field
     }
 }
