@@ -15,9 +15,11 @@ import org.elasticsearch.index.query.QueryBuilders
 @GroovyASTTransformationClass(["net.yankus.visor.VisorASTTransformation"])
 public @interface Visor { 
     public Class filters() default { BoolQueryBuilder qb -> qb.filter(QueryBuilders.matchAllQuery()) } 
-    public Class settings() default { 
-        node { local = true } 
-        http { enabled = false }
+    public Class settings() default { settings ->
+		settings.put('node.local',true)
+		settings.put('http.enabled', false)
+		settings.put('path.data','./')
+		settings.put('path.home','./')
     };
     public String index()
     public Class remoteAddresses() default { [] }    
