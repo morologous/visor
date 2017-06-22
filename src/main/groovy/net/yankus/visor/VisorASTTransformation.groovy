@@ -28,6 +28,9 @@ class VisorASTTransformation extends AbstractASTTransformation {
     static final ClassNode VISOR_NODE = ClassHelper.make(VISOR_CLASS)
     static final String VISOR_NODE_NAME = '@' + VISOR_NODE.getNameWithoutPackage()
 
+	static final Set<String> VISOR_METHOD_NAMES = ['search', 'index', 'update', 'delete']
+	static final Set<String> VISOR_PROPERTY_NAMES = ['queryString', 'score', 'pageSize', 'startingIndex', 'sortOrder', 'snippets']
+	
     public void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
         init(nodes, sourceUnit)
 
@@ -41,12 +44,12 @@ class VisorASTTransformation extends AbstractASTTransformation {
             ClassNode classNode = (ClassNode) parent
             checkNotInterface(classNode, VISOR_NODE_NAME)
             
-            def methodNames =['search', 'index', 'update', 'delete']
+            def methodNames = VISOR_METHOD_NAMES
             if (classNode.getAllDeclaredMethods().name.find { methodNames.contains it }) {
                 throw new IllegalStateException("Visor annotated classes should not have any of the following methods declared: $methodNames")
             }
 
-            def propertyNames = ['queryString', 'score', 'pageSize', 'startingIndex', 'sortOrder', 'snippets']
+            def propertyNames = VISOR_PROPERTY_NAMES
             if (classNode.getProperties().name.find { propertyNames.contains it}) {
                 throw new IllegalStateException("Visor annotated classes should not have any properties with the following names: $propertyNames")
             }
@@ -67,189 +70,89 @@ class VisorASTTransformation extends AbstractASTTransformation {
             classNode.addProperty(makeVisorOptsField())
         }
     }
+	
+	private MethodNode makeMethod(beanMethodName, engineMethodName=null) {
+		if (engineMethodName == null) {
+			engineMethodName = beanMethodName
+		}
+		def ast = new AstBuilder().buildFromSpec {
+			method(beanMethodName, ACC_PUBLIC, Object) {
+				parameters { }
+				exceptions { }
+				block {
+					returnStatement {
+						staticMethodCall(net.yankus.visor.Engine, engineMethodName) {
+							argumentList {
+								variable 'this'
+							}
+						}
+					}
+				}
+			}
+		}
+		MethodNode method = ast[0]
+
+		method
+	}
+	
+	private PropertyNode makeProperty(propertyName, propertyType=String.class, defaultValue=null) {
+		def ast = new AstBuilder().buildFromSpec {
+			propertyNode propertyName, ACC_PUBLIC, propertyType, this.class, {
+				constant defaultValue
+			}
+		}
+		PropertyNode field = ast[0]
+
+		field
+	}
 
     private def makeSearchMethod() {
-        def ast = new AstBuilder().buildFromSpec {
-            method('search', ACC_PUBLIC, Object) {
-                parameters { }
-                exceptions {}
-                block { 
-                    returnStatement {
-                        staticMethodCall(net.yankus.visor.Engine, 'search') {
-                            argumentList {
-                                variable 'this'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        MethodNode method = ast[0]
-
-        method
+		makeMethod 'search'
     }
 
     private def makeCountMethod() {
-        def ast = new AstBuilder().buildFromSpec {
-            method('count', ACC_PUBLIC, Object) {
-                parameters { }
-                exceptions {}
-                block { 
-                    returnStatement {
-                        staticMethodCall(net.yankus.visor.Engine, 'count') {
-                            argumentList {
-                                variable 'this'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        MethodNode method = ast[0]
-
-        method
+		makeMethod 'count'
     }
 
     private def makeIndexMethod() {
-        def ast = new AstBuilder().buildFromSpec {
-            method('index', ACC_PUBLIC, Object) {
-                parameters { }
-                exceptions { }
-                block {
-                    returnStatement {
-                        staticMethodCall(net.yankus.visor.Engine, 'index') {
-                            argumentList {
-                                variable 'this'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        MethodNode method = ast[0]
-
-        method
+		makeMethod 'index'
     }
 
     private def makeDeleteMethod() {
-        def ast = new AstBuilder().buildFromSpec {
-            method('delete', ACC_PUBLIC, Object) {
-                parameters { }
-                exceptions { }
-                block {
-                    returnStatement {
-                        staticMethodCall(net.yankus.visor.Engine, 'delete') {
-                            argumentList {
-                                variable 'this'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        MethodNode method = ast[0]
-
-        method
+		makeMethod 'delete'
     }
 
 
     private def makeUpdateMethod() {
-        def ast = new AstBuilder().buildFromSpec {
-            method('update', ACC_PUBLIC, Object) {
-                parameters { }
-                exceptions { }
-                block {
-                    returnStatement {
-                        staticMethodCall(net.yankus.visor.Engine, 'index') {
-                            argumentList {
-                                variable 'this'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        MethodNode method = ast[0]
-
-        method
+		makeMethod 'update', 'index'
     }
 
     private def makeQueryStringField() {
-        def ast = new AstBuilder().buildFromSpec {
-            propertyNode "queryString", ACC_PUBLIC, String, this.class, {
-                constant null
-            }
-        }
-        PropertyNode field = ast[0]
-
-        field
+		makeProperty 'queryString'
     }
 
     private def makeScoreField() {
-        def ast = new AstBuilder().buildFromSpec {
-            propertyNode "score", ACC_PUBLIC, Double, this.class, {
-                constant 0.0d
-            }
-        }
-        PropertyNode field = ast[0]
-
-        field
+		makeProperty 'score', Double, 0.0d
     }
 
-
     private def makePageSizeField() {
-        def ast = new AstBuilder().buildFromSpec {
-            propertyNode "pageSize", ACC_PUBLIC, Long, this.class, {
-                constant 25L
-            }
-        }
-        PropertyNode field = ast[0]
-
-        field
+		makeProperty 'pageSize', Long, 25L
     }
 
 
     private def makeStartingIndexField() {
-        def ast = new AstBuilder().buildFromSpec {
-            propertyNode "startingIndex", ACC_PUBLIC, Long, this.class, {
-                constant 0L
-            }
-        }
-        PropertyNode field = ast[0]
-
-        field
+		makeProperty 'startingIndex', Long, 0L
     }
 
     private def makeSortOrderField() {
-        def ast = new AstBuilder().buildFromSpec {
-            propertyNode "sortOrder", ACC_PUBLIC, Object, this.class, {
-               null
-            }
-        }
-        PropertyNode field = ast[0]
-
-        field
+		makeProperty 'sortOrder', Object
     }
 
     private def makeSnippetField() {
-        def ast = new AstBuilder().buildFromSpec {
-            propertyNode "snippets", ACC_PUBLIC, Object, this.class, {
-               null
-            }
-        }
-        PropertyNode field = ast[0]
-
-        field
+		makeProperty 'snippets', Object
     }
 
     private def makeVisorOptsField() {
-        def ast = new AstBuilder().buildFromSpec {
-            propertyNode "visorOpts", ACC_PUBLIC, Object, this.class, {
-               [:]
-            }
-        }
-        PropertyNode field = ast[0]
-
-        field
+		makeProperty 'visorOpts', Map, new HashMap()
     }
 }
