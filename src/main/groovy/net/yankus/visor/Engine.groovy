@@ -235,7 +235,7 @@ class Engine {
         stats
     }
 
-    static def index = { target -> 
+    static def index (target) {
         def context = ContextBuilder.build(target)
 
         def indexParams = Marshaller.marshall(target, 'INDEX')
@@ -259,7 +259,7 @@ class Engine {
 
     }
 
-    static def delete = { target ->
+    static def delete (target) {
         def context = ContextBuilder.build target 
         def idValue = Marshaller.getIdValueFromBean target
         log.info "Deleting $context.index id $idValue"
@@ -273,7 +273,7 @@ class Engine {
         }
     }
 
-    static def health = { target ->
+    static def health (target) {
         def context = ContextBuilder.build target
         return Engine.doInElasticSearch(context) { Client client ->
             // gotta dig down for the admin client.
