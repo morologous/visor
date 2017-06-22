@@ -50,7 +50,7 @@ class RemoteClientTestIntegration {
 
     @Visor ( index = 'test', 
         remoteAddresses = { [ 'localhost:9300' ] },
-        settings = { put('node.client', true)
+        settings = { it.put('node.client', true)
                      /* put('client.transport.sniff', true) */ }
               )
     @ToString
