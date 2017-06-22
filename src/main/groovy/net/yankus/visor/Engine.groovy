@@ -253,13 +253,13 @@ class Engine {
 
     static def health = { target ->
         def context = ContextBuilder.build target
-        Engine.doInElasticSearch(context) { client ->
+        return Engine.doInElasticSearch(context) { Client client ->
             // gotta dig down for the admin client.
-            def adminClient = client.client.admin
+            def adminClient = client.admin()
 
-            def response = adminClient.cluster() .prepareHealth().execute()
+            def future = adminClient.cluster().prepareHealth().execute()
 
-            response.actionGet()
+            return future.actionGet()
         }
     }
 

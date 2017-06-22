@@ -1,9 +1,15 @@
 package net.yankus.visor
 
-import java.util.concurrent.ExecutorService
 import static org.junit.Assert.*
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse
+import org.elasticsearch.cluster.health.ClusterHealthStatus
 import org.junit.BeforeClass
 import org.junit.Test
 
@@ -29,16 +35,15 @@ class HealthTest {
     	def response
 
         ExecutorService executor = Executors.newFixedThreadPool(1)
-        executor.execute( {
-                response = Engine.health(zeta)
-                while (ClusterHealthStatus.GREEN != response.status) {                    
+        Future<ClusterHealthResponse> future = executor.submit( {
+                def innerResponse = Engine.health(zeta)
+                while (ClusterHealthStatus.GREEN != innerResponse.status) {                    
                     Thread.sleep(250)
-                    response = Engine.health(zeta)
+                    innerResponse = Engine.health(zeta)
                 }
-                return
-             } as Runnable)
-        executor.awaitTermination(20, TimeUnit.SECONDS)        
-
+                return innerResponse
+             } as Callable<ClusterHealthResponse>)
+		response = future.get(30, TimeUnit.SECONDS)
     	assertEquals ClusterHealthStatus.GREEN, response.status
     }
 
