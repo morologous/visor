@@ -2,6 +2,8 @@ package net.yankus.visor
 
 import org.elasticsearch.action.ListenableActionFuture
 import org.elasticsearch.action.delete.DeleteResponse
+import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchType;
@@ -10,6 +12,7 @@ import org.elasticsearch.index.query.*
 
 import groovy.util.logging.Log4j
 
+import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortOrder
 
 import static org.elasticsearch.index.query.QueryBuilders.*
@@ -91,15 +94,7 @@ class Engine {
                  .setFrom(startingIndex as int)
                  .setSize(pageSize as int)
 
-                if (context.visorOpts['visor.highlight.disabled'] == null) {
-                    highlights.each {
-                        log.debug "Adding highlighted field: ${it}"
-                        s.addHighlightedField(it)
-                    }       
-                    s.setHighlighterPreTags('<strong>')
-                    s.setHighlighterPostTags('</strong>')
-                    s.setHighlighterEncoder('html')
-                }
+
 
                 sortOrder.each {
                     if (it instanceof String) {
@@ -129,10 +124,30 @@ class Engine {
 
             if (queryStrVal) {
                 log.debug "Applying query_string ${queryStrVal}"
-                bool.must(QueryBuilders.queryString(queryStrVal))
+                bool.must(QueryBuilders.queryStringQuery(queryStrVal))
             }
 
-            s.setQuery(bool)
+			
+			if (context.visorOpts['visor.highlight.disabled'] == null) {
+				HighlightBuilder highlighter = s.highlightBuilder()
+					
+				highlighter.preTags('<strong>')
+						   .postTags('</strong>')
+						   .encoder('html')
+						   //.fragmentSize(150)
+						   //.numOfFragments(4)
+						   //.forceSource(true)
+						   .requireFieldMatch(false)
+				highlights.each {
+					log.debug "Adding highlighted field: ${it}"
+					highlighter.field(it)
+				}
+				s.setHighlighterQuery(bool)
+			 }
+
+			//s.setExplain(true)			 
+			s.setQuery(bool)
+			 
 
             def filterClosure = context.filters.newInstance(null, this)         
 			filterClosure.call(bool)
@@ -227,11 +242,13 @@ class Engine {
 
         log.info "Indexing to $context.index id $targetId"
         log.debug "Indexed values: $indexParams"
-        Engine.doInElasticSearch(context) { client -> 
-            def request = client.prepareIndex(context.index, context.returnType.simpleName, targetId)
+        Engine.doInElasticSearch(context) { Client client -> 
+            IndexRequestBuilder request = client.prepareIndex(context.index, context.returnType.simpleName, targetId)
 			request.setSource(indexParams)
             
-			def result = request.get()
+			ListenableActionFuture<IndexResponse> future = request.execute()
+			
+			IndexResponse result = future.actionGet()
             result
         }
 
