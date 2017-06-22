@@ -21,7 +21,7 @@ class SearchPagingTest {
     public static void setUp() throws Exception {
         for (i in 0..24) {
             def bean = new SearchPagingTestBean(id:"$i", name:'bean_'+i)
-            bean.index().actionGet()
+            assertTrue bean.index().isCreated()
             testBeans << bean
         }
         SearchEngineTestHelper.refresh(testBeans[0])
