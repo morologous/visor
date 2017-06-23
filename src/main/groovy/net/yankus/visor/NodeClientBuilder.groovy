@@ -18,19 +18,19 @@ class NodeClientBuilder {
 	def build() {
 		log.info 'Creating nodeBuilder client.'
 
-                def datasource = new Expando()
-                datasource.nodeBuilder = nodeBuilder()
+        def datasource = new Expando()
+        datasource.nodeBuilder = nodeBuilder()
 
-                def nodeSettings = Settings.settingsBuilder()
-                settings(nodeSettings)
+        def nodeSettings = Settings.settingsBuilder()
+        settings(nodeSettings)
 
-                datasource.nodeBuilder.settings(nodeSettings) 
-             
-                datasource.node = datasource.nodeBuilder.node()
-                datasource.client = datasource.node.client
+        datasource.nodeBuilder.settings(nodeSettings) 
+     
+        datasource.node = datasource.nodeBuilder.node()
+        datasource.client = datasource.node.client
 
-                datasource.close = { datasource.node.stop().close() }  
+        datasource.close = { datasource.node.stop().close() }  
 
-                datasource
+        datasource
 	}
 }
