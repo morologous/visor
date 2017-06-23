@@ -1,6 +1,5 @@
 package net.yankus.visor
 
-import groovy.util.Expando
 import groovy.util.logging.Log4j 
 
 @Log4j

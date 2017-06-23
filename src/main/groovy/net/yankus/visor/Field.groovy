@@ -1,11 +1,11 @@
 package net.yankus.visor
 
+import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
-
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
-import java.lang.annotation.ElementType
-import static org.elasticsearch.index.query.QueryBuilders.*
+
+import org.elasticsearch.index.query.QueryBuilders
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -59,15 +59,15 @@ public @interface Field {
         AnnotationDefaultClosureLogger.trace "Applying $key : $value"
         if (value instanceof MultiSelect) {
             AnnotationDefaultClosureLogger.trace 'Applying MultiSelect'
-            termsQuery key + annotation.inQueryFieldSuffix(), value.values as Object[]        
+            QueryBuilders.termsQuery key + annotation.inQueryFieldSuffix(), value.values as Object[]        
         } else if (value instanceof DateRange) {
             AnnotationDefaultClosureLogger.trace 'Applying DateRange'
-            rangeQuery(key)
+            QueryBuilders.rangeQuery(key)
                 .from(value.from)
                 .to(value.to)
         } else {
             AnnotationDefaultClosureLogger.trace 'Performing default apply.'            
-            def query = queryStringQuery '' + value
+            def query = QueryBuilders.queryStringQuery '' + value
             query.defaultField = key
             query.analyzeWildcard = true
 

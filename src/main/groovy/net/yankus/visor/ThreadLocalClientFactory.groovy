@@ -1,12 +1,7 @@
 package net.yankus.visor
 
-import groovy.util.Expando
 import org.elasticsearch.client.Client
-import org.elasticsearch.node.Node
-import org.elasticsearch.node.NodeBuilder
-import static org.elasticsearch.node.NodeBuilder.*
-import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.transport.InetSocketTransportAddress
+
 import groovy.util.logging.Log4j 
 
 @Log4j

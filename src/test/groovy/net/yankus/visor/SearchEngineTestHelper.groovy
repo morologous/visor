@@ -1,18 +1,16 @@
 package net.yankus.visor
 
-import groovy.util.logging.Log4j
-
 import org.elasticsearch.action.ListenableActionFuture
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.elasticsearch.action.get.GetResponse
-import org.elasticsearch.action.search.SearchRequestBuilder
 import org.elasticsearch.action.search.SearchResponse
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.client.Client
+import org.elasticsearch.client.Requests
+import org.elasticsearch.index.query.QueryBuilders
 
-import static org.elasticsearch.client.Requests.*
+import groovy.util.logging.Log4j
 import static org.junit.Assert.*
+import net.yankus.visor.Visor
 
 @Log4j
 class SearchEngineTestHelper {
@@ -33,7 +31,7 @@ class SearchEngineTestHelper {
         def indexParams = Marshaller.marshall(bean, 'INDEX')
         log.debug "indexParams: $indexParams"
         
-        def request = indexRequest(context.index).type(context.returnType.simpleName)
+        def request = Requests.indexRequest(context.index).type(context.returnType.simpleName)
                                                  .id(SearchEngineTestHelper.getId(bean))
                                                  .source(indexParams)
 

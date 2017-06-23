@@ -1,13 +1,13 @@
 package net.yankus.visor
 
-import static org.junit.Assert.*
-
 import org.elasticsearch.common.text.Text
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHitField
 import org.elasticsearch.search.highlight.HighlightField
 import org.junit.Before
 import org.junit.Test
+import static org.junit.Assert.*
+import net.yankus.visor.Visor
 
 class UnmarshallerTest {
 	

@@ -1,10 +1,10 @@
 package net.yankus.visor
 
-import groovy.util.logging.Log4j
-
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHits
-import org.elasticsearch.search.highlight.HighlightField;
+import org.elasticsearch.search.highlight.HighlightField
+
+import groovy.util.logging.Log4j
 
 @Log4j
 class Marshaller {

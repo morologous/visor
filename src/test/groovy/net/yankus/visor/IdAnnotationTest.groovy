@@ -2,14 +2,12 @@ package net.yankus.visor
 
 
 import org.junit.AfterClass
-import static org.junit.Assert.*
-
 import org.junit.BeforeClass
 import org.junit.Test
 
-import groovy.lang.Closure
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import static org.junit.Assert.*
 import net.yankus.visor.Visor
 
 class IdAnnotationTest {

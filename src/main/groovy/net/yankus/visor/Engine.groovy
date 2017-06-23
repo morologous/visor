@@ -3,20 +3,18 @@ package net.yankus.visor
 import org.elasticsearch.action.ActionResponse;
 import org.elasticsearch.action.ListenableActionFuture
 import org.elasticsearch.action.delete.DeleteResponse
-import org.elasticsearch.action.index.IndexRequestBuilder;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.index.IndexRequestBuilder
+import org.elasticsearch.action.index.IndexResponse
+import org.elasticsearch.action.search.SearchRequestBuilder
 import org.elasticsearch.action.search.SearchResponse
-import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
-import org.elasticsearch.index.query.*
-
-import groovy.util.logging.Log4j
-
-import org.elasticsearch.search.highlight.HighlightBuilder;
+import org.elasticsearch.index.query.BoolQueryBuilder
+import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.search.highlight.HighlightBuilder
 import org.elasticsearch.search.sort.SortOrder
 
-import static org.elasticsearch.index.query.QueryBuilders.*
+import groovy.util.logging.Log4j
 
 @Log4j
 class Engine {
@@ -124,7 +122,7 @@ class Engine {
             }
 
             if (!ids.isEmpty()) {
-                bool.must(idsQuery(context.returnType.simpleName).addIds(ids as String[]))
+                bool.must(QueryBuilders.idsQuery(context.returnType.simpleName).addIds(ids as String[]))
             }
 
             if (queryStrVal) {

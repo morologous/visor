@@ -1,7 +1,8 @@
 package net.yankus.visor
 
-import groovy.transform.ToString
 import java.io.Serializable
+
+import groovy.transform.ToString
 
 @ToString
 class DateRange implements Serializable {

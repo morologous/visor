@@ -1,11 +1,9 @@
 package net.yankus.visor
 
-import org.junit.Test
 import static org.junit.Assert.*
-
 import net.yankus.visor.Visor
-import groovy.lang.Closure
 
+import org.junit.Test
 
 class ContextBuilderTest {
 	

@@ -1,17 +1,17 @@
 package net.yankus.visor
 
-import org.codehaus.groovy.ast.ClassHelper
-import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.AnnotatedNode
 import org.codehaus.groovy.ast.AnnotationNode
-import org.codehaus.groovy.ast.builder.AstBuilder
+import org.codehaus.groovy.ast.ClassHelper
+import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.MethodNode
-import org.codehaus.groovy.transform.GroovyASTTransformation
 import org.codehaus.groovy.ast.PropertyNode
-import org.codehaus.groovy.transform.AbstractASTTransformation
-import org.codehaus.groovy.control.SourceUnit
+import org.codehaus.groovy.ast.builder.AstBuilder
 import org.codehaus.groovy.control.CompilePhase
+import org.codehaus.groovy.control.SourceUnit
+import org.codehaus.groovy.transform.AbstractASTTransformation
+import org.codehaus.groovy.transform.GroovyASTTransformation
 
 /**
  * Full disclosure: I figured out how to do this from reading the groovy
