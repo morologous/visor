@@ -24,7 +24,7 @@ class SearchEngineTestHelper {
     }
     
 
-    static def index = { bean ->
+    static def index(bean) {
         def context = ContextBuilder.build(bean)
         def client = new ThreadLocalClientFactory(context:context).create() 
 
@@ -61,7 +61,7 @@ class SearchEngineTestHelper {
         }
     }
 
-    static def get = { bean -> 
+    static def get (bean) { 
         def context = ContextBuilder.build(bean)
         def client = new ThreadLocalClientFactory(context:context).create()
 
@@ -75,7 +75,7 @@ class SearchEngineTestHelper {
         response
     }
 
-    static def delete = { bean -> 
+    static def delete (bean) {
         if (bean) {            
             def context = ContextBuilder.build(bean)
             def client = new ThreadLocalClientFactory(context:context).create()
@@ -90,7 +90,7 @@ class SearchEngineTestHelper {
         }
     }
 
-    private static def getId = { bean -> 
+    private static def getId (bean) {
         def id = '' + bean.hashCode()
         def idField
         // intentionally naive about the possibility of multiple Id field annotation, for test purposes.
@@ -108,7 +108,7 @@ class SearchEngineTestHelper {
         id
     }
 
-    static def search = { bean -> 
+    static def search(bean) {
         def context = ContextBuilder.build(bean)
         Client client = new ThreadLocalClientFactory(context:context).create()
 
@@ -126,7 +126,7 @@ class SearchEngineTestHelper {
 		response
     }
 
-    static def showAll = { beanType ->
+    static def showAll(beanType) {
         def bean = beanType.newInstance()
         def context = ContextBuilder.build bean
         def client = new ThreadLocalClientFactory(context:context).create()
