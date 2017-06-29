@@ -11,6 +11,8 @@ import groovy.transform.ToString
        defaultTimeout = "600s",
        settings = {settings ->
         settings.put('node.local',true)
+        settings.put('index.number_of_shards','1')
+        settings.put('index.number_of_replicas','0')
         settings.put('discovery.cluster.name','visorTest')
         settings.put('http.enabled', false)
         settings.put('path.data','./build/data')
