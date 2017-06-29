@@ -8,6 +8,7 @@ import groovy.transform.ToString
 
 @Visor(filters = { it.filter(QueryBuilders.termsQuery('security', ['low', 'none'] as String[])) }, 
        index = "test",
+       defaultTimeout = "600s"
        settings = {settings ->
         settings.put('node.local',true)
         settings.put('discovery.cluster.name','visorTest')
