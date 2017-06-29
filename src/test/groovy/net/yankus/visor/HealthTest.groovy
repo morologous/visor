@@ -43,7 +43,7 @@ class HealthTest {
                 }
                 return innerResponse
              } as Callable<ClusterHealthResponse>)
-		response = future.get(30, TimeUnit.SECONDS)
+		response = future.get(300, TimeUnit.SECONDS)
     	assertEquals ClusterHealthStatus.GREEN, response.status
     }
 
