@@ -32,18 +32,8 @@ class HealthTest {
     @Test
     void testHealthRequest() {
 
-    	def response
-
-        ExecutorService executor = Executors.newFixedThreadPool(1)
-        Future<ClusterHealthResponse> future = executor.submit( {
-                def innerResponse = Engine.health(zeta)
-                while (ClusterHealthStatus.GREEN != innerResponse.status) {                    
-                    Thread.sleep(250)
-                    innerResponse = Engine.health(zeta)
-                }
-                return innerResponse
-             } as Callable<ClusterHealthResponse>)
-		response = future.get(300, TimeUnit.SECONDS)
+    	def response = Engine.health(zeta)
+	    
     	assertEquals ClusterHealthStatus.GREEN, response.status
     }
 
