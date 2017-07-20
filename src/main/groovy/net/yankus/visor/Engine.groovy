@@ -111,9 +111,9 @@ class Engine {
                 }
             }
 
-            def bool = new BoolQueryBuilder()            
+            def root = new BoolQueryBuilder()            
             queryParams.entrySet().each { entry -> 
-                bool.must(entry.value
+                root.must(entry.value
                                .annotation
                                .applyToQuery()
                                .newInstance(null, null)
@@ -122,12 +122,12 @@ class Engine {
             }
 
             if (!ids.isEmpty()) {
-                bool.must(QueryBuilders.idsQuery(context.returnType.simpleName).addIds(ids as String[]))
+                root.must(QueryBuilders.idsQuery(context.returnType.simpleName).addIds(ids as String[]))
             }
 
             if (queryStrVal) {
                 log.debug "Applying query_string ${queryStrVal}"
-                bool.must(QueryBuilders.queryStringQuery(queryStrVal))
+                root.must(QueryBuilders.queryStringQuery(queryStrVal))
             }
 
 			
@@ -145,15 +145,16 @@ class Engine {
 					log.debug "Adding highlighted field: ${it}"
 					highlighter.field(it)
 				}
-				s.setHighlighterQuery(bool)
+				s.setHighlighterQuery(root)
 			 }
 
 			//s.setExplain(true)			 
-			s.setQuery(bool)
+			s.setQuery(root)
 			 
-
+			
+			context.root = root
             def filterClosure = context.filters.newInstance(null, this)         
-			filterClosure.call(bool)
+			filterClosure(context)
 
             stats.queryBuiltInstant = new Date().time
 

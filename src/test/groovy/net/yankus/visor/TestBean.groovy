@@ -6,7 +6,7 @@ import net.yankus.visor.Visor
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
-@Visor(filters = { it.filter(QueryBuilders.termsQuery('security', ['low', 'none'] as String[])) }, 
+@Visor(filters = { it.root.filter(QueryBuilders.termsQuery('security', ['low', 'none'] as String[])) }, 
        index = "test",
        defaultTimeout = "600s",
        settings = {settings ->

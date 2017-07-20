@@ -14,7 +14,7 @@ import org.elasticsearch.index.query.QueryBuilders
 @Target(ElementType.TYPE)
 @GroovyASTTransformationClass(["net.yankus.visor.VisorASTTransformation"])
 public @interface Visor { 
-    public Class filters() default { BoolQueryBuilder qb -> qb.filter(QueryBuilders.matchAllQuery()) } 
+    public Class filters() default { context -> context.root.filter(QueryBuilders.matchAllQuery()) } 
     public Class settings() default { settings ->
 		settings.put('node.local',true)
 		settings.put('http.enabled', false)

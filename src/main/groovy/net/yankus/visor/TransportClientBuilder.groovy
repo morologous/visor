@@ -15,12 +15,12 @@ class TransportClientBuilder {
 
 	def build() {		
 		log.info "Creating transportClient for ${remoteAddresses}"
-        def settings = Settings.settingsBuilder()
+        def settingsbldr = Settings.settingsBuilder()
 		
-		settings(settings)
+		settings(settingsbldr)
 
 		def datasource = new Expando()
-        datasource.transportClient =  TransportClient.builder().settings(settings).build()
+        datasource.transportClient =  TransportClient.builder().settings(settingsbldr).build()
         remoteAddresses.each {
         	def (host, port) = it.split(':')
             datasource.transportClient.addTransportAddress(new InetSocketTransportAddress(host, port as int)) 
